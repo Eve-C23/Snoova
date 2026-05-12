@@ -184,33 +184,10 @@ function juegoMemorama(container){
         }
     }
 
-    // ======================================
-    // ESCALA PARA CELULAR
-    // ======================================
-
-    let escala = 1;
-
-    function actualizarEscala(){
-
-        if(window.innerWidth <= 768){
-
-            escala = window.innerWidth / 1450;
-
-        }else{
-
-            escala = 1;
-        }
-    }
 
     ajustarCanvas();
 
-    actualizarEscala();
-
-    window.addEventListener("resize",()=>{
-
-        ajustarCanvas();
-        actualizarEscala();
-    });
+    window.addEventListener("resize",ajustarCanvas);
 
     canvas.style.borderRadius = "40px";
 
@@ -306,13 +283,7 @@ function juegoMemorama(container){
     let inicioY;
 
     let columnas = 5;
-
-    // ======================================
-    // ESCALA RESPONSIVE
-    // ======================================
-
-    let escala = 1;
-
+    
     // =================================================
     // REINICIAR
     // =================================================
@@ -661,7 +632,6 @@ function juegoMemorama(container){
 
         ctx.save();
 
-        ctx.scale(escala, escala);
 
         const fondo =
         ctx.createLinearGradient(
@@ -816,10 +786,10 @@ function juegoMemorama(container){
         cartas.forEach((carta,i)=>{
 
             const x =
-            (i % 5) * espacioX + inicioX;
+            (i % columnas) * espacioX + inicioX;
 
             const y =
-            Math.floor(i / 5) * espacioY + inicioY;
+            Math.floor(i / columnas) * espacioY + inicioY;
 
             if(
                 carta.abierta ||

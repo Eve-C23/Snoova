@@ -192,11 +192,11 @@ function juegoMemorama(container){
 
         if(window.innerWidth <= 768){
 
-            escala = window.innerWidth / 1450;
+            let escala = window.innerWidth / 1450;
 
         }else{
 
-            escala = 1;
+            let escala = 1;
         }
     }
 

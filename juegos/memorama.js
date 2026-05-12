@@ -2,51 +2,86 @@ function juegoMemorama(container){
 
     container.innerHTML = "";
 
-    // mensaje celular vertical
+    // ======================================
+    // MENSAJE GIRAR CELULAR
+    // ======================================
 
-    if(
-        window.innerWidth <= 768 &&
-        window.innerHeight > window.innerWidth
-    ){
+    const aviso = document.createElement("div");
 
-        container.innerHTML = `
+    aviso.style.position = "fixed";
+    aviso.style.top = "0";
+    aviso.style.left = "0";
 
-            <div style="
-                display:flex;
-                flex-direction:column;
-                justify-content:center;
-                align-items:center;
-                height:100vh;
-                text-align:center;
-                color:white;
-                font-family:Poppins;
-                padding:30px;
-            ">
+    aviso.style.width = "100%";
+    aviso.style.height = "100%";
 
-                <h1 style="
-                    font-size:38px;
-                    margin-bottom:20px;
-                ">
-                    📱
-                </h1>
+    aviso.style.background =
+    "linear-gradient(to bottom,#2b004f,#120021)";
 
-                <h2>
-                    Gira tu celular
-                </h2>
+    aviso.style.display = "none";
 
-                <p style="
-                    opacity:.8;
-                    max-width:300px;
-                ">
-                    Este juego está diseñado
-                    para jugarse en horizontal ✨
-                </p>
+    aviso.style.flexDirection = "column";
+    aviso.style.justifyContent = "center";
+    aviso.style.alignItems = "center";
 
-            </div>
-        `;
+    aviso.style.textAlign = "center";
 
-        return;
+    aviso.style.color = "white";
+
+    aviso.style.fontFamily = "Poppins";
+
+    aviso.style.zIndex = "999999";
+
+    aviso.innerHTML = `
+
+        <h1 style="
+            font-size:60px;
+            margin-bottom:10px;
+        ">
+            📱
+        </h1>
+
+        <h2 style="
+            font-size:32px;
+            margin:0;
+        ">
+            Gira tu celular
+        </h2>
+
+        <p style="
+            opacity:.8;
+            max-width:300px;
+            margin-top:15px;
+            font-size:18px;
+        ">
+            Este juego se disfruta
+            mejor en horizontal ✨
+        </p>
+    `;
+
+    document.body.appendChild(aviso);
+
+    function verificarOrientacion(){
+
+        if(
+            window.innerWidth <= 768 &&
+            window.innerHeight > window.innerWidth
+        ){
+
+            aviso.style.display = "flex";
+
+        }else{
+
+            aviso.style.display = "none";
+        }
     }
+
+    verificarOrientacion();
+
+    window.addEventListener(
+        "resize",
+        verificarOrientacion
+    );
 
     // =================================================
     // FUENTE

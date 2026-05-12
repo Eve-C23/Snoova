@@ -188,15 +188,17 @@ function juegoMemorama(container){
     // ESCALA PARA CELULAR
     // ======================================
 
+    let escala = 1;
+
     function actualizarEscala(){
 
         if(window.innerWidth <= 768){
 
-            let escala = window.innerWidth / 1450;
+            escala = window.innerWidth / 1450;
 
         }else{
 
-            let escala = 1;
+            escala = 1;
         }
     }
 
@@ -294,14 +296,16 @@ function juegoMemorama(container){
     // TAMAÑOS
     // =================================================
 
-    const anchoCarta = 155;
-    const altoCarta = 155;
+    let anchoCarta;
+    let altoCarta;
 
-    const espacioX = 240;
-    const espacioY = 165;
+    let espacioX;
+    let espacioY;
 
-    const inicioX = 125;
-    const inicioY = 295;
+    let inicioX;
+    let inicioY;
+
+    let columnas = 5;
 
     // ======================================
     // ESCALA RESPONSIVE
@@ -313,11 +317,63 @@ function juegoMemorama(container){
     // REINICIAR
     // =================================================
 
+    function configurarResponsive(){
+
+    if(window.innerWidth <= 768){
+
+            // CELULAR
+
+            columnas = 4;
+
+            anchoCarta = 120;
+            altoCarta = 120;
+
+            espacioX = 150;
+            espacioY = 140;
+
+            inicioX = 40;
+            inicioY = 260;
+
+        }else{
+
+            // PC
+
+            columnas = 5;
+
+            anchoCarta = 155;
+            altoCarta = 155;
+
+            espacioX = 240;
+            espacioY = 165;
+
+            inicioX = 125;
+            inicioY = 295;
+        }
+    }
+
+    configurarResponsive();
+
+    window.addEventListener("resize",()=>{
+
+        configurarResponsive();
+    });
+
     function reiniciarJuego(){
 
         sonidoVictoria = false;
 
-        cartas = [...imagenes,...imagenes];
+        let personajesUsar;
+
+        if(window.innerWidth <= 768){
+
+            personajesUsar = imagenes.slice(0,8);
+
+        }else{
+
+            personajesUsar = imagenes;
+        }
+
+        cartas = [...personajesUsar,...personajesUsar];
 
         cartas.sort(()=>Math.random()-0.5);
 
@@ -359,10 +415,10 @@ function juegoMemorama(container){
         cartas.forEach((carta,i)=>{
 
             const x =
-            (i % 5) * espacioX + inicioX;
+            ((i % columnas)) * espacioX + inicioX;
 
             const y =
-            Math.floor(i / 5) * espacioY + inicioY;
+            Math.floor(i / columnas) * espacioY + inicioY;
 
             if(
 
@@ -750,7 +806,7 @@ function juegoMemorama(container){
         cartas.filter(c=>c.encontrada).length / 2;
 
         ctx.fillText(
-            "⭐ Pares: " + pares + "/10",
+            "⭐ Pares: " + pares + "/" + (cartas.length / 2),
             1160,
             262
         );
@@ -854,7 +910,7 @@ function juegoMemorama(container){
         // sonido victoria
 
         if(
-            pares === 10 &&
+            pares === cartas.length / 2 &&
             !sonidoVictoria
         ){
 
@@ -866,7 +922,7 @@ function juegoMemorama(container){
 
         // ganar
 
-        if(pares === 10){
+        if(pares === cartas.length / 2){
 
             ctx.fillStyle =
             "rgba(0,0,0,.82)";

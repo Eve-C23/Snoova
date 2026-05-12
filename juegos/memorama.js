@@ -2,7 +2,86 @@ function juegoMemorama(container){
 
     container.innerHTML = "";
 
-    
+    // ======================================
+    // MENSAJE GIRAR CELULAR
+    // ======================================
+
+    const aviso = document.createElement("div");
+
+    aviso.style.position = "fixed";
+    aviso.style.top = "0";
+    aviso.style.left = "0";
+
+    aviso.style.width = "100%";
+    aviso.style.height = "100%";
+
+    aviso.style.background =
+    "linear-gradient(to bottom,#2b004f,#120021)";
+
+    aviso.style.display = "none";
+
+    aviso.style.flexDirection = "column";
+    aviso.style.justifyContent = "center";
+    aviso.style.alignItems = "center";
+
+    aviso.style.textAlign = "center";
+
+    aviso.style.color = "white";
+
+    aviso.style.fontFamily = "Poppins";
+
+    aviso.style.zIndex = "999999";
+
+    aviso.innerHTML = `
+
+        <h1 style="
+            font-size:60px;
+            margin-bottom:10px;
+        ">
+            📱
+        </h1>
+
+        <h2 style="
+            font-size:32px;
+            margin:0;
+        ">
+            Gira tu celular
+        </h2>
+
+        <p style="
+            opacity:.8;
+            max-width:300px;
+            margin-top:15px;
+            font-size:18px;
+        ">
+            Este juego se disfruta
+            mejor en horizontal ✨
+        </p>
+    `;
+
+    document.body.appendChild(aviso);
+
+    function verificarOrientacion(){
+
+        if(
+            window.innerWidth <= 768 &&
+            window.innerHeight > window.innerWidth
+        ){
+
+            aviso.style.display = "flex";
+
+        }else{
+
+            aviso.style.display = "none";
+        }
+    }
+
+    verificarOrientacion();
+
+    window.addEventListener(
+        "resize",
+        verificarOrientacion
+    );
 
     // =================================================
     // FUENTE
@@ -196,14 +275,14 @@ function juegoMemorama(container){
     // TAMAÑOS
     // =================================================
 
-    const anchoCarta = 155;
-    const altoCarta = 155;
+    let anchoCarta = 85;
+    let altoCarta = 85;
 
-    const espacioX = 240;
-    const espacioY = 165;
+    let espacioX = 90;
+    let espacioY = 95;
 
-    const inicioX = 125;
-    const inicioY = 295;
+    let inicioX = 18;
+    let inicioY = 220;
 
     // =================================================
     // REINICIAR
@@ -254,11 +333,22 @@ function juegoMemorama(container){
 
         cartas.forEach((carta,i)=>{
 
+            let columnas;
+
+            if(window.innerWidth <= 768){
+
+                columnas = 4;
+
+            }else{
+
+                columnas = 5;
+            }
+
             const x =
-            (i % 5) * espacioX + inicioX;
+            (i % columnas) * espacioX + inicioX;
 
             const y =
-            Math.floor(i / 5) * espacioY + inicioY;
+            Math.floor(i / columnas) * espacioY + inicioY;
 
             if(
 

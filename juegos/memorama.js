@@ -184,12 +184,31 @@ function juegoMemorama(container){
         }
     }
 
+    // ======================================
+    // ESCALA PARA CELULAR
+    // ======================================
+
+    function actualizarEscala(){
+
+        if(window.innerWidth <= 768){
+
+            escala = window.innerWidth / 1450;
+
+        }else{
+
+            escala = 1;
+        }
+    }
+
     ajustarCanvas();
 
-    window.addEventListener(
-        "resize",
-        ajustarCanvas
-    );
+    actualizarEscala();
+
+    window.addEventListener("resize",()=>{
+
+        ajustarCanvas();
+        actualizarEscala();
+    });
 
     canvas.style.borderRadius = "40px";
 
@@ -275,14 +294,20 @@ function juegoMemorama(container){
     // TAMAÑOS
     // =================================================
 
-    let anchoCarta = 85;
-    let altoCarta = 85;
+    const anchoCarta = 155;
+    const altoCarta = 155;
 
-    let espacioX = 90;
-    let espacioY = 95;
+    const espacioX = 240;
+    const espacioY = 165;
 
-    let inicioX = 18;
-    let inicioY = 220;
+    const inicioX = 125;
+    const inicioY = 295;
+
+    // ======================================
+    // ESCALA RESPONSIVE
+    // ======================================
+
+    let escala = 1;
 
     // =================================================
     // REINICIAR
@@ -333,22 +358,11 @@ function juegoMemorama(container){
 
         cartas.forEach((carta,i)=>{
 
-            let columnas;
-
-            if(window.innerWidth <= 768){
-
-                columnas = 4;
-
-            }else{
-
-                columnas = 5;
-            }
-
             const x =
-            (i % columnas) * espacioX + inicioX;
+            (i % 5) * espacioX + inicioX;
 
             const y =
-            Math.floor(i / columnas) * espacioY + inicioY;
+            Math.floor(i / 5) * espacioY + inicioY;
 
             if(
 
@@ -588,6 +602,10 @@ function juegoMemorama(container){
     // =================================================
 
     function loop(){
+
+        ctx.save();
+
+        ctx.scale(escala, escala);
 
         const fondo =
         ctx.createLinearGradient(
@@ -881,6 +899,7 @@ function juegoMemorama(container){
             );
         }
 
+        ctx.restore();
         requestAnimationFrame(loop);
     }
 

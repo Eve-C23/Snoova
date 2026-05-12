@@ -1,76 +1,85 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <!-- ADAPTAR DISPOSITIVO -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Snoopy Nova 💫</title>
+    <title>SNOOVA ✨</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <!-- LOGO -->
-    <center>
-        <img id="logo" class="logo" src="img/logo.png">
-    </center>
 
-    <!-- MENU -->
-    <div id="menu" class="menu-juegos">
-    
-        <div class="juego" onclick="abrirJuego('carrera')">
-            <img src="img/carreras.png">
-        </div>
+    <div id="pantallaInicio">
+        <img src="img/snoo.png" id="snoopy">
 
-        <div class="juego" onclick="abrirJuego('frutas')">
-            <img src="img/frutas.png">
-        </div>
+        <button id="btnEmpezar">
+            <span class="corazon">❤</span>
 
-        <div class="juego" onclick="abrirJuego('dino')">
-            <img src="img/dino.png">
-        </div>
+            CLICK PARA EMPEZAR
 
-        <div class="juego" onclick="abrirJuego('gato')">
-            <img src="img/gato.png">
-        </div>
-
-        <div class="juego" onclick="abrirJuego('memorama')">
-            <img src="img/memorama.png">
-        </div>
-
-        <div class="juego" onclick="abrirJuego('cocodrilo')">
-            <img src="img/cocodrilo.png">
-        </div>
+        </button>
 
     </div>
 
-    <div id="transition"></div>
-
-    <div id="game"></div>
-
-    <!-- BOTON MENU -->
-    <button id="volver" onclick="volverMenu()">
-        Volver al menú
-    </button>
-
-    <!-- ORDEN IMPORTANTE -->
-    <script src="juegos/gato.js"></script>
-    <script src="juegos/frutas.js"></script>
-    <script src="juegos/carrera.js"></script>
-    <script src="juegos/dino.js"></script>
-    <script src="juegos/memorama.js"></script>
-    <script src="juegos/nubes.js"></script>
-
-    <!-- AUDIO MENU -->
-    <audio id="musica" loop>
-        <source src="audio/menu.mp3" type="audio/mp3">
+    <!-- MUSICA -->
+    <audio id="musicaInicio" loop>
+        <source src="audio/bienvenida.mp3" type="audio/mp3">
     </audio>
-    
+
+    <!-- CLICK -->
     <audio id="clickSound">
         <source src="audio/clickMenu.mp3" type="audio/mp3">
     </audio>
-    <script src="main.js"></script>
 
+    <!-- TRANSICION -->
+    <div id="transition"></div>
+
+    <script>
+        const btn = document.getElementById("btnEmpezar");
+        const musicaInicio = document.getElementById("musicaInicio");
+        const clickSound = document.getElementById("clickSound");
+
+        /* volumen */
+        musicaInicio.volume = 0.25;
+        clickSound.volume = 0.5;
+
+        /* primer click inicia música */
+        document.body.addEventListener("click", () => {
+
+            musicaInicio.play();
+
+        }, { once: true });
+
+        /* botón empezar */
+        btn.addEventListener("click", () => {
+
+            /* sonido click */
+            clickSound.currentTime = 0;
+
+            clickSound.play();
+
+            /* activar música menú */
+            localStorage.setItem("musicaPermitida", "true");
+
+            /* transición */
+            const transition = document.getElementById("transition");
+
+            /* mostrar transición */
+            transition.style.opacity = "1";
+
+            /* cambiar página */
+            setTimeout(() => {
+
+                window.location.href = "menu.html";
+
+            }, 500);
+        });
+    </script>
 
 </body>
+
 </html>

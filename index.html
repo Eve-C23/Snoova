@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- ADAPTAR DISPOSITIVO -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Snoopy Nova 💫</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- LOGO -->
+    <center>
+        <img id="logo" class="logo" src="img/logo.png">
+    </center>
+
+    <!-- MENU -->
+    <div id="menu" class="menu-juegos">
+    
+        <div class="juego" onclick="abrirJuego('carrera')">
+            <img src="img/carreras.png">
+        </div>
+
+        <div class="juego" onclick="abrirJuego('frutas')">
+            <img src="img/frutas.png">
+        </div>
+
+        <div class="juego" onclick="abrirJuego('dino')">
+            <img src="img/dino.png">
+        </div>
+
+        <div class="juego" onclick="abrirJuego('gato')">
+            <img src="img/gato.png">
+        </div>
+
+        <div class="juego" onclick="abrirJuego('memorama')">
+            <img src="img/memorama.png">
+        </div>
+
+        <div class="juego" onclick="abrirJuego('cocodrilo')">
+            <img src="img/cocodrilo.png">
+        </div>
+
+    </div>
+ 
+    <div id="transition"></div>
+
+    <div id="game"></div>
+
+    <!-- BOTON MENU -->
+    <button id="volver" onclick="volverMenu()">
+        Volver al menú
+    </button>
+
+    <!-- ORDEN IMPORTANTE -->
+    <script src="juegos/gato.js"></script>
+    <script src="juegos/frutas.js"></script>
+    <script src="juegos/carrera.js"></script>
+    <script src="juegos/dino.js"></script>
+    <script src="juegos/memorama.js"></script>
+    <script src="juegos/cocodrilo.js"></script>
+
+    <!-- AUDIO MENU -->
+    <audio id="musica" loop>
+        <source src="audio/menu.mp3" type="audio/mp3">
+    </audio>
+    
+    <audio id="clickSound">
+        <source src="audio/clickMenu.mp3" type="audio/mp3">
+    </audio>
+    <script src="main.js"></script>
+
+
+</body>
+</html>

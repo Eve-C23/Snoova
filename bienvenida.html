@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- ADAPTAR DISPOSITIVO -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>SNOOVA ✨</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="pantallaInicio">
+        <img src="img/snoo.png" id="snoopy">
+
+        <button id="btnEmpezar">
+            <span class="corazon">❤</span>
+
+            CLICK PARA EMPEZAR
+
+        </button>
+
+    </div>
+
+    <!-- MUSICA -->
+    <audio id="musicaInicio" loop>
+        <source src="audio/bienvenida.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- CLICK -->
+    <audio id="clickSound">
+        <source src="audio/clickMenu.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- TRANSICION -->
+    <div id="transition"></div>
+
+    <script>
+        const btn = document.getElementById("btnEmpezar");
+        const musicaInicio = document.getElementById("musicaInicio");
+        const clickSound = document.getElementById("clickSound");
+
+        /* volumen */
+        musicaInicio.volume = 0.25;
+        clickSound.volume = 0.5;
+
+        /* primer click inicia música */
+        document.body.addEventListener("click", () => {
+
+            musicaInicio.play();
+
+        }, { once: true });
+
+        /* botón empezar */
+        btn.addEventListener("click", () => {
+
+            /* sonido click */
+            clickSound.currentTime = 0;
+
+            clickSound.play();
+
+            /* activar música menú */
+            localStorage.setItem("musicaPermitida", "true");
+
+            /* transición */
+            const transition = document.getElementById("transition");
+
+            /* mostrar transición */
+            transition.style.opacity = "1";
+
+            /* cambiar página */
+            setTimeout(() => {
+
+                window.location.href = "index.html";
+
+            }, 500);
+        });
+    </script>
+
+</body>
+
+</html>

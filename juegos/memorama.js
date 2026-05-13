@@ -120,7 +120,7 @@ function juegoMemorama(container){
 
     btn.style.position = "absolute";
     btn.style.top = "35px";
-    btn.style.right = "60px";
+    
     btn.style.zIndex = "10";
 
     btn.style.padding = "12px 24px";
@@ -163,31 +163,34 @@ function juegoMemorama(container){
 
     const canvas = document.createElement("canvas");
 
-    canvas.width = 1450;
-    canvas.height = 980;
-
-    // ======================================
-    // RESPONSIVE SOLO VISUAL
-    // ======================================
-
-    function ajustarCanvas(){
+    function resizeCanvas(){
 
         if(window.innerWidth <= 768){
 
-            canvas.style.width = "95vw";
-            canvas.style.height = "auto";
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 40;
 
         }else{
 
-            canvas.style.width = "1450px";
-            canvas.style.height = "980px";
+            canvas.width = 1450;
+            canvas.height = 980;
+        }
+
+        if(window.innerWidth <= 768){
+
+            btn.style.right = "15px";
+            btn.style.top = "15px";
+
+        }else{
+
+            btn.style.right = "60px";
+            btn.style.top = "35px";
         }
     }
 
+    resizeCanvas();
 
-    ajustarCanvas();
-
-    window.addEventListener("resize",ajustarCanvas);
+    window.addEventListener("resize", resizeCanvas);
 
     canvas.style.borderRadius = "40px";
 
@@ -296,14 +299,14 @@ function juegoMemorama(container){
 
             columnas = 4;
 
-            anchoCarta = 120;
-            altoCarta = 120;
+            anchoCarta = 70;
+            altoCarta = 70;
 
-            espacioX = 150;
-            espacioY = 140;
+            espacioX = 85;
+            espacioY = 95;
 
-            inicioX = 40;
-            inicioY = 260;
+            inicioX = 15;
+            inicioY = 210;
 
         }else{
 
@@ -637,8 +640,8 @@ function juegoMemorama(container){
         ctx.createLinearGradient(
             0,
             0,
-            1450,
-            980
+            canvas.width,
+            canvas.height
         );
 
         fondo.addColorStop(0,"#180028");
@@ -647,7 +650,7 @@ function juegoMemorama(container){
 
         ctx.fillStyle = fondo;
 
-        ctx.fillRect(0,0,1450,980);
+        ctx.fillRect(0,0,canvas.width,canvas.height);
 
         // panel
 
@@ -657,11 +660,11 @@ function juegoMemorama(container){
         ctx.beginPath();
 
         ctx.roundRect(
-            65,
-            60,
-            1350,
-            900,
-            50
+            20,
+            20,
+            canvas.width - 40,
+            canvas.height - 40,
+            35
         );
 
         ctx.fill();
@@ -685,11 +688,11 @@ function juegoMemorama(container){
         ctx.beginPath();
 
         ctx.roundRect(
-            90,
-            70,
-            1270,
-            120,
-            36
+            40,
+            50,
+            canvas.width - 80,
+            100,
+            30
         );
 
         ctx.fill();
@@ -706,7 +709,7 @@ function juegoMemorama(container){
 
         ctx.fillText(
             "MEMORAMA SNOOPY",
-            728,
+            canvas.width / 2,
             136
         );
 
@@ -714,7 +717,7 @@ function juegoMemorama(container){
 
         ctx.fillText(
             "MEMORAMA SNOOPY",
-            723,
+            canvas.width / 2,
             130
         );
 
@@ -728,7 +731,7 @@ function juegoMemorama(container){
 
         ctx.fillText(
             "Encuentra todas las parejas ✨",
-            725,
+            canvas.width / 2,
             165
         );
 
@@ -897,19 +900,25 @@ function juegoMemorama(container){
             ctx.fillStyle =
             "rgba(0,0,0,.82)";
 
-            ctx.fillRect(0,0,1450,980);
+            ctx.fillRect(0,0,canvas.width,canvas.height);
 
             ctx.fillStyle = "white";
 
             ctx.shadowColor = "#b88cff";
             ctx.shadowBlur = 40;
 
-            ctx.font =
-            "bold 82px 'Baloo 2'";
+            if(window.innerWidth <= 768){
+
+                ctx.font = "bold 42px 'Baloo 2'";
+
+            }else{
+
+                ctx.font = "bold 82px 'Baloo 2'";
+            }
 
             ctx.fillText(
                 "¡LO LOGRASTE!",
-                725,
+                canvas.width / 2,
                 430
             );
 
@@ -920,7 +929,7 @@ function juegoMemorama(container){
 
             ctx.fillText(
                 "Intentos: " + intentos,
-                725,
+                canvas.width / 2,
                 500
             );
         }

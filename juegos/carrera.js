@@ -52,24 +52,6 @@ function juegoCarrera(container){
                 box-shadow:0 0 22px rgba(255,105,255,.45);
             }
 
-            .reiniciar-btn{
-                border:none;
-                padding:12px 20px;
-                border-radius:18px;
-                background:linear-gradient(135deg,#ff8de1,#d86bff);
-                color:white;
-                font-family:'Quicksand', sans-serif;
-                font-size:16px;
-                font-weight:bold;
-                cursor:pointer;
-                box-shadow:0 0 15px rgba(255,105,255,.45);
-                margin-top:8px;
-            }
-
-            .reiniciar-btn:hover{
-                transform:scale(1.05);
-            }
-
             @media(max-width:800px){
                 .zona-juego{
                     flex-direction:column;
@@ -85,10 +67,6 @@ function juegoCarrera(container){
                 <div class="canvas-box">
                     <canvas id="canvas"></canvas>
                 </div>
-
-                <button class="reiniciar-btn" onclick="juegoCarrera(container)">
-                    Reiniciar
-                </button>
             </div>
         </div>
     `;

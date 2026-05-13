@@ -12,84 +12,151 @@ function juegoMemorama(container){
     document.head.appendChild(link);
 
     // =================================================
-    // CONTENEDOR
+    // MEDIDAS BASE DEL JUEGO
+    // =================================================
+
+    const BASE_W = 1450;
+    const BASE_H = 980;
+
+    let modoVertical = false;
+
+    // =================================================
+    // CONTENEDOR GENERAL
     // =================================================
 
     const wrapper = document.createElement("div");
 
+    wrapper.style.width = "100%";
+    wrapper.style.minHeight = "100dvh";
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
-    wrapper.style.justifyContent = "center";
     wrapper.style.alignItems = "center";
-    wrapper.style.position = "relative";
-    wrapper.style.padding = "15px";
-    wrapper.style.width = "100%";
+    wrapper.style.justifyContent = "flex-start";
     wrapper.style.boxSizing = "border-box";
+    wrapper.style.overflow = "hidden";
+    wrapper.style.padding = "12px";
+    wrapper.style.fontFamily = "'Baloo 2', cursive";
 
     container.appendChild(wrapper);
 
     // =================================================
-    // BOTÓN
+    // BOTÓN REINICIAR
     // =================================================
 
     const btn = document.createElement("button");
 
     btn.innerText = "⟳ Reiniciar";
 
-    btn.style.position = "relative";
-    btn.style.top = "0";
-    btn.style.right = "0";
-    btn.style.marginBottom = "12px";
-    btn.style.zIndex = "10";
-
-    btn.style.padding = "12px 24px";
+    btn.style.padding = "12px 26px";
     btn.style.border = "2px solid rgba(255,255,255,.15)";
     btn.style.borderRadius = "18px";
-
-    btn.style.fontSize = "16px";
+    btn.style.fontSize = "18px";
     btn.style.fontFamily = "'Baloo 2'";
     btn.style.fontWeight = "700";
-
     btn.style.cursor = "pointer";
-
     btn.style.background = "linear-gradient(135deg,#ff69c8,#8f7cff)";
     btn.style.color = "white";
-
     btn.style.boxShadow = "0 10px 25px rgba(0,0,0,.28)";
-    btn.style.transition = ".25s";
-
-    btn.onmouseenter = ()=>{
-        btn.style.transform = "translateY(-2px) scale(1.03)";
-    };
-
-    btn.onmouseleave = ()=>{
-        btn.style.transform = "translateY(0px)";
-    };
+    btn.style.marginBottom = "12px";
+    btn.style.zIndex = "20";
 
     wrapper.appendChild(btn);
 
     // =================================================
-    // CANVAS RESPONSIVE
+    // CONTENEDOR DEL CANVAS
+    // =================================================
+
+    const canvasBox = document.createElement("div");
+
+    canvasBox.style.position = "relative";
+    canvasBox.style.display = "flex";
+    canvasBox.style.alignItems = "center";
+    canvasBox.style.justifyContent = "center";
+    canvasBox.style.overflow = "visible";
+
+    wrapper.appendChild(canvasBox);
+
+    // =================================================
+    // CANVAS
     // =================================================
 
     const canvas = document.createElement("canvas");
 
-    canvas.width = 1450;
-    canvas.height = 980;
-
-    canvas.style.width = "min(95vw, 1450px)";
-    canvas.style.height = "auto";
-    canvas.style.maxHeight = "82vh";
+    canvas.width = BASE_W;
+    canvas.height = BASE_H;
 
     canvas.style.borderRadius = "40px";
     canvas.style.boxShadow = "0 35px 90px rgba(0,0,0,.45)";
     canvas.style.border = "2px solid rgba(255,255,255,.08)";
     canvas.style.touchAction = "none";
     canvas.style.display = "block";
+    canvas.style.transformOrigin = "center center";
 
-    wrapper.appendChild(canvas);
+    canvasBox.appendChild(canvas);
 
     const ctx = canvas.getContext("2d");
+
+    // =================================================
+    // RESPONSIVE VERTICAL / HORIZONTAL
+    // =================================================
+
+    function ajustarPantalla(){
+
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        modoVertical = vw < vh;
+
+        let espacioArriba = btn.offsetHeight + 28;
+
+        if(modoVertical){
+
+            const escala = Math.min(
+                (vw - 20) / BASE_H,
+                (vh - espacioArriba - 20) / BASE_W
+            );
+
+            const w = BASE_W * escala;
+            const h = BASE_H * escala;
+
+            canvas.style.width = w + "px";
+            canvas.style.height = h + "px";
+            canvas.style.transform = "rotate(90deg)";
+
+            canvasBox.style.width = h + "px";
+            canvasBox.style.height = w + "px";
+
+            btn.style.fontSize = "18px";
+            btn.style.padding = "12px 24px";
+
+        }else{
+
+            const escala = Math.min(
+                (vw - 30) / BASE_W,
+                (vh - espacioArriba - 20) / BASE_H
+            );
+
+            const w = BASE_W * escala;
+            const h = BASE_H * escala;
+
+            canvas.style.width = w + "px";
+            canvas.style.height = h + "px";
+            canvas.style.transform = "rotate(0deg)";
+
+            canvasBox.style.width = w + "px";
+            canvasBox.style.height = h + "px";
+
+            btn.style.fontSize = "18px";
+            btn.style.padding = "12px 26px";
+        }
+    }
+
+    window.addEventListener("resize", ajustarPantalla);
+    window.addEventListener("orientationchange", ()=>{
+        setTimeout(ajustarPantalla, 300);
+    });
+
+    ajustarPantalla();
 
     // =================================================
     // PERSONAJES
@@ -144,7 +211,7 @@ function juegoMemorama(container){
     let sonidoVictoria = false;
 
     // =================================================
-    // TAMAÑOS
+    // TAMAÑOS DE CARTAS
     // =================================================
 
     const anchoCarta = 155;
@@ -164,9 +231,9 @@ function juegoMemorama(container){
 
         sonidoVictoria = false;
 
-        cartas = [...imagenes,...imagenes];
+        cartas = [...imagenes, ...imagenes];
 
-        cartas.sort(()=>Math.random()-0.5);
+        cartas.sort(()=>Math.random() - 0.5);
 
         cartas = cartas.map(img=>({
             img: img,
@@ -187,7 +254,7 @@ function juegoMemorama(container){
     };
 
     // =================================================
-    // CLICK / TOUCH RESPONSIVE
+    // CLICK / TOUCH CORREGIDO PARA ROTACIÓN
     // =================================================
 
     canvas.addEventListener("pointerdown", e=>{
@@ -196,11 +263,22 @@ function juegoMemorama(container){
 
         const rect = canvas.getBoundingClientRect();
 
-        const escalaX = canvas.width / rect.width;
-        const escalaY = canvas.height / rect.height;
+        let mx;
+        let my;
 
-        const mx = (e.clientX - rect.left) * escalaX;
-        const my = (e.clientY - rect.top) * escalaY;
+        if(modoVertical){
+
+            const vx = e.clientX - rect.left;
+            const vy = e.clientY - rect.top;
+
+            mx = vy * (BASE_W / rect.height);
+            my = (rect.width - vx) * (BASE_H / rect.width);
+
+        }else{
+
+            mx = (e.clientX - rect.left) * (BASE_W / rect.width);
+            my = (e.clientY - rect.top) * (BASE_H / rect.height);
+        }
 
         cartas.forEach((carta,i)=>{
 
@@ -378,24 +456,20 @@ function juegoMemorama(container){
 
     function loop(){
 
-        const fondo = ctx.createLinearGradient(0, 0, 1450, 980);
+        const fondo = ctx.createLinearGradient(0, 0, BASE_W, BASE_H);
 
         fondo.addColorStop(0,"#180028");
         fondo.addColorStop(.5,"#29004f");
         fondo.addColorStop(1,"#35106e");
 
         ctx.fillStyle = fondo;
-        ctx.fillRect(0,0,1450,980);
-
-        // panel
+        ctx.fillRect(0,0,BASE_W,BASE_H);
 
         ctx.fillStyle = "rgba(17,14,38,.88)";
 
         ctx.beginPath();
         ctx.roundRect(65, 60, 1350, 900, 50);
         ctx.fill();
-
-        // header
 
         const top = ctx.createLinearGradient(80, 70, 1300, 170);
 
@@ -409,26 +483,18 @@ function juegoMemorama(container){
         ctx.roundRect(90, 70, 1270, 120, 36);
         ctx.fill();
 
-        // título
-
         ctx.textAlign = "center";
 
         ctx.fillStyle = "rgba(0,0,0,.18)";
         ctx.font = "bold 42px 'Baloo 2'";
-
         ctx.fillText("MEMORAMA SNOOPY", 728, 136);
 
         ctx.fillStyle = "white";
         ctx.fillText("MEMORAMA SNOOPY", 723, 130);
 
-        // subtítulo
-
         ctx.font = "18px 'Baloo 2'";
         ctx.fillStyle = "rgba(255,255,255,.85)";
-
         ctx.fillText("Encuentra todas las parejas ✨", 725, 165);
-
-        // stats
 
         ctx.fillStyle = "rgba(255,255,255,.08)";
 
@@ -448,8 +514,6 @@ function juegoMemorama(container){
         const pares = cartas.filter(c=>c.encontrada).length / 2;
 
         ctx.fillText("⭐ Pares: " + pares + "/10", 1160, 262);
-
-        // cartas
 
         cartas.forEach((carta,i)=>{
 
@@ -502,8 +566,6 @@ function juegoMemorama(container){
             }
         });
 
-        // sonido victoria
-
         if(pares === 10 && !sonidoVictoria){
 
             sonidoWin.currentTime = 0;
@@ -512,12 +574,10 @@ function juegoMemorama(container){
             sonidoVictoria = true;
         }
 
-        // ganar
-
         if(pares === 10){
 
             ctx.fillStyle = "rgba(0,0,0,.82)";
-            ctx.fillRect(0,0,1450,980);
+            ctx.fillRect(0,0,BASE_W,BASE_H);
 
             ctx.fillStyle = "white";
 
@@ -525,13 +585,11 @@ function juegoMemorama(container){
             ctx.shadowBlur = 40;
 
             ctx.font = "bold 82px 'Baloo 2'";
-
             ctx.fillText("¡LO LOGRASTE!", 725, 430);
 
             ctx.shadowBlur = 0;
 
             ctx.font = "bold 36px 'Baloo 2'";
-
             ctx.fillText("Intentos: " + intentos, 725, 500);
         }
 

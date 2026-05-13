@@ -1,524 +1,389 @@
 function juegoCarrera(container){
-    /* CARGAR IMÁGENES PNG */
 
-    // personaje jugador
-    const snoopy = new Image();
-    snoopy.src = "img/snoopy-run.png";
-
-    // oponentes
-    const woodstock = new Image();
-    woodstock.src = "img/woodstock-run.png";
-
-    const charlie = new Image();
-    charlie.src = "img/charlie-run.png";
-
-    const lucy = new Image();
-    lucy.src = "img/lucy-run.png";
-
-    /* HTML DEL JUEGO */
+    // =========================
+    // DISEÑO HTML Y CSS
+    // =========================
     container.innerHTML = `
-        <div class="carrera-container">
-            <h2 class="carrera-titulo">🏁 SPEED RUN 💗</h2>
-            <canvas id="canvasCarrera"></canvas>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap');
+
+            .carrera-wrap{
+                min-height:100vh;
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                justify-content:center;
+                background:transparent;
+                font-family:'Quicksand', sans-serif;
+                padding:18px;
+                box-sizing:border-box;
+                overflow:hidden;
+            }
+
+            h2{
+                color:#ff8df3;
+                font-size:clamp(34px,6vw,58px);
+                margin:0 0 16px 0;
+                letter-spacing:4px;
+                text-align:center;
+                text-shadow:0 0 8px #ff8df3, 0 0 20px #ff4de1, 0 0 40px #c77dff;
+            }
+
+            .zona-juego{
+                display:flex;
+                align-items:flex-start;
+                justify-content:center;
+                gap:18px;
+            }
+
+            .canvas-box{
+                padding:16px;
+                border-radius:34px;
+                background:linear-gradient(180deg,rgba(255,160,245,.18),rgba(110,30,190,.12));
+                border:3px solid rgba(255,141,243,.55);
+                box-shadow:0 0 25px rgba(255,105,255,.42), 0 0 55px rgba(170,80,255,.25), inset 0 0 18px rgba(255,255,255,.13);
+            }
+
+            canvas{
+                display:block;
+                border-radius:26px;
+                touch-action:none;
+                max-width:100%;
+                box-shadow:0 0 22px rgba(255,105,255,.45);
+            }
+
+            .reiniciar-btn{
+                border:none;
+                padding:12px 20px;
+                border-radius:18px;
+                background:linear-gradient(135deg,#ff8de1,#d86bff);
+                color:white;
+                font-family:'Quicksand', sans-serif;
+                font-size:16px;
+                font-weight:bold;
+                cursor:pointer;
+                box-shadow:0 0 15px rgba(255,105,255,.45);
+                margin-top:8px;
+            }
+
+            .reiniciar-btn:hover{
+                transform:scale(1.05);
+            }
+
+            @media(max-width:800px){
+                .zona-juego{
+                    flex-direction:column;
+                    align-items:center;
+                }
+            }
+        </style>
+
+        <div class="carrera-wrap">
+            <h2>✨ SNOOPY RACE ✨</h2>
+
+            <div class="zona-juego">
+                <div class="canvas-box">
+                    <canvas id="canvas"></canvas>
+                </div>
+
+                <button class="reiniciar-btn" onclick="juegoCarrera(container)">
+                    Reiniciar
+                </button>
+            </div>
         </div>
     `;
 
-    /* CANVAS */
-    // obtener canvas
-    const canvas = document.getElementById("canvasCarrera");
-    // contexto para dibujar
+    // =========================
+    // CANVAS
+    // =========================
+    const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    /* VARIABLES GENERALES */
+    // =========================
+    // IMÁGENES DE PERSONAJES
+    // =========================
+    const imgJugador = new Image();
+    imgJugador.src = "Smoto.png";
 
-    // posiciones Y de cada carril
+    const imgSally = new Image();
+    imgSally.src = "SAmoto.png";
+
+    const imgCharlie = new Image();
+    imgCharlie.src = "Cmoto.png";
+
+    const imgWood = new Image();
+    imgWood.src = "Wmoto.png";
+
+    // =========================
+    // VARIABLES DEL JUEGO
+    // =========================
     let carriles = [];
-
-    // posición X de la meta
     let META = 0;
 
+    let jugador = { id:"p", x:50, y:0 };
 
-    /* JUGADOR */
-    let jugador = {
-
-        // identificador
-        id:"p",
-
-        // posición X
-        x:50,
-
-        // posición Y
-        y:0,
-
-        // tiempo final
-        tiempo:null,
-
-        // imagen PNG
-        img:snoopy
-    };
-
-
-    /* OPONENTES */
     let oponentes = [
-    {
-        id:"o1",
-        x:50,
-        y:0,
-
-        // velocidad automática
-        vel:1.4,
-
-        tiempo:null,
-
-        img: woodstock
-    },
-
-    {
-        id:"o2",
-        x:50,
-        y:0,
-        vel:1.5,
-        tiempo:null,
-        img: charlie
-    },
-
-    {
-        id:"o3",
-        x:50,
-        y:0,
-        vel:1.3,
-        tiempo:null,
-        img: lucy
-    }
+        {id:"o1", x:50, y:0, vel:1.4},
+        {id:"o2", x:50, y:0, vel:1.5},
+        {id:"o3", x:50, y:0, vel:1.3}
     ];
 
-
-    /* ESTADOS DEL JUEGO */
-
-    // countdown inicial
     let inicio = true;
-
-    // tiempo inicial countdown
     let t0 = Date.now();
 
-    // controla si el juego sigue activo
     let juegoActivo = true;
-
-    // texto final
     let resultado = "";
 
-    // tiempo cuando empieza la carrera
-    let tiempoInicio = 0;
-
-    // tiempo final del ganador
-    let tiempoFinal = 0;
-
-    // velocidad actual del jugador
     let velJugador = 0;
-
-    // evita spam de clicks
     let puede = true;
 
-
-    /* ADAPTAR TAMAÑO */
+    // =========================
+    // AJUSTA TAMAÑO Y CARRILES
+    // =========================
     function resize(){
 
-        // tamaño responsive del canvas
-        canvas.width = window.innerWidth - 20;
-        canvas.height = window.innerHeight - 120;
+        const maxW = Math.min(window.innerWidth * 0.82, 1120);
+        const maxH = Math.min(window.innerHeight * 0.58, 520);
 
-        // posición de la meta
+        canvas.width = maxW;
+        canvas.height = maxH;
+
         META = canvas.width * 0.82;
 
-        // posiciones verticales de carriles
         carriles = [
-            canvas.height*0.2,
+            canvas.height*0.15,
             canvas.height*0.35,
-            canvas.height*0.5,
-            canvas.height*0.65
+            canvas.height*0.55,
+            canvas.height*0.75
         ];
 
-        // carril jugador
         jugador.y = carriles[0];
 
-        // carriles enemigos
         oponentes.forEach((o,i)=>{
             o.y = carriles[i+1];
         });
     }
 
-    // adaptar cuando cambia pantalla
     window.addEventListener("resize", resize);
-    // adaptar cuando gira celular
     window.addEventListener("orientationchange", resize);
     resize();
 
-    /* MOVIMIENTO DEL JUGADOR */
+    // =========================
+    // MOVIMIENTO DEL JUGADOR
+    // =========================
     function mover(){
         if(!inicio && juegoActivo && puede){
-
-            // aumentar velocidad
             velJugador += 2.6;
-
-            // bloquear spam
             puede = false;
 
-            // desbloquear después
-            setTimeout(()=> puede = true, 160);
+            setTimeout(()=>{
+                puede = true;
+            },160);
         }
     }
 
-    /* CONTROL TECLADO */
-    // evita dejar presionado SPACE
+    // =========================
+    // CONTROLES CON TECLADO
+    // =========================
     let spaceLock = false;
+
     document.addEventListener("keydown", e=>{
-
         if(e.code==="Space"){
-
-            // evita scroll
             e.preventDefault();
 
-            // solo un click real
             if(!spaceLock){
-
                 spaceLock = true;
-
                 mover();
             }
         }
     });
+
     document.addEventListener("keyup", e=>{
-
         if(e.code==="Space"){
-
-            // desbloquear SPACE
             spaceLock = false;
         }
     });
 
-    /* CONTROL MOUSE Y TOUCH */
-    // click en pc
+    // =========================
+    // CONTROLES CON CLICK Y TOUCH
+    // =========================
     canvas.addEventListener("click", mover);
-    // toque celular
+
     canvas.addEventListener("touchstart",(e)=>{
-
         e.preventDefault();
-
         mover();
-
     },{passive:false});
 
-    /* FONDO DEL JUEGO */
+    // =========================
+    // FONDO DEL JUEGO
+    // =========================
     function fondo(){
-        // degradado vertical
+
         let g = ctx.createLinearGradient(0,0,0,canvas.height);
 
-        g.addColorStop(0,"#fff0f6");
-        g.addColorStop(1,"#ffe4f2");
+        g.addColorStop(0,"#17002e");
+        g.addColorStop(0.45,"#3d0878");
+        g.addColorStop(1,"#a855f7");
 
-        ctx.fillStyle=g;
-
-        // pintar fondo
+        ctx.fillStyle = g;
         ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        ctx.fillStyle="rgba(255,255,255,.7)";
+
+        for(let i=0;i<55;i++){
+            let x = (i * 137) % canvas.width;
+            let y = (i * 91) % canvas.height;
+            ctx.fillRect(x,y,2,2);
+        }
     }
 
-    /* META */
+    // =========================
+    // META
+    // =========================
     function meta(){
-        let s = 20;
-        // ancho meta
+
+        let s = 18;
         let w = s * 3;
 
-        // patrón cuadros blancos y negros
+        ctx.shadowColor="#ffffff";
+        ctx.shadowBlur=12;
+
         for(let y=0;y<canvas.height;y+=s){
-
             for(let x=0;x<w;x+=s){
-
-                ctx.fillStyle = ((x+y)/s%2===0)
-                ? "#fff"
-                : "#000";
-
+                ctx.fillStyle = ((x+y)/s%2===0) ? "#fff" : "#111";
                 ctx.fillRect(META+x,y,s,s);
             }
         }
+
+        ctx.shadowBlur=0;
     }
 
-    /* RANKING */
-    function ranking(){
-        // ordenar por posición X
-        return [jugador,...oponentes]
-
-        .sort((a,b)=>b.x-a.x);
+    // =========================
+    // DIBUJA LAS MOTOS
+    // =========================
+    function dibujar(img,x,y){
+        ctx.drawImage(img, x-52, y-31, 104, 84);
     }
 
-    /* LOOP PRINCIPAL */
+    // =========================
+    // LOOP PRINCIPAL DEL JUEGO
+    // =========================
     function loop(){
-        // dibujar fondo
+
         fondo();
 
-        /* BORDE */
-        ctx.strokeStyle="#ff4da6";
+        // borde del canvas
+        ctx.strokeStyle="#ff8df3";
         ctx.lineWidth=4;
-        ctx.strokeRect(
-            10,
-            10,
-            canvas.width-20,
-            canvas.height-20
-        );
+        ctx.shadowColor="#ff4de1";
+        ctx.shadowBlur=14;
+        ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
+        ctx.shadowBlur=0;
 
-        /* PISTA */
-        carriles.forEach(y=>{
+        // pistas/carreteras
+        carriles.forEach((y,i)=>{
 
-            // pista rosa
-            ctx.fillStyle="#ffcce6";
+            let pista = ctx.createLinearGradient(20,y,canvas.width-20,y);
 
-            ctx.fillRect(
-                20,
-                y,
-                canvas.width-40,
-                60
-            );
+            pista.addColorStop(0,"rgba(255,166,230,.60)");
+            pista.addColorStop(0.5,"rgba(255,210,245,.78)");
+            pista.addColorStop(1,"rgba(255,166,230,.60)");
 
-            // líneas blancas
-            for(let x=20;x<canvas.width-20;x+=80){
+            ctx.fillStyle=pista;
+            ctx.fillRect(28,y,canvas.width-56,58);
 
-                ctx.fillStyle="#fff";
+            ctx.strokeStyle="rgba(255,255,255,.35)";
+            ctx.lineWidth=2;
+            ctx.strokeRect(28,y,canvas.width-56,58);
 
-                ctx.fillRect(x,y+25,40,8);
+            for(let x=45;x<canvas.width-45;x+=82){
+                ctx.fillStyle="rgba(255,255,255,.88)";
+                ctx.fillRect(x,y+26,42,7);
             }
+
+            ctx.fillStyle="rgba(255,255,255,.32)";
+            ctx.font="18px Quicksand";
+            ctx.textAlign="left";
+            ctx.fillText("✦", 38, y+20);
         });
 
-        // dibujar meta
         meta();
 
-
-        /* COUNTDOWN */
+        // cuenta regresiva
         if(inicio){
 
-            // segundos countdown
             let s=(Date.now()-t0)/1000;
+            let txt=["3","2","1","GO!"][Math.floor(s)] || "";
 
-            // textos countdown
-            let txt=["3","2","1","GO!"]
+            if(s>3) inicio=false;
 
-            [Math.floor(s)] || "";
-
-            // terminar countdown
-            if(s>3){
-
-                inicio = false;
-
-                tiempoInicio = Date.now();
-            }
-
-            // dibujar texto countdown
             if(txt){
-
-                ctx.font="60px Quicksand";
-
+                ctx.font="72px Quicksand";
                 ctx.textAlign="center";
-
-                ctx.fillStyle="#ff2e93";
-
-                ctx.fillText(
-                    txt,
-                    canvas.width/2,
-                    canvas.height/2
-                );
+                ctx.fillStyle="#ff8df3";
+                ctx.shadowColor="#ff4de1";
+                ctx.shadowBlur=25;
+                ctx.fillText(txt,canvas.width/2,canvas.height/2);
+                ctx.shadowBlur=0;
             }
-            requestAnimationFrame(loop);
 
+            requestAnimationFrame(loop);
             return;
         }
 
-
-        /* MOVIMIENTO GENERAL */
+        // lógica de carrera
         if(juegoActivo){
 
-            // mover jugador
             jugador.x += velJugador;
-
-            // fricción
             velJugador *= 0.86;
 
-            // mover enemigos
             oponentes.forEach(o=>{
                 o.x += o.vel;
             });
 
-
-            /* GANAR */
-            if(jugador.x >= META && jugador.tiempo === null){
-
-                // guardar tiempo
-                jugador.tiempo = (
-                    (Date.now() - tiempoInicio) / 1000
-                ).toFixed(1);
-
+            if(jugador.x >= META){
                 juegoActivo = false;
-
-                resultado = "YOU WIN";
-
-                tiempoFinal = jugador.tiempo;
+                resultado = "YOU WIN ";
             }
 
-
-            /* PERDER */
             oponentes.forEach(o=>{
-
-                if(o.x >= META && o.tiempo === null){
-
-                    o.tiempo = (
-                        (Date.now() - tiempoInicio) / 1000
-                    ).toFixed(1);
-
-                    if(juegoActivo){
-
-                        juegoActivo = false;
-
-                        resultado = "GAME OVER";
-
-                        tiempoFinal = o.tiempo;
-                    }
+                if(o.x >= META && juegoActivo){
+                    juegoActivo = false;
+                    resultado = "GAME OVER ";
                 }
             });
         }
 
+        // personajes
+        dibujar(imgJugador,jugador.x,jugador.y);
+        dibujar(imgSally,oponentes[0].x,oponentes[0].y);
+        dibujar(imgCharlie,oponentes[1].x,oponentes[1].y);
+        dibujar(imgWood,oponentes[2].x,oponentes[2].y);
 
-        /* CRONÓMETRO */
-        if(!inicio){
-            let tiempoActual;
-
-            if(juegoActivo){
-
-                tiempoActual = (
-                    (Date.now() - tiempoInicio) / 1000
-                ).toFixed(1);
-
-            } else {
-
-                tiempoActual = tiempoFinal;
-            }
-
-            ctx.font = "28px Quicksand";
-
-            ctx.fillStyle = "#ff2e93";
-
-            ctx.textAlign = "left";
-
-            ctx.textBaseline = "top";
-
-            ctx.fillText(
-                "⏱ TIME: " + tiempoActual + "s",
-                30,
-                25
-            );
-        }
-
-
-        /* EFECTO REBOTE */
-        let bounce = Math.sin(Date.now()/120)*4;
-
-
-        /* DIBUJAR ENEMIGOS */
-        oponentes.forEach(o=>{
-
-            ctx.drawImage(
-                o.img,
-                o.x - 60,
-                o.y + bounce,
-                120,
-                120
-            );
-        });
-
-
-        /* DIBUJAR JUGADOR */
-        ctx.drawImage(
-            snoopy,
-            jugador.x - 60,
-            jugador.y + bounce,
-            120,
-            120
-        );
-
-
-        /* PANTALLA FINAL */
+        // pantalla final
         if(!juegoActivo){
 
-            // texto resultado
-            ctx.font="50px Quicksand";
+            ctx.fillStyle="rgba(20,0,45,.38)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
 
-            ctx.fillStyle="#ff2e93";
+            ctx.fillStyle="rgba(255,220,250,.18)";
+            ctx.fillRect(canvas.width/2-235,canvas.height/2-60,470,105);
 
-            ctx.fillText(
-                resultado,
-                canvas.width/2,
-                canvas.height/2
-            );
+            ctx.strokeStyle="#ff8df3";
+            ctx.lineWidth=3;
+            ctx.strokeRect(canvas.width/2-235,canvas.height/2-60,470,105);
 
-            // tiempo final
-            ctx.font = "30px Quicksand";
-
-            ctx.fillStyle = "#ff7abf";
-
-            ctx.fillText(
-                `TIME: ${tiempoFinal}s`,
-                canvas.width/2,
-                canvas.height/2 + 45
-            );
-
-            /* RANKING */
-            let r = ranking();
-
-            r.forEach((p,i)=>{
-
-                let y = canvas.height/2 + 70 + (i*55);
-
-
-                // medallas
-                ctx.fillStyle = "#ff2e93";
-
-                ctx.font = "26px Quicksand";
-
-                ctx.fillText(
-                    `${["🥇","🥈","🥉","💔"][i]}`,
-                    canvas.width/2 - 110,
-                    y
-                );
-
-
-                // PNG personaje
-                ctx.drawImage(
-                    p.img,
-                    canvas.width/2 - 55,
-                    y - 28,
-                    40,
-                    40
-                );
-
-
-                // nombres
-                let nombre = "";
-
-                if(p.id === "p") nombre = "Snoopy";
-                if(p.id === "o1") nombre = "Woodstock";
-                if(p.id === "o2") nombre = "Charlie";
-                if(p.id === "o3") nombre = "Lucy";
-
-
-                // texto ranking
-                ctx.fillStyle = "#ff4da6";
-
-                ctx.fillText(
-                    `${nombre}`,
-                    canvas.width/2 + 10,
-                    y
-                );
-            });
+            ctx.font="55px Quicksand";
+            ctx.textAlign="center";
+            ctx.fillStyle="#ff8df3";
+            ctx.shadowColor="#ff4de1";
+            ctx.shadowBlur=22;
+            ctx.fillText(resultado,canvas.width/2,canvas.height/2+10);
+            ctx.shadowBlur=0;
         }
-        // repetir loop
+
         requestAnimationFrame(loop);
     }
-    // iniciar juego
+
     loop();
 }

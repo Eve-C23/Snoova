@@ -109,7 +109,7 @@ function juegoMemorama(container){
     canvas.style.boxShadow = "0 35px 90px rgba(0,0,0,.45)";
 
     // Borde transparente
-    canvas.style.border = "2px solid rgba(255,255,255,.08)";
+    canvas.style.border = "2px solid rgb(255, 255, 255)";
 
     // Evita gestos táctiles automáticos
     canvas.style.touchAction = "none";

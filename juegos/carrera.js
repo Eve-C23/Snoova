@@ -100,6 +100,52 @@ function juegoCarrera(container){
     const ctx = canvas.getContext("2d");
 
     // =========================
+    // RESOLUCIÓN BASE FIJA
+    // =========================
+    const BASE_W = 1120;
+    const BASE_H = 520;
+
+    // Tamaño REAL interno del canvas
+    canvas.width = BASE_W;
+    canvas.height = BASE_H;
+
+    // =========================
+    // AJUSTA TAMAÑO RESPONSIVE
+    // =========================
+
+    function resize(){
+
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        const escala = Math.min(
+            (vw - 40) / BASE_W,
+            (vh - 180) / BASE_H
+        );
+
+        const w = BASE_W * escala;
+        const h = BASE_H * escala;
+
+        canvas.style.width = w + "px";
+        canvas.style.height = h + "px";
+
+        META = BASE_W * 0.82;
+
+        carriles = [
+            BASE_H * 0.15,
+            BASE_H * 0.35,
+            BASE_H * 0.55,
+            BASE_H * 0.75
+        ];
+
+        jugador.y = carriles[0];
+
+        oponentes.forEach((o,i)=>{
+            o.y = carriles[i+1];
+        });
+    }
+
+    // =========================
     // IMÁGENES DE PERSONAJES
     // =========================
     const imgJugador = new Image();
@@ -136,37 +182,6 @@ function juegoCarrera(container){
 
     let velJugador = 0;
     let puede = true;
-
-    // =========================
-    // AJUSTA TAMAÑO Y CARRILES
-    // =========================
-    function resize(){
-
-        const maxW = Math.min(window.innerWidth * 0.82, 1120);
-        const maxH = Math.min(window.innerHeight * 0.58, 520);
-
-        canvas.width = maxW;
-        canvas.height = maxH;
-
-        META = canvas.width * 0.82;
-
-        carriles = [
-            canvas.height*0.15,
-            canvas.height*0.35,
-            canvas.height*0.55,
-            canvas.height*0.75
-        ];
-
-        jugador.y = carriles[0];
-
-        oponentes.forEach((o,i)=>{
-            o.y = carriles[i+1];
-        });
-    }
-
-    window.addEventListener("resize", resize);
-    window.addEventListener("orientationchange", resize);
-    resize();
 
     // =========================
     // MOVIMIENTO DEL JUGADOR
@@ -219,20 +234,20 @@ function juegoCarrera(container){
     // =========================
     function fondo(){
 
-        let g = ctx.createLinearGradient(0,0,0,canvas.height);
+        let g = ctx.createLinearGradient(0,0,0,BASE_H);
 
         g.addColorStop(0,"#17002e");
         g.addColorStop(0.45,"#3d0878");
         g.addColorStop(1,"#a855f7");
 
         ctx.fillStyle = g;
-        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillRect(0,0,BASE_W,BASE_H);
 
         ctx.fillStyle="rgba(255,255,255,.7)";
 
         for(let i=0;i<55;i++){
-            let x = (i * 137) % canvas.width;
-            let y = (i * 91) % canvas.height;
+            let x = (i * 137) % BASE_W;
+            let y = (i * 91) % BASE_H;
             ctx.fillRect(x,y,2,2);
         }
     }
@@ -248,7 +263,7 @@ function juegoCarrera(container){
         ctx.shadowColor="#ffffff";
         ctx.shadowBlur=12;
 
-        for(let y=0;y<canvas.height;y+=s){
+        for(let y=0;y<BASE_H;y+=s){
             for(let x=0;x<w;x+=s){
                 ctx.fillStyle = ((x+y)/s%2===0) ? "#fff" : "#111";
                 ctx.fillRect(META+x,y,s,s);
@@ -277,26 +292,26 @@ function juegoCarrera(container){
         ctx.lineWidth=4;
         ctx.shadowColor="#ff4de1";
         ctx.shadowBlur=14;
-        ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
+        ctx.strokeRect(10,10,BASE_W-20,BASE_H-20);
         ctx.shadowBlur=0;
 
         // pistas/carreteras
         carriles.forEach((y,i)=>{
 
-            let pista = ctx.createLinearGradient(20,y,canvas.width-20,y);
+            let pista = ctx.createLinearGradient(20,y,BASE_W-20,y);
 
             pista.addColorStop(0,"rgba(255,166,230,.60)");
             pista.addColorStop(0.5,"rgba(255,210,245,.78)");
             pista.addColorStop(1,"rgba(255,166,230,.60)");
 
             ctx.fillStyle=pista;
-            ctx.fillRect(28,y,canvas.width-56,58);
+            ctx.fillRect(28,y,BASE_W-56,58);
 
             ctx.strokeStyle="rgba(255,255,255,.35)";
             ctx.lineWidth=2;
-            ctx.strokeRect(28,y,canvas.width-56,58);
+            ctx.strokeRect(28,y,BASE_W-56,58);
 
-            for(let x=45;x<canvas.width-45;x+=82){
+            for(let x=45;x<BASE_W-45;x+=82){
                 ctx.fillStyle="rgba(255,255,255,.88)";
                 ctx.fillRect(x,y+26,42,7);
             }
@@ -323,7 +338,7 @@ function juegoCarrera(container){
                 ctx.fillStyle="#ff8df3";
                 ctx.shadowColor="#ff4de1";
                 ctx.shadowBlur=25;
-                ctx.fillText(txt,canvas.width/2,canvas.height/2);
+                ctx.fillText(txt,BASE_W/2,BASE_H/2);
                 ctx.shadowBlur=0;
             }
 
@@ -364,21 +379,21 @@ function juegoCarrera(container){
         if(!juegoActivo){
 
             ctx.fillStyle="rgba(20,0,45,.38)";
-            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillRect(0,0,BASE_W,BASE_H);
 
             ctx.fillStyle="rgba(255,220,250,.18)";
-            ctx.fillRect(canvas.width/2-235,canvas.height/2-60,470,105);
+            ctx.fillRect(BASE_W/2-235,BASE_H/2-60,470,105);
 
             ctx.strokeStyle="#ff8df3";
             ctx.lineWidth=3;
-            ctx.strokeRect(canvas.width/2-235,canvas.height/2-60,470,105);
+            ctx.strokeRect(BASE_W/2-235,BASE_H/2-60,470,105);
 
             ctx.font="55px Quicksand";
             ctx.textAlign="center";
             ctx.fillStyle="#ff8df3";
             ctx.shadowColor="#ff4de1";
             ctx.shadowBlur=22;
-            ctx.fillText(resultado,canvas.width/2,canvas.height/2+10);
+            ctx.fillText(resultado,BASE_W/2,BASE_H/2+10);
             ctx.shadowBlur=0;
         }
 

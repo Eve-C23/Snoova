@@ -103,16 +103,16 @@ function juegoCarrera(container){
     // IMÁGENES DE PERSONAJES
     // =========================
     const imgJugador = new Image();
-    imgJugador.src = "Smoto.png";
+    imgJugador.src = "img/Smoto.png";
 
     const imgSally = new Image();
-    imgSally.src = "SAmoto.png";
+    imgSally.src = "img/SAmoto.png";
 
     const imgCharlie = new Image();
-    imgCharlie.src = "Cmoto.png";
+    imgCharlie.src = "img/Cmoto.png";
 
     const imgWood = new Image();
-    imgWood.src = "Wmoto.png";
+    imgWood.src = "img/Wmoto.png";
 
     // =========================
     // VARIABLES DEL JUEGO

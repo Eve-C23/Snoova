@@ -106,7 +106,7 @@ function juegoMemorama(container){
     canvas.style.borderRadius = "40px";
 
     // Sombra del canvas
-    canvas.style.boxShadow = "0 35px 90px rgba(0,0,0,.45)";
+    canvas.style.boxShadow = "0 35px 90px rgba(255, 255, 255, 0.67)";
 
     // Borde transparente
     canvas.style.border = "2px solid rgb(255, 255, 255)";

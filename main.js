@@ -61,7 +61,7 @@ function abrirJuego(nombre){
             juegoMemorama(game);
         }
 
-        else if(nombre === "nube"){
+        else if(nombre === "nubes"){
             juegoNubes(game);
         }
 

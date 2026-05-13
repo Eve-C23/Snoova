@@ -99,6 +99,7 @@ function juegoCarrera(container){
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
+
     // =========================
     // IMÁGENES DE PERSONAJES
     // =========================
@@ -133,6 +134,9 @@ function juegoCarrera(container){
 
     let juegoActivo = true;
     let resultado = "";
+
+    let tiempoInicio = 0;
+    let tiempoFinal = 0;
 
     let velJugador = 0;
     let puede = true;
@@ -315,7 +319,10 @@ function juegoCarrera(container){
             let s=(Date.now()-t0)/1000;
             let txt=["3","2","1","GO!"][Math.floor(s)] || "";
 
-            if(s>3) inicio=false;
+            if(s>3){
+                inicio = false;
+                tiempoInicio = Date.now(); // AQUÍ empieza el cronómetro
+            }
 
             if(txt){
                 ctx.font="72px Quicksand";
@@ -341,15 +348,21 @@ function juegoCarrera(container){
                 o.x += o.vel;
             });
 
-            if(jugador.x >= META){
+            if(jugador.x >= META && juegoActivo){
+
                 juegoActivo = false;
-                resultado = "YOU WIN ";
+                resultado = "YOU WIN";
+
+                tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
             }
 
             oponentes.forEach(o=>{
                 if(o.x >= META && juegoActivo){
+
                     juegoActivo = false;
-                    resultado = "GAME OVER ";
+                    resultado = "GAME OVER";
+
+                    tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
                 }
             });
         }
@@ -380,6 +393,26 @@ function juegoCarrera(container){
             ctx.shadowBlur=22;
             ctx.fillText(resultado,canvas.width/2,canvas.height/2+10);
             ctx.shadowBlur=0;
+        }
+
+        // =========================
+        // CRONÓMETRO
+        // =========================
+        if(!inicio){
+
+            let tiempoActual;
+
+            if(juegoActivo){
+                tiempoActual = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+            } else {
+                tiempoActual = tiempoFinal;
+            }
+
+            ctx.font = "26px Quicksand";
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "left";
+
+            ctx.fillText("⏱ " + tiempoActual + "s", 30, 40);
         }
 
         requestAnimationFrame(loop);

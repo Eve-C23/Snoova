@@ -132,7 +132,7 @@ function juegoFlappySnoopy(contenedor){
             "audio/musica.mp3"
         );
 
-        musicaFondo.volume = 0.5;
+        musicaFondo.volume = 0.7;
 
         // para que se repita sola
         musicaFondo.loop = true;

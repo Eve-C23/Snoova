@@ -248,6 +248,34 @@ function juegoCarrera(container){
     }
 
     // =========================
+    // FUNCIÓN PARA REINICIAR EL JUEGO
+    // =========================
+    function reiniciarJuego(){
+
+        // reinicia posiciones del jugador
+        jugador.x = 50;
+
+        // reinicia velocidad
+        velJugador = 0;
+
+        // reinicia oponentes
+        oponentes.forEach(o=>{
+            o.x = 50;
+            o.tiempo = null;
+        });
+
+        // reinicia estado del juego
+        juegoActivo = true;
+        resultado = "";
+
+        // reinicia cronómetro
+        inicio = true;
+        t0 = Date.now();
+        tiempoInicio = 0;
+        tiempoFinal = 0;
+    }
+
+    // =========================
     // LOOP PRINCIPAL DEL JUEGO
     // =========================
     function loop(){
@@ -371,6 +399,11 @@ function juegoCarrera(container){
             ctx.shadowBlur=22;
             ctx.fillText(resultado,canvas.width/2,canvas.height/2+10);
             ctx.shadowBlur=0;
+
+            canvas.style.cursor = "pointer";
+            ctx.font = "28px Quicksand";
+            ctx.fillText("Toca para reiniciar", canvas.width/2, canvas.height/2 + 90);
+            canvas.onclick = reiniciarJuego;
         }
 
         // =========================

@@ -174,7 +174,7 @@ function juegoMemorama(container){
     // Ejecuta ajuste inicial
     ajustarPantalla();
 
-        // ======================================
+    // ======================================
     // IMÁGENES DE PERSONAJES
     // ======================================
 

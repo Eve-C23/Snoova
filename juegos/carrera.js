@@ -175,7 +175,11 @@ function juegoCarrera(container){
         ALTO * 0.75
     ];
 
-    let jugador = { id:"p", x:50, y:carriles[0] };
+    let jugador = { 
+        id:"p", 
+        x:50, 
+        y:carriles[0] 
+    };
 
     let oponentes = [
         {id:"o1", x:50, y:carriles[1], vel:1.4},
@@ -198,7 +202,7 @@ function juegoCarrera(container){
     let tiempoGuardado = false;
 
     // =========================
-    // 🏆 MEJORES TIEMPOS DEL CRONÓMETRO
+    // 🏆 MEJORES TIEMPOS
     // =========================
     let mejoresTiempos = JSON.parse(
         localStorage.getItem("mejoresTiemposCarrera")
@@ -225,7 +229,7 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // 🔁 REINICIAR JUEGO SOLO CON CLICK O TOUCH
+    // 🔁 REINICIAR SOLO CON CLICK O TOUCH
     // =========================
     function reiniciarJuego(){
 
@@ -277,14 +281,18 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // ⌨️ CONTROL CON ESPACIO
+    // ⌨️ CONTROL SOLO CON ESPACIO
     // =========================
     let spaceLock = false;
 
-    document.addEventListener("keydown", e=>{
+    document.onkeydown = function(e){
+
+        if(e.code === "Enter"){
+            e.preventDefault();
+            return;
+        }
 
         if(e.code === "Space"){
-
             e.preventDefault();
 
             if(!spaceLock){
@@ -292,14 +300,14 @@ function juegoCarrera(container){
                 mover();
             }
         }
-    });
+    };
 
-    document.addEventListener("keyup", e=>{
+    document.onkeyup = function(e){
 
         if(e.code === "Space"){
             spaceLock = false;
         }
-    });
+    };
 
     // =========================
     // 📱 CONTROL CON CLICK Y TOUCH
@@ -337,7 +345,7 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // 🛣️ PISTAS DEL JUEGO
+    // 🛣️ CARRETERAS REDONDEADAS
     // =========================
     function dibujarPistas(){
 
@@ -350,21 +358,44 @@ function juegoCarrera(container){
             pista.addColorStop(1,"rgba(255,166,230,.60)");
 
             ctx.fillStyle = pista;
-            ctx.fillRect(28,y,ANCHO-56,58);
+
+            ctx.beginPath();
+
+            ctx.roundRect(
+                45,
+                y - 8,
+                ANCHO - 110,
+                70,
+                22
+            );
+
+            ctx.fill();
 
             ctx.strokeStyle = "rgba(255,255,255,.35)";
             ctx.lineWidth = 2;
-            ctx.strokeRect(28,y,ANCHO-56,58);
+            ctx.stroke();
 
-            for(let x=45;x<ANCHO-45;x+=82){
+            for(let x=75; x<ANCHO-90; x+=90){
+
                 ctx.fillStyle = "rgba(255,255,255,.88)";
-                ctx.fillRect(x,y+26,42,7);
+
+                ctx.fillRect(
+                    x,
+                    y + 23,
+                    42,
+                    7
+                );
             }
 
             ctx.fillStyle = "rgba(255,255,255,.32)";
             ctx.font = "18px Quicksand";
             ctx.textAlign = "left";
-            ctx.fillText("✦",38,y+20);
+
+            ctx.fillText(
+                "✦",
+                62,
+                y + 17
+            );
         });
     }
 
@@ -386,7 +417,12 @@ function juegoCarrera(container){
                 ctx.fillStyle =
                 ((x+y)/s%2===0) ? "#fff" : "#111";
 
-                ctx.fillRect(META+x,y,s,s);
+                ctx.fillRect(
+                    META+x,
+                    y,
+                    s,
+                    s
+                );
             }
         }
 
@@ -431,7 +467,15 @@ function juegoCarrera(container){
         ctx.fillStyle = gradiente;
 
         ctx.beginPath();
-        ctx.roundRect(260,80,680,560,40);
+
+        ctx.roundRect(
+            260,
+            80,
+            680,
+            560,
+            40
+        );
+
         ctx.fill();
 
         ctx.strokeStyle = "rgba(255,255,255,.35)";
@@ -468,8 +512,17 @@ function juegoCarrera(container){
         );
 
         ctx.fillStyle = "rgba(0,0,0,.18)";
+
         ctx.beginPath();
-        ctx.roundRect(390,350,420,180,20);
+
+        ctx.roundRect(
+            390,
+            350,
+            420,
+            180,
+            20
+        );
+
         ctx.fill();
 
         ctx.font = "bold 24px Quicksand";
@@ -515,41 +568,62 @@ function juegoCarrera(container){
 
         fondo();
 
-        ctx.strokeStyle="#ff8df3";
-        ctx.lineWidth=4;
-        ctx.shadowColor="#ff4de1";
-        ctx.shadowBlur=14;
-        ctx.strokeRect(10,10,ANCHO-20,ALTO-20);
-        ctx.shadowBlur=0;
+        ctx.strokeStyle = "#ff8df3";
+        ctx.lineWidth = 4;
+        ctx.shadowColor = "#ff4de1";
+        ctx.shadowBlur = 14;
+
+        ctx.strokeRect(
+            10,
+            10,
+            ANCHO - 20,
+            ALTO - 20
+        );
+
+        ctx.shadowBlur = 0;
 
         dibujarPistas();
         meta();
 
+        // =========================
+        // ⏳ CUENTA REGRESIVA
+        // =========================
         if(inicio){
 
             let s = (Date.now() - t0) / 1000;
             let txt = ["3","2","1","GO!"][Math.floor(s)] || "";
 
             if(s > 3){
+
                 inicio = false;
                 estado = "jugando";
                 tiempoInicio = Date.now();
             }
 
             if(txt){
-                ctx.font="72px Quicksand";
-                ctx.textAlign="center";
-                ctx.fillStyle="#ff8df3";
-                ctx.shadowColor="#ff4de1";
-                ctx.shadowBlur=25;
-                ctx.fillText(txt,ANCHO/2,ALTO/2);
-                ctx.shadowBlur=0;
+
+                ctx.font = "72px Quicksand";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#ff8df3";
+                ctx.shadowColor = "#ff4de1";
+                ctx.shadowBlur = 25;
+
+                ctx.fillText(
+                    txt,
+                    ANCHO/2,
+                    ALTO/2
+                );
+
+                ctx.shadowBlur = 0;
             }
 
             requestAnimationFrame(loop);
             return;
         }
 
+        // =========================
+        // 🏁 LÓGICA DE CARRERA
+        // =========================
         if(juegoActivo){
 
             jugador.x += velJugador;
@@ -579,11 +653,17 @@ function juegoCarrera(container){
             });
         }
 
+        // =========================
+        // 🏍️ PERSONAJES
+        // =========================
         dibujar(imgJugador,jugador.x,jugador.y);
         dibujar(imgSally,oponentes[0].x,oponentes[0].y);
         dibujar(imgCharlie,oponentes[1].x,oponentes[1].y);
         dibujar(imgWood,oponentes[2].x,oponentes[2].y);
 
+        // =========================
+        // ⏱️ CRONÓMETRO
+        // =========================
         if(!inicio){
 
             let tiempoActual;
@@ -605,10 +685,14 @@ function juegoCarrera(container){
             );
         }
 
+        // =========================
+        // 💀 FINAL
+        // =========================
         if(!juegoActivo){
 
             estado = "final";
             canvas.style.cursor = "pointer";
+
             mostrarGameOver();
 
             requestAnimationFrame(loop);

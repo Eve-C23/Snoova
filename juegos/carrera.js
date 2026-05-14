@@ -7,114 +7,108 @@ function juegoCarrera(container){
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap');
 
-            *{
-                box-sizing:border-box;
-            }
-
             .carrera-wrap{
-                width:100%;
                 min-height:100dvh;
+                width:100%;
                 display:flex;
                 align-items:center;
                 justify-content:center;
+                background:transparent;
+                font-family:'Quicksand', sans-serif;
                 padding:10px;
+                box-sizing:border-box;
                 overflow:hidden;
-                font-family:'Quicksand',sans-serif;
             }
 
             .marcoGeneralCarrera{
-                width:min(96vw,1200px);
-                padding:38px;
-                border-radius:38px;
-                background:rgba(25,8,55,.88);
-                border:4px solid rgba(255,122,246,.35);
+                width:min(92vw, calc((100dvh - 40px) * 1.714), 1200px);
+                padding:clamp(8px,1.6vw,22px);
+                border-radius:34px;
+                background:linear-gradient(180deg,rgba(255,160,245,.18),rgba(110,30,190,.12));
+                border:3px solid rgba(255,141,243,.55);
                 box-shadow:
-                    0 0 25px rgba(255,0,255,.45),
-                    0 0 80px rgba(138,43,226,.25);
+                    0 0 25px rgba(255,105,255,.42),
+                    0 0 55px rgba(170,80,255,.25),
+                    inset 0 0 18px rgba(255,255,255,.13);
+                box-sizing:border-box;
             }
 
             .tituloCarrera{
-                width:100%;
-                padding:22px 20px;
-                margin-bottom:28px;
-                border-radius:32px;
-                text-align:center;
+                width:78%;
+                margin:0 auto 16px auto;
+                padding:clamp(8px,1.2vw,16px) 18px;
+                border-radius:28px;
                 background:linear-gradient(90deg,#ff8ed6,#d974ff,#ff7ac8);
                 color:white;
-                font-size:clamp(26px,4vw,48px);
+                text-align:center;
+                font-size:clamp(22px,3.5vw,48px);
                 font-weight:700;
                 letter-spacing:2px;
                 text-shadow:0 3px 8px rgba(0,0,0,.28);
+                box-shadow:0 0 18px rgba(255,120,255,.45);
             }
 
             .subtituloCarrera{
                 display:block;
-                margin-top:6px;
-                font-size:clamp(13px,2vw,18px);
+                margin-top:5px;
+                font-size:clamp(11px,1.4vw,17px);
                 opacity:.9;
                 letter-spacing:0;
             }
 
-            .marcoJuegoCarrera{
-                padding:0;
-                border-radius:30px;
+            .canvas-box{
+                width:100%;
+                aspect-ratio:1200 / 700;
+                border-radius:28px;
                 overflow:hidden;
                 background:#12072c;
+                box-shadow:0 0 22px rgba(255,105,255,.45);
             }
 
             canvas{
-                display:block;
                 width:100%;
-                height:auto;
-                aspect-ratio:1200 / 700;
-                border-radius:30px;
+                height:100%;
+                display:block;
+                border-radius:28px;
                 touch-action:none;
             }
 
-            @media(max-width:700px){
-                .carrera-wrap{
-                    padding:6px;
-                }
-
+            @media(max-width:850px){
                 .marcoGeneralCarrera{
-                    width:96vw;
-                    padding:14px;
-                    border-radius:28px;
-                }
-
-                .tituloCarrera{
-                    padding:14px 10px;
-                    margin-bottom:14px;
-                    border-radius:22px;
-                    font-size:clamp(22px,7vw,34px);
-                }
-
-                .subtituloCarrera{
-                    font-size:12px;
-                }
-
-                canvas{
-                    border-radius:20px;
-                }
-            }
-
-            @media(max-height:500px){
-                .carrera-wrap{
-                    align-items:flex-start;
-                    padding:5px;
-                }
-
-                .marcoGeneralCarrera{
-                    width:min(96vw, calc((100dvh - 20px) * 1.714));
-                    padding:10px;
+                    width:min(96vw, calc((100dvh - 25px) * 1.714));
+                    padding:8px;
                     border-radius:24px;
                 }
 
                 .tituloCarrera{
-                    padding:8px;
+                    width:86%;
                     margin-bottom:8px;
+                    padding:8px 12px;
+                    border-radius:20px;
+                    font-size:clamp(18px,5vw,30px);
+                }
+
+                .subtituloCarrera{
+                    font-size:clamp(10px,3vw,13px);
+                }
+
+                .canvas-box,
+                canvas{
                     border-radius:18px;
-                    font-size:22px;
+                }
+            }
+
+            @media(orientation:landscape) and (max-height:650px){
+                .marcoGeneralCarrera{
+                    width:min(94vw, calc((100dvh - 20px) * 1.714));
+                    padding:8px;
+                }
+
+                .tituloCarrera{
+                    width:62%;
+                    padding:6px 12px;
+                    font-size:clamp(17px,3vw,25px);
+                    margin-bottom:6px;
                 }
 
                 .subtituloCarrera{
@@ -133,7 +127,7 @@ function juegoCarrera(container){
                     </span>
                 </div>
 
-                <div class="marcoJuegoCarrera">
+                <div class="canvas-box">
                     <canvas id="canvasCarrera"></canvas>
                 </div>
 
@@ -154,19 +148,23 @@ function juegoCarrera(container){
     canvas.height = ALTO;
 
     // =========================
-    // 🖼️ IMÁGENES
+    // 🖼️ CARGA DE IMÁGENES
     // =========================
-    const imgJugador = new Image();
-    imgJugador.src = "img/Smoto.png";
+    function cargarImagen(ruta1, ruta2){
+        const img = new Image();
+        img.src = ruta1;
 
-    const imgSally = new Image();
-    imgSally.src = "img/SAmoto.png";
+        img.onerror = function(){
+            img.src = ruta2;
+        };
 
-    const imgCharlie = new Image();
-    imgCharlie.src = "img/Cmoto.png";
+        return img;
+    }
 
-    const imgWood = new Image();
-    imgWood.src = "img/Wmoto.png";
+    const imgJugador = cargarImagen("img/Smoto.png", "Smoto.png");
+    const imgSally = cargarImagen("img/SAmoto.png", "SAmoto.png");
+    const imgCharlie = cargarImagen("img/Cmoto.png", "Cmoto.png");
+    const imgWood = cargarImagen("img/Wmoto.png", "Wmoto.png");
 
     // =========================
     // 🏁 VARIABLES DEL JUEGO
@@ -186,10 +184,11 @@ function juegoCarrera(container){
         y:carriles[0]
     };
 
+    // Velocidad original de los bots
     let oponentes = [
-        {id:"o1", x:50, y:carriles[1], vel:2.3},
-        {id:"o2", x:50, y:carriles[2], vel:2.5},
-        {id:"o3", x:50, y:carriles[3], vel:2.2}
+        {id:"o1", x:50, y:carriles[1], vel:1.4},
+        {id:"o2", x:50, y:carriles[2], vel:1.5},
+        {id:"o3", x:50, y:carriles[3], vel:1.3}
     ];
 
     let inicio = true;
@@ -221,9 +220,7 @@ function juegoCarrera(container){
         let tiempoNumero = parseFloat(tiempoFinal);
 
         mejoresTiempos.push(tiempoNumero);
-
         mejoresTiempos.sort((a,b) => a - b);
-
         mejoresTiempos = mejoresTiempos.slice(0,5);
 
         localStorage.setItem(
@@ -241,9 +238,9 @@ function juegoCarrera(container){
         jugador.y = carriles[0];
 
         oponentes = [
-            {id:"o1", x:50, y:carriles[1], vel:2.3},
-            {id:"o2", x:50, y:carriles[2], vel:2.5},
-            {id:"o3", x:50, y:carriles[3], vel:2.2}
+            {id:"o1", x:50, y:carriles[1], vel:1.4},
+            {id:"o2", x:50, y:carriles[2], vel:1.5},
+            {id:"o3", x:50, y:carriles[3], vel:1.3}
         ];
 
         inicio = true;
@@ -299,10 +296,6 @@ function juegoCarrera(container){
                 mover();
             }
         }
-
-        if(e.code === "Enter" && estado === "final"){
-            reiniciarJuego();
-        }
     });
 
     document.addEventListener("keyup", e=>{
@@ -313,7 +306,7 @@ function juegoCarrera(container){
     });
 
     // =========================
-    // 📱 CONTROLES CLICK Y TOUCH
+    // 📱 CONTROLES CON CLICK Y TOUCH
     // =========================
     canvas.addEventListener("click", mover);
 
@@ -425,14 +418,13 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // 💀 GAME OVER / FINAL
+    // 💀 PANTALLA FINAL
     // =========================
     function mostrarGameOver(){
 
         ctx.fillStyle = "rgba(0,0,0,.74)";
         ctx.fillRect(0,0,ANCHO,ALTO);
 
-        // PANEL
         let gradiente = ctx.createLinearGradient(
             260,
             120,
@@ -449,12 +441,10 @@ function juegoCarrera(container){
         ctx.roundRect(260,80,680,560,40);
         ctx.fill();
 
-        // BORDE
         ctx.strokeStyle = "rgba(255,255,255,.35)";
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // TÍTULO
         ctx.textAlign = "center";
 
         ctx.fillStyle = "white";
@@ -466,7 +456,6 @@ function juegoCarrera(container){
             170
         );
 
-        // TIEMPO
         ctx.fillStyle = "#ffb3f5";
         ctx.font = "bold 30px Quicksand";
 
@@ -476,7 +465,6 @@ function juegoCarrera(container){
             235
         );
 
-        // MENSAJE
         ctx.fillStyle = "#ffe066";
         ctx.font = "bold 32px Quicksand";
 
@@ -487,7 +475,6 @@ function juegoCarrera(container){
             ctx.fillText("Sigue intentando 🏍️",ANCHO/2,290);
         }
 
-        // MEJORES TIEMPOS
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 34px Quicksand";
 
@@ -497,7 +484,6 @@ function juegoCarrera(container){
             360
         );
 
-        // TABLA
         ctx.fillStyle = "rgba(0,0,0,.18)";
         ctx.beginPath();
         ctx.roundRect(390,390,420,150,20);
@@ -508,6 +494,7 @@ function juegoCarrera(container){
         if(mejoresTiempos.length === 0){
 
             ctx.fillStyle = "white";
+
             ctx.fillText(
                 "Aún no hay tiempos",
                 ANCHO/2,
@@ -528,12 +515,11 @@ function juegoCarrera(container){
             });
         }
 
-        // REINICIAR
         ctx.fillStyle = "#ffffff";
         ctx.font = "22px Quicksand";
 
         ctx.fillText(
-            "Toca la pantalla o presiona Enter para reiniciar",
+            "Toca la pantalla para reiniciar",
             ANCHO/2,
             615
         );
@@ -546,28 +532,16 @@ function juegoCarrera(container){
 
         fondo();
 
-        // BORDE DEL CANVAS
-        ctx.strokeStyle = "#ff8df3";
-        ctx.lineWidth = 4;
-        ctx.shadowColor = "#ff4de1";
-        ctx.shadowBlur = 14;
+        ctx.strokeStyle="#ff8df3";
+        ctx.lineWidth=4;
+        ctx.shadowColor="#ff4de1";
+        ctx.shadowBlur=14;
+        ctx.strokeRect(10,10,ANCHO-20,ALTO-20);
+        ctx.shadowBlur=0;
 
-        ctx.strokeRect(
-            10,
-            10,
-            ANCHO - 20,
-            ALTO - 20
-        );
-
-        ctx.shadowBlur = 0;
-
-        // PISTAS
         dibujarPistas();
-
-        // META
         meta();
 
-        // CUENTA REGRESIVA
         if(inicio){
 
             let s = (Date.now() - t0) / 1000;
@@ -582,26 +556,19 @@ function juegoCarrera(container){
 
             if(txt){
 
-                ctx.font = "bold 72px Quicksand";
-                ctx.textAlign = "center";
-                ctx.fillStyle = "#ff8df3";
-                ctx.shadowColor = "#ff4de1";
-                ctx.shadowBlur = 25;
-
-                ctx.fillText(
-                    txt,
-                    ANCHO/2,
-                    ALTO/2
-                );
-
-                ctx.shadowBlur = 0;
+                ctx.font="72px Quicksand";
+                ctx.textAlign="center";
+                ctx.fillStyle="#ff8df3";
+                ctx.shadowColor="#ff4de1";
+                ctx.shadowBlur=25;
+                ctx.fillText(txt,ANCHO/2,ALTO/2);
+                ctx.shadowBlur=0;
             }
 
             requestAnimationFrame(loop);
             return;
         }
 
-        // LÓGICA DEL JUEGO
         if(juegoActivo){
 
             jugador.x += velJugador;
@@ -630,13 +597,11 @@ function juegoCarrera(container){
             });
         }
 
-        // MOTOS
         dibujar(imgJugador,jugador.x,jugador.y);
         dibujar(imgSally,oponentes[0].x,oponentes[0].y);
         dibujar(imgCharlie,oponentes[1].x,oponentes[1].y);
         dibujar(imgWood,oponentes[2].x,oponentes[2].y);
 
-        // CRONÓMETRO
         if(!inicio){
 
             let tiempoActual;
@@ -658,7 +623,6 @@ function juegoCarrera(container){
             );
         }
 
-        // FINAL
         if(!juegoActivo){
 
             estado = "final";

@@ -117,13 +117,25 @@ function juegoFlappySnoopy(contenedor){
     const sonidoPunto =
     new Audio("audio/coin.mp3");
 
-    sonidoPunto.volume = 0.35;
+    sonidoPunto.volume = 0.3;
 
     const sonidoGameOver =
     new Audio("audio/gameover.mp3");
 
-    sonidoGameOver.volume = 0.45;
+    sonidoGameOver.volume = 0.4;
 
+    // =================================================
+    // MUSICA DE FONDO
+    // =================================================
+
+        const musicaFondo = new Audio(
+            "audio/musica.mp3"
+        );
+
+        musicaFondo.volume = 0.5;
+
+        // para que se repita sola
+        musicaFondo.loop = true;
 
     
 
@@ -285,14 +297,31 @@ function juegoFlappySnoopy(contenedor){
 
     canvas.addEventListener("click",()=>{
 
-        if(gameOver){
+    if(gameOver){
 
-            juegoFlappySnoopy(contenedor);
-            return;
-        }
+        // detener game over
+        sonidoGameOver.pause();
 
-        saltar();
-    });
+        sonidoGameOver.currentTime = 0;
+
+        // detener musica vieja
+        musicaFondo.pause();
+
+        musicaFondo.currentTime = 0;
+
+        juegoFlappySnoopy(contenedor);
+
+        return;
+    }
+
+    // iniciar musica solo al empezar
+    if(!iniciado){
+
+        musicaFondo.play();
+    }
+
+    saltar();
+});
 
 
      // =====================================
@@ -301,17 +330,34 @@ function juegoFlappySnoopy(contenedor){
 
     canvas.addEventListener("touchstart",(e)=>{
 
-        e.preventDefault();
+    e.preventDefault();
 
-        if(gameOver){
+    if(gameOver){
 
-            juegoFlappySnoopy(contenedor);
-            return;
-        }
+        // detener game over
+        sonidoGameOver.pause();
 
-        saltar();
+        sonidoGameOver.currentTime = 0;
 
-    }, { passive:false });
+        // detener musica vieja
+        musicaFondo.pause();
+
+        musicaFondo.currentTime = 0;
+
+        juegoFlappySnoopy(contenedor);
+
+        return;
+    }
+
+    // iniciar musica al tocar
+    if(!iniciado){
+
+        musicaFondo.play();
+    }
+
+    saltar();
+
+}, { passive:false });
 
     function saltar(){
 
@@ -809,13 +855,13 @@ function juegoFlappySnoopy(contenedor){
 
                 gameOver = true;
 
+                musicaFondo.pause();
+
                 sonidoGameOver.currentTime = 0;
 
                 sonidoGameOver.play();
 
                 guardarScore();
-
-                
             }
             }
         });
@@ -1056,6 +1102,8 @@ function mostrarGameOver(){
         }
         
     }
+
+    
 
     loop();
 }

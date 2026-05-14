@@ -161,10 +161,10 @@ function juegoFrutas(container){
     // 🖼️ CARGA DE IMÁGENES
     // =========================
     const imgNube = new Image();
-    imgNube.src = "nube.png";
+    imgNube.src = "img/nube.png";
 
     const imgSnoopy = new Image();
-    imgSnoopy.src = "snoopyCanasta.png";
+    imgSnoopy.src = "img/snoopyCanasta.png";
 
     // =========================
     // 🍓 VARIABLES DEL JUEGO

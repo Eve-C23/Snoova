@@ -1036,7 +1036,6 @@ function mostrarGameOver(){
 
     ctx.fill();
 
-
     // PUNTAJES
 
     ctx.font =

@@ -131,6 +131,7 @@ function juegoCarrera(container){
     let velJugador = 0; // velocidad del jugador
     let puede = true; // control para evitar spam de movimiento
 
+    let puedeReiniciar = false;
 
     // =========================
     // AJUSTA TAMAÑO Y CARRILES
@@ -174,11 +175,11 @@ function juegoCarrera(container){
     // Aumenta velocidad cuando el jugador presiona
     function mover(){
         if(!inicio && juegoActivo && puede){
-            velJugador += 2.6; // impulso del jugador
+            velJugador += 2.6;
             puede = false;
 
             setTimeout(()=>{
-                puede = true; // evita spam de clicks
+                puede = true;
             },160);
         }
     }
@@ -211,11 +212,18 @@ function juegoCarrera(container){
     // CONTROLES CON CLICK Y TOUCH
     // =========================
     // permite jugar tocando o clicando
-    canvas.addEventListener("click", mover);
+    canvas.addEventListener("click", ()=>{
+        if(puedeReiniciar){
+            reiniciarJuego();
+        }
+    });
 
     canvas.addEventListener("touchstart",(e)=>{
         e.preventDefault();
-        mover();
+
+        if(puedeReiniciar){
+            reiniciarJuego();
+        }
     },{passive:false});
 
 
@@ -282,27 +290,25 @@ function juegoCarrera(container){
     // =========================
     function reiniciarJuego(){
 
-        jugador.x = 50; // reinicia jugador
+        jugador.x = 50;
+        velJugador = 0;
 
-        velJugador = 0; // reinicia velocidad
-
-        // reinicia oponentes
         oponentes.forEach(o=>{
             o.x = 50;
             o.tiempo = null;
         });
-        
+
         resultado = "";
 
-        inicio = true; // reinicia cuenta regresiva
+        inicio = true;
         t0 = Date.now();
 
         tiempoInicio = 0;
         tiempoFinal = 0;
-    }
 
-    // Inicia el juego por primera vez
-    reiniciarJuego();
+        juegoActivo = true;      // reactiva el juego
+        puedeReiniciar = false;  // desactiva click de reinicio
+    }
 
     // =========================
     // LOOP PRINCIPAL DEL JUEGO
@@ -432,6 +438,9 @@ function juegoCarrera(container){
             ctx.font = "28px Quicksand";
             ctx.fillText("Toca para reiniciar", canvas.width/2, canvas.height/2 + 90);
         }
+
+        puedeReiniciar = true;
+        canvas.style.cursor = "pointer";
 
         // =========================
         // CRONÓMETRO

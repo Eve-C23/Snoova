@@ -53,8 +53,11 @@ function juegoNubes(contenedor){
         </div>
 
         <canvas id="nubesGame"
-        width="1200"
-        height="700"
+        let W = window.innerWidth;
+        let H = window.innerHeight * 0.85;
+
+        canvas.width = W;
+        canvas.height = H;
         style="
             border-radius:35px;
             border:4px solid rgba(255,255,255,0.85);
@@ -71,8 +74,37 @@ function juegoNubes(contenedor){
     </div>
     `;
 
+    window.addEventListener("resize", ()=>{
+        let W = window.innerWidth;
+        let H = window.innerHeight * 0.85;
+
+        canvas.width = W;
+        canvas.height = H;
+    });
+
     const canvas = document.getElementById("nubesGame");
+    const baseW = 1200;
+    const baseH = 700;
+
+    function scaleX(x){
+        return x * (canvas.width / baseW);
+    }
+
+    function scaleY(y){
+        return y * (canvas.height / baseH);
+    }
     const ctx = canvas.getContext("2d");
+
+    function ajustarJugador(){
+
+        jugador.w = canvas.width * 0.1;
+        jugador.h = canvas.width * 0.1;
+
+        jugador.x = canvas.width / 2 - jugador.w / 2;
+        jugador.y = canvas.height * 0.7;
+    }
+
+    ajustarJugador();
 
     // =================================================
     // REINICIAR CON CLICK
@@ -153,16 +185,14 @@ function juegoNubes(contenedor){
 
     const jugador = {
 
-        x: 560,
-        y: 500,
+        x: 0,
+        y: 0,
 
         w: 120,
         h: 120,
 
         velY: 0,
-
         salto: -19,
-
         velocidad: 8
     };
 
@@ -202,7 +232,7 @@ function juegoNubes(contenedor){
 
         const mouseX =
         (e.clientX - rect.left) *
-        (1200 / rect.width);
+        (canvas.width / rect.width);
 
         jugador.x =
         mouseX - jugador.w/2;
@@ -213,19 +243,17 @@ function juegoNubes(contenedor){
 
     canvas.addEventListener("touchmove", (e)=>{
 
-        e.preventDefault();
+    e.preventDefault();
 
-        const rect =
-        canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-        const touchX =
-        (e.touches[0].clientX - rect.left) *
-        (1200 / rect.width);
+    const touchX =
+    (e.touches[0].clientX - rect.left) *
+    (canvas.width / rect.width);
 
-        jugador.x =
-        touchX - jugador.w/2;
+    jugador.x = touchX - jugador.w/2;
 
-    }, { passive:false });
+}, { passive:false });
 
 
     // =================================================
@@ -305,8 +333,8 @@ function juegoNubes(contenedor){
 
         estrellas.push({
 
-            x: Math.random()*1200,
-            y: Math.random()*700,
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
 
             size: Math.random()*4 + 2,
 
@@ -363,12 +391,7 @@ function juegoNubes(contenedor){
 
         ctx.fillStyle = gradiente;
 
-        ctx.fillRect(
-            0,
-            0,
-            1200,
-            700
-        );
+        ctx.fillRect(0,0,canvas.width,canvas.height);
 
         estrellas.forEach(s=>{
 

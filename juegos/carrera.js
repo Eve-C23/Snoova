@@ -432,7 +432,6 @@ function juegoCarrera(container){
             ctx.font = "28px Quicksand";
             ctx.fillText("Toca para reiniciar", canvas.width/2, canvas.height/2 + 90);
 
-            canvas.onclick = reiniciarJuego;
         }
 
         // =========================

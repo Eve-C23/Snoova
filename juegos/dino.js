@@ -4,91 +4,137 @@ function juegoDino(container){
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap');
 
+            *{
+                box-sizing:border-box;
+            }
+
             .contenedorJuego{
                 width:100%;
                 min-height:100dvh;
                 display:flex;
-                flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                padding:12px;
-                box-sizing:border-box;
-                font-family:'Quicksand',sans-serif;
+                padding:10px;
                 overflow:hidden;
+                font-family:'Quicksand',sans-serif;
+            }
+
+            .marcoGeneral{
+                width:min(96vw,1200px);
+                padding:38px;
+                border-radius:38px;
+                background:rgba(25,8,55,.88);
+                border:4px solid rgba(255,122,246,.35);
+                box-shadow:
+                    0 0 25px rgba(255,0,255,.45),
+                    0 0 80px rgba(138,43,226,.25);
             }
 
             .tituloDino{
-                font-size:clamp(24px,5vw,58px);
-                font-weight:700;
-                margin-bottom:12px;
-                background:linear-gradient(180deg,#ffffff 0%,#ffc8ff 40%,#ff7ae6 100%);
-                -webkit-background-clip:text;
-                -webkit-text-fill-color:transparent;
-                text-shadow:0 0 10px #ff4dff,0 0 25px #8a2be2;
-                letter-spacing:3px;
+                width:100%;
+                padding:22px 20px;
+                margin-bottom:28px;
+                border-radius:32px;
                 text-align:center;
+                background:linear-gradient(90deg,#ff8ed6,#d974ff,#ff7ac8);
+                color:white;
+                font-size:clamp(26px,4vw,48px);
+                font-weight:700;
+                letter-spacing:2px;
+                text-shadow:0 3px 8px rgba(0,0,0,.28);
             }
 
-            .zonaDino{
-                width:100%;
-                display:flex;
-                justify-content:center;
-                align-items:center;
+            .subtituloDino{
+                display:block;
+                margin-top:6px;
+                font-size:clamp(13px,2vw,18px);
+                opacity:.9;
+                letter-spacing:0;
             }
 
             .marcoJuego{
-                padding:14px;
-                border-radius:35px;
-                background:linear-gradient(145deg,rgba(255,0,255,.25),rgba(138,43,226,.25));
-                border:3px solid rgba(255,255,255,.15);
-                box-shadow:0 0 25px rgba(255,0,255,.4),0 0 80px rgba(138,43,226,.25);
-                backdrop-filter:blur(12px);
-                box-sizing:border-box;
+                padding:0;
+                border-radius:30px;
+                overflow:hidden;
+                background:#12072c;
             }
 
             canvas{
                 display:block;
-                width:min(1200px, calc(100vw - 60px));
+                width:100%;
                 height:auto;
-                max-height:calc(100dvh - 140px);
                 aspect-ratio:1200 / 700;
-                border-radius:25px;
+                border-radius:30px;
                 touch-action:none;
             }
 
             @media (max-width:700px){
 
                 .contenedorJuego{
-                    justify-content:center;
-                    padding:8px;
+                    padding:6px;
+                }
+
+                .marcoGeneral{
+                    width:96vw;
+                    padding:14px;
+                    border-radius:28px;
                 }
 
                 .tituloDino{
-                    font-size:clamp(22px,8vw,38px);
-                    margin-bottom:8px;
+                    padding:14px 10px;
+                    margin-bottom:14px;
+                    border-radius:22px;
+                    font-size:clamp(22px,7vw,34px);
                 }
 
-                .marcoJuego{
-                    padding:8px;
-                    border-radius:25px;
+                .subtituloDino{
+                    font-size:12px;
                 }
 
                 canvas{
-                    width:min(calc(100vw - 35px), calc((100dvh - 100px) * 1.714));
-                    max-height:calc(100dvh - 100px);
+                    border-radius:20px;
+                }
+            }
+
+            @media (max-height:500px){
+
+                .contenedorJuego{
+                    align-items:flex-start;
+                    padding:5px;
+                }
+
+                .marcoGeneral{
+                    width:min(96vw, calc((100dvh - 20px) * 1.714));
+                    padding:10px;
+                    border-radius:24px;
+                }
+
+                .tituloDino{
+                    padding:8px;
+                    margin-bottom:8px;
                     border-radius:18px;
+                    font-size:22px;
+                }
+
+                .subtituloDino{
+                    display:none;
                 }
             }
         </style>
 
         <div class="contenedorJuego">
 
-            <div class="tituloDino">
-                ✨ SNOOPY RUN ✨
-            </div>
+            <div class="marcoGeneral">
 
-            <div class="zonaDino">
+                <div class="tituloDino">
+                    SNOOPY RUN ✨
+                    <span class="subtituloDino">
+                        Toca la pantalla para saltar
+                    </span>
+                </div>
+
                 <div class="marcoJuego"></div>
+
             </div>
 
         </div>
@@ -107,8 +153,6 @@ function juegoDino(container){
     canvas.width = ANCHO;
     canvas.height = ALTO;
 
-    const fuerzaSalto = -24;
-
     const imgSnoopy = new Image();
     imgSnoopy.src = "snoopy.png";
 
@@ -122,17 +166,19 @@ function juegoDino(container){
     imgRecord.src = "record.png";
 
     let jugador;
-    let obstaculos;
-    let monedas;
-    let nubes;
+    let obstaculos = [];
+    let monedas = [];
+    let nubes = [];
 
-    let puntos;
-    let coins;
-    let juegoActivo;
+    let puntos = 0;
+    let coins = 0;
+    let juegoActivo = true;
 
-    let ultimoSpawn;
-    let ultimoCoin;
-    let sueloY;
+    let ultimoSpawn = 0;
+    let ultimoCoin = 0;
+
+    let sueloY = ALTO - 80;
+    let fuerzaSalto = -24;
 
     let recordGuardado = false;
 
@@ -162,16 +208,107 @@ function juegoDino(container){
         }
     }
 
+    function init(){
+
+        jugador = {
+            x:100,
+            y:sueloY - 85,
+            w:85,
+            h:85,
+            velY:0,
+            saltando:false
+        };
+
+        obstaculos = [];
+        monedas = [];
+        nubes = [];
+
+        puntos = 0;
+        coins = 0;
+
+        juegoActivo = true;
+
+        ultimoSpawn = 0;
+        ultimoCoin = 0;
+
+        recordGuardado = false;
+
+        for(let i=0;i<5;i++){
+
+            nubes.push({
+                x:i * (ANCHO / 5),
+                y:50 + Math.random() * 120,
+                w:140,
+                h:80,
+                vel:0.3 + Math.random() * 0.3
+            });
+        }
+    }
+
+    function saltar(){
+
+        if(!jugador.saltando && juegoActivo){
+
+            jugador.velY = fuerzaSalto;
+            jugador.saltando = true;
+        }
+    }
+
+    window.onkeydown = function(e){
+
+        if(e.code === "Space"){
+
+            e.preventDefault();
+            saltar();
+        }
+
+        if(e.code === "Enter" && !juegoActivo){
+
+            init();
+        }
+    };
+
+    canvas.addEventListener("touchstart",(e)=>{
+
+        e.preventDefault();
+
+        if(!juegoActivo){
+            init();
+        }else{
+            saltar();
+        }
+    });
+
+    canvas.addEventListener("click",()=>{
+
+        if(!juegoActivo){
+            init();
+        }else{
+            saltar();
+        }
+    });
+
     function fondo(){
 
-        let grad = ctx.createLinearGradient(0,0,0,ALTO);
+        let grad = ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            ALTO
+        );
 
         grad.addColorStop(0,"#12002f");
         grad.addColorStop(.45,"#5b0eff");
         grad.addColorStop(1,"#ff4dff");
 
         ctx.fillStyle = grad;
-        ctx.fillRect(0,0,ANCHO,ALTO);
+
+        ctx.fillRect(
+            0,
+            0,
+            ANCHO,
+            ALTO
+        );
 
         for(let i=0;i<45;i++){
 
@@ -213,114 +350,6 @@ function juegoDino(container){
         }
     }
 
-    function init(){
-
-        sueloY = ALTO - 80;
-
-        jugador = {
-            x:100,
-            y:0,
-            w:85,
-            h:85,
-            velY:0,
-            saltando:false
-        };
-
-        jugador.y = sueloY - jugador.h;
-
-        obstaculos = [];
-        monedas = [];
-        nubes = [];
-
-        puntos = 0;
-        coins = 0;
-
-        juegoActivo = true;
-
-        ultimoSpawn = 0;
-        ultimoCoin = 0;
-
-        recordGuardado = false;
-
-        for(let i=0;i<5;i++){
-
-            nubes.push({
-                x:i*(ANCHO/5),
-                y:50 + Math.random()*120,
-                w:140,
-                h:80,
-                vel:0.3 + Math.random()*0.3
-            });
-        }
-    }
-
-    function saltar(){
-
-        if(!jugador.saltando && juegoActivo){
-
-            jugador.velY = fuerzaSalto;
-
-            jugador.saltando = true;
-        }
-    }
-
-    window.onkeydown = function(e){
-
-        if(e.code === "Space"){
-
-            e.preventDefault();
-
-            saltar();
-        }
-
-        if(e.code === "Enter" && !juegoActivo){
-
-            init();
-        }
-    };
-
-    canvas.addEventListener("touchstart",(e)=>{
-
-        e.preventDefault();
-
-        if(!juegoActivo){
-
-            init();
-
-        }else{
-
-            saltar();
-        }
-    });
-
-    canvas.addEventListener("click",()=>{
-
-        if(!juegoActivo){
-
-            init();
-
-        }else{
-
-            saltar();
-        }
-    });
-
-    function guardarRecord(){
-
-        records.push(puntos);
-
-        records = [...new Set(records)];
-
-        records.sort((a,b)=>b-a);
-
-        records = records.slice(0,5);
-
-        localStorage.setItem(
-            "records",
-            JSON.stringify(records)
-        );
-    }
-
     function dibujarMonedas(){
 
         monedas.forEach(m=>{
@@ -359,12 +388,27 @@ function juegoDino(container){
         });
     }
 
+    function guardarRecord(){
+
+        records.push(puntos);
+
+        records = [...new Set(records)];
+
+        records.sort((a,b)=>b-a);
+
+        records = records.slice(0,5);
+
+        localStorage.setItem(
+            "records",
+            JSON.stringify(records)
+        );
+    }
+
     function mostrarGameOver(){
 
         if(!recordGuardado){
 
             guardarRecord();
-
             recordGuardado = true;
         }
 
@@ -437,7 +481,6 @@ function juegoDino(container){
         records.slice(0,5).forEach((r,i)=>{
 
             ctx.fillStyle = i===0 ? "#ffd43b" : "#ffffff";
-
             ctx.font = "bold 26px Quicksand";
 
             ctx.fillText(
@@ -466,7 +509,6 @@ function juegoDino(container){
             n.x -= n.vel;
 
             if(n.x < -n.w){
-
                 n.x = ANCHO;
             }
 
@@ -544,13 +586,11 @@ function juegoDino(container){
         }
 
         jugador.velY += 1.2;
-
         jugador.y += jugador.velY;
 
         if(jugador.y >= sueloY - jugador.h){
 
             jugador.y = sueloY - jugador.h;
-
             jugador.saltando = false;
         }
 
@@ -599,7 +639,6 @@ function juegoDino(container){
                 jugador.y < o.y+o.h &&
                 jugador.y+jugador.h > o.y
             ){
-
                 juegoActivo = false;
             }
         }
@@ -615,7 +654,6 @@ function juegoDino(container){
             if(hit){
 
                 m.tomada = true;
-
                 coins++;
 
                 return false;
@@ -651,6 +689,5 @@ function juegoDino(container){
     }
 
     init();
-
     loop();
 }

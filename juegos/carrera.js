@@ -291,8 +291,7 @@ function juegoCarrera(container){
             o.x = 50;
             o.tiempo = null;
         });
-
-        juegoActivo = true; // vuelve a iniciar juego
+        
         resultado = "";
 
         inicio = true; // reinicia cuenta regresiva
@@ -302,6 +301,8 @@ function juegoCarrera(container){
         tiempoFinal = 0;
     }
 
+    // Inicia el juego por primera vez
+    reiniciarJuego();
 
     // =========================
     // LOOP PRINCIPAL DEL JUEGO
@@ -428,10 +429,8 @@ function juegoCarrera(container){
             ctx.shadowBlur=0;
 
             // mensaje de reinicio
-            canvas.style.cursor = "pointer";
             ctx.font = "28px Quicksand";
             ctx.fillText("Toca para reiniciar", canvas.width/2, canvas.height/2 + 90);
-
         }
 
         // =========================

@@ -82,6 +82,12 @@ function juegoNubes(contenedor){
 
         if(gameOver){
 
+            // detener sonido game over
+        sonidoGameOver.pause();
+
+        // regresar al inicio del audio
+        sonidoGameOver.currentTime = 0;
+
             juegoNubes(contenedor);
         }
     });
@@ -107,13 +113,26 @@ function juegoNubes(contenedor){
         "audio/coin.mp3"
     );
 
-    sonidoMoneda.volume = 0.4;
+    sonidoMoneda.volume = 0.3;
 
     const sonidoGameOver = new Audio(
         "audio/gameover.mp3"
     );
 
-    sonidoGameOver.volume = 0.5;
+    sonidoGameOver.volume = 0.4;
+
+    // =================================================
+    // MUSICA DE FONDO
+    // =================================================
+
+        const musicaFondo = new Audio(
+            "audio/musica.mp3"
+        );
+
+        musicaFondo.volume = 0.5;
+
+        // para que se repita sola
+        musicaFondo.loop = true;
 
     // =================================================
     // TOP SCORES
@@ -664,6 +683,9 @@ function juegoNubes(contenedor){
 
             gameOver = true;
 
+             musicaFondo.pause();
+
+
             if(!scoreGuardado){
 
                 guardarScore();
@@ -915,6 +937,8 @@ function juegoNubes(contenedor){
     }
 
     jugador.velY = 0;
+
+    musicaFondo.play();
 
     loop();
 }

@@ -6,103 +6,77 @@ function juegoDino(container){
 
             .contenedorJuego{
                 width:100%;
-                min-height:100vh;
+                min-height:100dvh;
                 display:flex;
                 flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                padding:20px;
+                padding:12px;
                 box-sizing:border-box;
                 font-family:'Quicksand',sans-serif;
+                overflow:hidden;
             }
 
             .tituloDino{
-                font-size: clamp(32px,5vw,70px);
+                font-size:clamp(24px,5vw,58px);
                 font-weight:700;
-                margin-bottom:20px;
+                margin-bottom:12px;
                 background:linear-gradient(180deg,#ffffff 0%,#ffc8ff 40%,#ff7ae6 100%);
                 -webkit-background-clip:text;
                 -webkit-text-fill-color:transparent;
                 text-shadow:0 0 10px #ff4dff,0 0 25px #8a2be2;
                 letter-spacing:3px;
+                text-align:center;
             }
 
             .zonaDino{
+                width:100%;
                 display:flex;
-                align-items:flex-start;
-                gap:15px;
+                justify-content:center;
+                align-items:center;
             }
 
             .marcoJuego{
-                padding:18px;
+                padding:14px;
                 border-radius:35px;
                 background:linear-gradient(145deg,rgba(255,0,255,.25),rgba(138,43,226,.25));
                 border:3px solid rgba(255,255,255,.15);
                 box-shadow:0 0 25px rgba(255,0,255,.4),0 0 80px rgba(138,43,226,.25);
                 backdrop-filter:blur(12px);
+                box-sizing:border-box;
             }
 
             canvas{
                 display:block;
-                border-radius:25px;
-                max-width:100%;
+                width:min(1200px, calc(100vw - 60px));
                 height:auto;
+                max-height:calc(100dvh - 140px);
+                aspect-ratio:1200 / 700;
+                border-radius:25px;
                 touch-action:none;
             }
 
-            .btnSalto{
-                position:fixed;
-                bottom:20px;
-                right:20px;
-                width:90px;
-                height:90px;
-                border:none;
-                border-radius:50%;
-                background:linear-gradient(180deg,#ff7af6,#b84dff);
-                color:white;
-                font-size:18px;
-                font-family:'Quicksand',sans-serif;
-                box-shadow:0 0 20px rgba(255,0,255,.6);
-                z-index:999;
-            }
+            @media (max-width:700px){
 
-            .btnSalto:active{
-                transform:scale(.95);
-            }
-
-            .btnReiniciar{
-                display:none;
-                margin-top:8px;
-                padding:12px 22px;
-                border:none;
-                border-radius:18px;
-                background:linear-gradient(180deg,#ff7af6,#b84dff);
-                color:white;
-                font-family:'Quicksand',sans-serif;
-                font-size:16px;
-                box-shadow:0 0 18px rgba(255,0,255,.6);
-                cursor:pointer;
-            }
-
-            .btnReiniciar:hover{
-                transform:scale(1.05);
-            }
-
-            @media (min-width:900px){
-                .btnSalto{
-                    display:none;
-                }
-            }
-
-            @media (max-width:900px){
-
-                .zonaDino{
-                    flex-direction:column;
-                    align-items:center;
+                .contenedorJuego{
+                    justify-content:center;
+                    padding:8px;
                 }
 
-                .btnReiniciar{
-                    align-self:flex-end;
+                .tituloDino{
+                    font-size:clamp(22px,8vw,38px);
+                    margin-bottom:8px;
+                }
+
+                .marcoJuego{
+                    padding:8px;
+                    border-radius:25px;
+                }
+
+                canvas{
+                    width:min(calc(100vw - 35px), calc((100dvh - 100px) * 1.714));
+                    max-height:calc(100dvh - 100px);
+                    border-radius:18px;
                 }
             }
         </style>
@@ -114,50 +88,26 @@ function juegoDino(container){
             </div>
 
             <div class="zonaDino">
-
                 <div class="marcoJuego"></div>
-
-                <button class="btnReiniciar">
-                    Reiniciar
-                </button>
-
             </div>
 
         </div>
     `;
 
     const marcoJuego = container.querySelector(".marcoJuego");
-    const btnReiniciar = container.querySelector(".btnReiniciar");
 
     const canvas = document.createElement("canvas");
     marcoJuego.appendChild(canvas);
 
-    const btnSalto = document.createElement("button");
-    btnSalto.className = "btnSalto";
-    btnSalto.innerHTML = "⬆️";
-
-    container.appendChild(btnSalto);
-
     const ctx = canvas.getContext("2d");
 
-    let ANCHO, ALTO, scale, fuerzaSalto;
+    const ANCHO = 1200;
+    const ALTO = 700;
 
-    function resize(){
+    canvas.width = ANCHO;
+    canvas.height = ALTO;
 
-        ANCHO = Math.min(window.innerWidth * 0.82, 1100);
-        ALTO = Math.min(window.innerHeight * 0.70, 650);
-
-        canvas.width = ANCHO;
-        canvas.height = ALTO;
-
-        scale = ANCHO / 900;
-
-        fuerzaSalto = -24 * scale;
-    }
-
-    window.addEventListener("resize", resize);
-
-    resize();
+    const fuerzaSalto = -24;
 
     const imgSnoopy = new Image();
     imgSnoopy.src = "snoopy.png";
@@ -171,19 +121,41 @@ function juegoDino(container){
     const imgRecord = new Image();
     imgRecord.src = "record.png";
 
-    function draw(img, x, y, w, h){
+    let jugador;
+    let obstaculos;
+    let monedas;
+    let nubes;
+
+    let puntos;
+    let coins;
+    let juegoActivo;
+
+    let ultimoSpawn;
+    let ultimoCoin;
+    let sueloY;
+
+    let recordGuardado = false;
+
+    let records = JSON.parse(
+        localStorage.getItem("records")
+    ) || [];
+
+    function draw(img,x,y,w,h){
 
         if(img.complete && img.naturalWidth !== 0){
 
-            const s = Math.min(w/img.width, h/img.height);
+            const s = Math.min(
+                w / img.width,
+                h / img.height
+            );
 
-            const nw = img.width*s;
-            const nh = img.height*s;
+            const nw = img.width * s;
+            const nh = img.height * s;
 
             ctx.drawImage(
                 img,
-                x+(w-nw)/2,
-                y+(h-nh)/2,
+                x + (w - nw) / 2,
+                y + (h - nh) / 2,
                 nw,
                 nh
             );
@@ -203,7 +175,7 @@ function juegoDino(container){
 
         for(let i=0;i<45;i++){
 
-            ctx.fillStyle="rgba(255,255,255,.7)";
+            ctx.fillStyle = "rgba(255,255,255,.7)";
 
             ctx.beginPath();
 
@@ -218,18 +190,18 @@ function juegoDino(container){
             ctx.fill();
         }
 
-        ctx.fillStyle="rgba(255,255,255,.12)";
+        ctx.fillStyle = "rgba(255,255,255,.12)";
 
         ctx.fillRect(
             0,
             sueloY,
             ANCHO,
-            ALTO-sueloY
+            ALTO - sueloY
         );
 
-        ctx.strokeStyle="rgba(255,255,255,.12)";
+        ctx.strokeStyle = "rgba(255,255,255,.12)";
 
-        for(let i=0;i<ANCHO;i+=40*scale){
+        for(let i=0;i<ANCHO;i+=40){
 
             ctx.beginPath();
 
@@ -241,23 +213,15 @@ function juegoDino(container){
         }
     }
 
-    let jugador, obstaculos, monedas, nubes;
-    let puntos, coins, juegoActivo;
-    let ultimoSpawn, ultimoCoin, sueloY;
-
-    let records = JSON.parse(
-        localStorage.getItem("records")
-    ) || [];
-
     function init(){
 
-        sueloY = ALTO - 80*scale;
+        sueloY = ALTO - 80;
 
         jugador = {
-            x:100*scale,
+            x:100,
             y:0,
-            w:85*scale,
-            h:85*scale,
+            w:85,
+            h:85,
             velY:0,
             saltando:false
         };
@@ -276,15 +240,15 @@ function juegoDino(container){
         ultimoSpawn = 0;
         ultimoCoin = 0;
 
-        btnReiniciar.style.display = "none";
+        recordGuardado = false;
 
         for(let i=0;i<5;i++){
 
             nubes.push({
                 x:i*(ANCHO/5),
-                y:50*scale + Math.random()*120*scale,
-                w:140*scale,
-                h:80*scale,
+                y:50 + Math.random()*120,
+                w:140,
+                h:80,
                 vel:0.3 + Math.random()*0.3
             });
         }
@@ -295,11 +259,11 @@ function juegoDino(container){
         if(!jugador.saltando && juegoActivo){
 
             jugador.velY = fuerzaSalto;
+
             jugador.saltando = true;
         }
     }
 
-    // TECLADO
     window.onkeydown = function(e){
 
         if(e.code === "Space"){
@@ -309,29 +273,12 @@ function juegoDino(container){
             saltar();
         }
 
-        if(e.code === "Enter"){
+        if(e.code === "Enter" && !juegoActivo){
 
-            if(!juegoActivo){
-
-                init();
-            }
+            init();
         }
     };
 
-    // BOTÓN CELULAR
-    btnSalto.addEventListener("touchstart",(e)=>{
-
-        e.preventDefault();
-
-        saltar();
-    });
-
-    btnSalto.addEventListener("click",()=>{
-
-        saltar();
-    });
-
-    // CLICK CANVAS
     canvas.addEventListener("touchstart",(e)=>{
 
         e.preventDefault();
@@ -355,15 +302,6 @@ function juegoDino(container){
         }else{
 
             saltar();
-        }
-    });
-
-    // REINICIAR
-    btnReiniciar.addEventListener("click",()=>{
-
-        if(!juegoActivo){
-
-            init();
         }
     });
 
@@ -421,11 +359,108 @@ function juegoDino(container){
         });
     }
 
+    function mostrarGameOver(){
+
+        if(!recordGuardado){
+
+            guardarRecord();
+
+            recordGuardado = true;
+        }
+
+        ctx.fillStyle = "rgba(0,0,0,.74)";
+
+        ctx.fillRect(
+            0,
+            0,
+            ANCHO,
+            ALTO
+        );
+
+        let gradiente = ctx.createLinearGradient(
+            260,
+            120,
+            950,
+            620
+        );
+
+        gradiente.addColorStop(0,"rgba(255,122,246,.20)");
+        gradiente.addColorStop(1,"rgba(184,77,255,.20)");
+
+        ctx.fillStyle = gradiente;
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+            260,
+            80,
+            680,
+            560,
+            40
+        );
+
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255,.35)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 72px Quicksand";
+
+        ctx.fillText(
+            "GAME OVER",
+            ANCHO/2,
+            190
+        );
+
+        ctx.fillStyle = "#ffb3f5";
+        ctx.font = "bold 30px Quicksand";
+
+        ctx.fillText(
+            "Puntos: " + puntos,
+            ANCHO/2,
+            250
+        );
+
+        ctx.fillStyle = "#ffe066";
+        ctx.font = "bold 34px Quicksand";
+
+        ctx.fillText(
+            "🏆 TOP 5",
+            ANCHO/2,
+            320
+        );
+
+        records.slice(0,5).forEach((r,i)=>{
+
+            ctx.fillStyle = i===0 ? "#ffd43b" : "#ffffff";
+
+            ctx.font = "bold 26px Quicksand";
+
+            ctx.fillText(
+                (i+1)+". "+r,
+                ANCHO/2,
+                370 + i*42
+            );
+        });
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "22px Quicksand";
+
+        ctx.fillText(
+            "Toca la pantalla o presiona Enter para reiniciar",
+            ANCHO/2,
+            615
+        );
+    }
+
     function loop(){
 
         fondo();
 
-        // NUBES
         nubes.forEach(n=>{
 
             n.x -= n.vel;
@@ -435,7 +470,7 @@ function juegoDino(container){
                 n.x = ANCHO;
             }
 
-            ctx.globalAlpha=.55;
+            ctx.globalAlpha = .55;
 
             draw(
                 imgNube,
@@ -445,156 +480,70 @@ function juegoDino(container){
                 n.h
             );
 
-            ctx.globalAlpha=1;
+            ctx.globalAlpha = 1;
         });
 
-        // MONEDA UI
-        ctx.fillStyle="#ffd43b";
+        ctx.fillStyle = "#ffd43b";
 
         ctx.beginPath();
 
         ctx.arc(
-            48*scale,
-            48*scale,
-            13*scale,
+            48,
+            48,
+            13,
             0,
             Math.PI*2
         );
 
         ctx.fill();
 
-        ctx.fillStyle="#fff3bf";
+        ctx.fillStyle = "#fff3bf";
 
         ctx.beginPath();
 
         ctx.arc(
-            48*scale,
-            48*scale,
-            6*scale,
+            48,
+            48,
+            6,
             0,
             Math.PI*2
         );
 
         ctx.fill();
 
-        ctx.fillStyle="#fff";
-
-        ctx.font=(24*scale)+"px Quicksand";
+        ctx.fillStyle = "#fff";
+        ctx.font = "24px Quicksand";
 
         ctx.fillText(
             coins,
-            78*scale,
-            55*scale
+            78,
+            55
         );
 
         draw(
             imgRecord,
             28,
-            65*scale,
-            32*scale,
-            32*scale
+            65,
+            32,
+            32
         );
 
         ctx.fillText(
             puntos,
-            78*scale,
-            95*scale
+            78,
+            95
         );
 
-        // GAME OVER
         if(!juegoActivo){
 
-            btnReiniciar.style.display = "block";
-
-            if(!window.recordGuardado){
-
-                guardarRecord();
-
-                window.recordGuardado = true;
-            }
-
-            const cuadroX = ANCHO*0.27;
-            const cuadroY = ALTO*0.12;
-            const cuadroW = ANCHO*0.46;
-            const cuadroH = ALTO*0.70;
-
-            ctx.fillStyle = "rgba(10,0,35,.96)";
-
-            ctx.fillRect(
-                cuadroX,
-                cuadroY,
-                cuadroW,
-                cuadroH
-            );
-
-            ctx.strokeStyle = "#ff5eff";
-
-            ctx.lineWidth = 4;
-
-            ctx.strokeRect(
-                cuadroX,
-                cuadroY,
-                cuadroW,
-                cuadroH
-            );
-
-            ctx.textAlign = "center";
-
-            ctx.fillStyle = "#ffffff";
-
-            ctx.font = (38*scale)+"px Quicksand";
-
-            ctx.fillText(
-                "GAME OVER",
-                ANCHO/2,
-                cuadroY + 55*scale
-            );
-
-            ctx.fillStyle = "#ff7af6";
-
-            ctx.font = (22*scale)+"px Quicksand";
-
-            ctx.fillText(
-                "Puntos: " + puntos,
-                ANCHO/2,
-                cuadroY + 85*scale
-            );
-
-            const tablaY = cuadroY + 110*scale;
-
-            ctx.fillStyle = "#ffe066";
-
-            ctx.font = (24*scale)+"px Quicksand";
-
-            ctx.fillText(
-                "🏆 TOP 5",
-                ANCHO/2,
-                tablaY + 35*scale
-            );
-
-            records.slice(0,5).forEach((r,i)=>{
-
-                ctx.fillStyle =
-                    i===0
-                    ? "#ffd43b"
-                    : "#ffffff";
-
-                ctx.font = (18*scale)+"px Quicksand";
-
-                ctx.fillText(
-                    (i+1)+". "+r,
-                    ANCHO/2,
-                    tablaY + 75*scale + i*35*scale
-                );
-            });
+            mostrarGameOver();
 
             requestAnimationFrame(loop);
 
             return;
         }
 
-        // FÍSICAS
-        jugador.velY += 1.2*scale;
+        jugador.velY += 1.2;
 
         jugador.y += jugador.velY;
 
@@ -605,10 +554,9 @@ function juegoDino(container){
             jugador.saltando = false;
         }
 
-        // OBSTÁCULOS
-        if(Date.now()-ultimoSpawn > 1400){
+        if(Date.now() - ultimoSpawn > 1400){
 
-            let s=(60 + Math.random()*25)*scale;
+            let s = 60 + Math.random()*25;
 
             obstaculos.push({
                 x:ANCHO,
@@ -617,34 +565,32 @@ function juegoDino(container){
                 h:s
             });
 
-            ultimoSpawn=Date.now();
+            ultimoSpawn = Date.now();
         }
 
         obstaculos.forEach(o=>{
 
-            o.x -= 6*scale;
+            o.x -= 6;
         });
 
-        // MONEDAS
-        if(Date.now()-ultimoCoin > 1600){
+        if(Date.now() - ultimoCoin > 1600){
 
             monedas.push({
                 x:ANCHO,
-                y:sueloY - 120*scale,
-                size:40*scale,
+                y:sueloY - 120,
+                size:40,
                 rotacion:0,
                 tomada:false
             });
 
-            ultimoCoin=Date.now();
+            ultimoCoin = Date.now();
         }
 
         monedas.forEach(m=>{
 
-            m.x -= 6*scale;
+            m.x -= 6;
         });
 
-        // COLISIÓN
         for(let o of obstaculos){
 
             if(
@@ -653,11 +599,11 @@ function juegoDino(container){
                 jugador.y < o.y+o.h &&
                 jugador.y+jugador.h > o.y
             ){
-                juegoActivo=false;
+
+                juegoActivo = false;
             }
         }
 
-        // MONEDAS
         monedas = monedas.filter(m=>{
 
             let hit =
@@ -678,7 +624,6 @@ function juegoDino(container){
             return true;
         });
 
-        // DIBUJAR
         draw(
             imgSnoopy,
             jugador.x,

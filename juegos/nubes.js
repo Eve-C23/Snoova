@@ -814,20 +814,7 @@ function juegoNubes(contenedor){
             325
         );
 
-        ctx.font =
-        "bold 26px Arial";
-
-        ctx.fillStyle =
-        "rgba(255,255,255,.85)";
-
-        ctx.fillText(
-
-            "Haz click para reiniciar",
-
-            600,
-
-            370
-        );
+    
 
         // =================================================
         // TOP SCORES
@@ -876,36 +863,56 @@ function juegoNubes(contenedor){
         ctx.font =
         "bold 25px Arial";
 
-        mejoresPuntajes.forEach((p,i)=>{
+mejoresPuntajes.forEach((p,i)=>{
 
-            ctx.fillStyle =
-            "rgba(255,255,255,.10)";
+    ctx.fillStyle =
+    "rgba(255,255,255,.10)";
 
-            ctx.fillRect(
+    ctx.fillRect(
 
-                tablaX + 20,
+        tablaX + 20,
 
-                tablaY + 12 + (i*28),
+        tablaY + 12 + (i*28),
 
-                tablaW - 40,
+        tablaW - 40,
 
-                2
-            );
+        2
+    );
 
-            ctx.fillStyle = "white";
+    ctx.fillStyle = "white";
 
-            ctx.fillText(
+    ctx.fillText(
 
-                (i+1) +
-                ".   " +
-                p +
-                " pts",
+        (i+1) +
+        ".   " +
+        p +
+        " pts",
 
-                600,
+        600,
 
-                tablaY + 38 + (i*28)
-            );
-        });
+        tablaY + 38 + (i*28)
+    );
+});
+
+// =====================================
+// REINICIAR ABAJO DE LA TABLA
+// =====================================
+
+ctx.font =
+"bold 26px Arial";
+
+ctx.fillStyle =
+"rgba(255,255,255,.85)";
+
+ctx.fillText(
+
+    "Haz click para reiniciar",
+
+    600,
+
+    655
+);
+        
     }
 
     // =================================================

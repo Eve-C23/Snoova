@@ -132,7 +132,7 @@ function juegoFlappySnoopy(contenedor){
             "audio/musica.mp3"
         );
 
-        musicaFondo.volume = 0.7;
+        musicaFondo.volume = 0.5;
 
         // para que se repita sola
         musicaFondo.loop = true;
@@ -1068,10 +1068,25 @@ function mostrarGameOver(){
 
             tablaY + 42 + (i*30)
         );
-
-        
     });
+
+    ctx.font =
+"bold 26px Arial";
+
+ctx.fillStyle =
+"rgba(255,255,255,.85)";
+
+ctx.fillText(
+
+    "Haz click para reiniciar",
+
+    600,
+
+    655
+);
+
 }
+
 
 
     // =====================================
@@ -1100,7 +1115,6 @@ function mostrarGameOver(){
 
             
         }
-        
         
     }
 

@@ -133,6 +133,9 @@ function juegoCarrera(container){
 
     let puedeReiniciar = false;
 
+    let estado = "inicio"; 
+    // "inicio" | "jugando" | "final"
+
     // =========================
     // AJUSTA TAMAÑO Y CARRILES
     // =========================
@@ -213,15 +216,23 @@ function juegoCarrera(container){
     // =========================
     // permite jugar tocando o clicando
     canvas.addEventListener("click", ()=>{
-        if(puedeReiniciar){
-            reiniciarJuego();
+        if(estado === "jugando"){
+            mover(); // acelera
+        }
+
+        if(estado === "final"){
+            reiniciarJuego(); // reinicia
         }
     });
 
     canvas.addEventListener("touchstart",(e)=>{
         e.preventDefault();
 
-        if(puedeReiniciar){
+        if(estado === "jugando"){
+            mover();
+        }
+
+        if(estado === "final"){
             reiniciarJuego();
         }
     },{passive:false});
@@ -306,8 +317,9 @@ function juegoCarrera(container){
         tiempoInicio = 0;
         tiempoFinal = 0;
 
-        juegoActivo = true;      // reactiva el juego
-        puedeReiniciar = false;  // desactiva click de reinicio
+        juegoActivo = true;
+
+        estado = "inicio";
     }
 
     // =========================
@@ -378,6 +390,8 @@ function juegoCarrera(container){
 
             requestAnimationFrame(loop);
             return;
+
+            estado = "jugando";
         }
 
         // lógica del juego
@@ -433,6 +447,9 @@ function juegoCarrera(container){
             ctx.shadowBlur=22;
             ctx.fillText(resultado,canvas.width/2,canvas.height/2+10);
             ctx.shadowBlur=0;
+
+            estado = "final";
+            canvas.style.cursor = "pointer";
 
             // mensaje de reinicio
             ctx.font = "28px Quicksand";

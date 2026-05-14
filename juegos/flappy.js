@@ -1036,6 +1036,15 @@ function mostrarGameOver(){
 
     ctx.fill();
 
+    ctx.fillText(
+
+        "Haz click para reiniciar",
+
+        600,
+
+        370
+    );
+
     // PUNTAJES
 
     ctx.font =
@@ -1069,14 +1078,7 @@ function mostrarGameOver(){
             tablaY + 42 + (i*30)
         );
 
-        ctx.fillText(
-
-            "Haz click para reiniciar",
-
-            600,
-
-            370
-        );
+        
     });
 
 }

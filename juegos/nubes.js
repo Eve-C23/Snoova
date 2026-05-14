@@ -26,7 +26,7 @@ function juegoNubes(contenedor){
 
         ">
 
-           <h2 style="
+        <h2 style="
                 font-family:'Baloo 2', Arial;
                 color:white;
                 margin:0;

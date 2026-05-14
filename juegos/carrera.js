@@ -24,24 +24,23 @@ function juegoCarrera(container){
                 width:min(92vw, calc((100dvh - 40px) * 1.714), 1200px);
                 padding:clamp(8px,1.6vw,22px);
                 border-radius:34px;
-                background:linear-gradient(180deg,rgba(255,160,245,.18),rgba(110,30,190,.12));
-                border:3px solid rgba(255,141,243,.55);
+                background:rgba(25,8,55,.88);
+                border:4px solid rgba(255,122,246,.35);
                 box-shadow:
-                    0 0 25px rgba(255,105,255,.42),
-                    0 0 55px rgba(170,80,255,.25),
-                    inset 0 0 18px rgba(255,255,255,.13);
+                    0 0 25px rgba(255,0,255,.45),
+                    0 0 80px rgba(138,43,226,.25);
                 box-sizing:border-box;
             }
 
             .tituloCarrera{
-                width:78%;
-                margin:0 auto 16px auto;
-                padding:clamp(8px,1.2vw,16px) 18px;
-                border-radius:28px;
+                width:100%;
+                margin:0 auto 22px auto;
+                padding:clamp(12px,1.8vw,22px) 18px;
+                border-radius:32px;
                 background:linear-gradient(90deg,#ff8ed6,#d974ff,#ff7ac8);
                 color:white;
                 text-align:center;
-                font-size:clamp(22px,3.5vw,48px);
+                font-size:clamp(24px,4vw,48px);
                 font-weight:700;
                 letter-spacing:2px;
                 text-shadow:0 3px 8px rgba(0,0,0,.28);
@@ -50,8 +49,8 @@ function juegoCarrera(container){
 
             .subtituloCarrera{
                 display:block;
-                margin-top:5px;
-                font-size:clamp(11px,1.4vw,17px);
+                margin-top:6px;
+                font-size:clamp(12px,1.6vw,17px);
                 opacity:.9;
                 letter-spacing:0;
             }
@@ -59,7 +58,7 @@ function juegoCarrera(container){
             .canvas-box{
                 width:100%;
                 aspect-ratio:1200 / 700;
-                border-radius:28px;
+                border-radius:30px;
                 overflow:hidden;
                 background:#12072c;
                 box-shadow:0 0 22px rgba(255,105,255,.45);
@@ -69,7 +68,7 @@ function juegoCarrera(container){
                 width:100%;
                 height:100%;
                 display:block;
-                border-radius:28px;
+                border-radius:30px;
                 touch-action:none;
             }
 
@@ -81,7 +80,6 @@ function juegoCarrera(container){
                 }
 
                 .tituloCarrera{
-                    width:86%;
                     margin-bottom:8px;
                     padding:8px 12px;
                     border-radius:20px;
@@ -105,7 +103,6 @@ function juegoCarrera(container){
                 }
 
                 .tituloCarrera{
-                    width:62%;
                     padding:6px 12px;
                     font-size:clamp(17px,3vw,25px);
                     margin-bottom:6px;
@@ -148,7 +145,7 @@ function juegoCarrera(container){
     canvas.height = ALTO;
 
     // =========================
-    // 🖼️ CARGA DE IMÁGENES
+    // 🖼️ IMÁGENES
     // =========================
     function cargarImagen(ruta1, ruta2){
         const img = new Image();
@@ -178,13 +175,8 @@ function juegoCarrera(container){
         ALTO * 0.75
     ];
 
-    let jugador = {
-        id:"p",
-        x:50,
-        y:carriles[0]
-    };
+    let jugador = { id:"p", x:50, y:carriles[0] };
 
-    // Velocidad original de los bots
     let oponentes = [
         {id:"o1", x:50, y:carriles[1], vel:1.4},
         {id:"o2", x:50, y:carriles[2], vel:1.5},
@@ -203,9 +195,10 @@ function juegoCarrera(container){
     let velJugador = 0;
     let puede = true;
     let estado = "inicio";
+    let tiempoGuardado = false;
 
     // =========================
-    // 🏆 MEJORES TIEMPOS
+    // 🏆 MEJORES TIEMPOS DEL CRONÓMETRO
     // =========================
     let mejoresTiempos = JSON.parse(
         localStorage.getItem("mejoresTiemposCarrera")
@@ -213,7 +206,7 @@ function juegoCarrera(container){
 
     function guardarTiempo(){
 
-        if(resultado !== "YOU WIN"){
+        if(tiempoGuardado){
             return;
         }
 
@@ -227,10 +220,12 @@ function juegoCarrera(container){
             "mejoresTiemposCarrera",
             JSON.stringify(mejoresTiempos)
         );
+
+        tiempoGuardado = true;
     }
 
     // =========================
-    // 🔁 REINICIAR JUEGO
+    // 🔁 REINICIAR JUEGO SOLO CON CLICK O TOUCH
     // =========================
     function reiniciarJuego(){
 
@@ -255,6 +250,7 @@ function juegoCarrera(container){
         velJugador = 0;
         puede = true;
         estado = "inicio";
+        tiempoGuardado = false;
 
         canvas.style.cursor = "default";
     }
@@ -281,7 +277,7 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // ⌨️ CONTROLES CON TECLADO
+    // ⌨️ CONTROL CON ESPACIO
     // =========================
     let spaceLock = false;
 
@@ -306,15 +302,13 @@ function juegoCarrera(container){
     });
 
     // =========================
-    // 📱 CONTROLES CON CLICK Y TOUCH
+    // 📱 CONTROL CON CLICK Y TOUCH
     // =========================
     canvas.addEventListener("click", mover);
 
     canvas.addEventListener("touchstart", e=>{
-
         e.preventDefault();
         mover();
-
     },{passive:false});
 
     // =========================
@@ -347,7 +341,7 @@ function juegoCarrera(container){
     // =========================
     function dibujarPistas(){
 
-        carriles.forEach((y,i)=>{
+        carriles.forEach((y)=>{
 
             let pista = ctx.createLinearGradient(20,y,ANCHO-20,y);
 
@@ -363,7 +357,6 @@ function juegoCarrera(container){
             ctx.strokeRect(28,y,ANCHO-56,58);
 
             for(let x=45;x<ANCHO-45;x+=82){
-
                 ctx.fillStyle = "rgba(255,255,255,.88)";
                 ctx.fillRect(x,y+26,42,7);
             }
@@ -466,27 +459,17 @@ function juegoCarrera(container){
         );
 
         ctx.fillStyle = "#ffe066";
-        ctx.font = "bold 32px Quicksand";
-
-        if(resultado === "YOU WIN"){
-            ctx.fillText("Ganaste la carrera 🏁",ANCHO/2,290);
-        }
-        else{
-            ctx.fillText("Sigue intentando 🏍️",ANCHO/2,290);
-        }
-
-        ctx.fillStyle = "#ffffff";
         ctx.font = "bold 34px Quicksand";
 
         ctx.fillText(
             "🏆 Mejores Tiempos",
             ANCHO/2,
-            360
+            315
         );
 
         ctx.fillStyle = "rgba(0,0,0,.18)";
         ctx.beginPath();
-        ctx.roundRect(390,390,420,150,20);
+        ctx.roundRect(390,350,420,180,20);
         ctx.fill();
 
         ctx.font = "bold 24px Quicksand";
@@ -498,7 +481,7 @@ function juegoCarrera(container){
             ctx.fillText(
                 "Aún no hay tiempos",
                 ANCHO/2,
-                465
+                440
             );
 
         }else{
@@ -510,7 +493,7 @@ function juegoCarrera(container){
                 ctx.fillText(
                     (i+1) + ". " + t + "s",
                     ANCHO/2,
-                    425 + i*24
+                    390 + i*28
                 );
             });
         }
@@ -548,14 +531,12 @@ function juegoCarrera(container){
             let txt = ["3","2","1","GO!"][Math.floor(s)] || "";
 
             if(s > 3){
-
                 inicio = false;
                 estado = "jugando";
                 tiempoInicio = Date.now();
             }
 
             if(txt){
-
                 ctx.font="72px Quicksand";
                 ctx.textAlign="center";
                 ctx.fillStyle="#ff8df3";
@@ -593,6 +574,7 @@ function juegoCarrera(container){
                     juegoActivo = false;
                     resultado = "GAME OVER";
                     tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+                    guardarTiempo();
                 }
             });
         }

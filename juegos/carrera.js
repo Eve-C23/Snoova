@@ -1,95 +1,161 @@
 function juegoCarrera(container){
 
     // =========================
-    // DISEÑO HTML Y CSS
+    // 🎨 DISEÑO HTML Y CSS
     // =========================
-    // Aquí se crea toda la interfaz visual del juego (HTML + estilos CSS)
     container.innerHTML = `
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap');
 
-            /* Contenedor principal del juego */
+            *{
+                box-sizing:border-box;
+            }
+
             .carrera-wrap{
-                min-height:100vh; /* ocupa toda la pantalla */
+                width:100%;
+                min-height:100dvh;
                 display:flex;
-                flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                background:transparent;
-                font-family:'Quicksand', sans-serif;
-                padding:18px;
-                box-sizing:border-box;
+                padding:10px;
                 overflow:hidden;
+                font-family:'Quicksand',sans-serif;
             }
 
-            /* Título del juego */
-            h2{
-                color:#ff8df3;
-                font-size:clamp(34px,6vw,58px); /* responsive */
-                margin:0 0 16px 0;
-                letter-spacing:4px;
+            .marcoGeneralCarrera{
+                width:min(96vw,1200px);
+                padding:38px;
+                border-radius:38px;
+                background:rgba(25,8,55,.88);
+                border:4px solid rgba(255,122,246,.35);
+                box-shadow:
+                    0 0 25px rgba(255,0,255,.45),
+                    0 0 80px rgba(138,43,226,.25);
+            }
+
+            .tituloCarrera{
+                width:100%;
+                padding:22px 20px;
+                margin-bottom:28px;
+                border-radius:32px;
                 text-align:center;
-                text-shadow:0 0 8px #ff8df3, 0 0 20px #ff4de1, 0 0 40px #c77dff;
+                background:linear-gradient(90deg,#ff8ed6,#d974ff,#ff7ac8);
+                color:white;
+                font-size:clamp(26px,4vw,48px);
+                font-weight:700;
+                letter-spacing:2px;
+                text-shadow:0 3px 8px rgba(0,0,0,.28);
             }
 
-            /* Zona donde está el canvas */
-            .zona-juego{
-                display:flex;
-                align-items:flex-start;
-                justify-content:center;
-                gap:18px;
+            .subtituloCarrera{
+                display:block;
+                margin-top:6px;
+                font-size:clamp(13px,2vw,18px);
+                opacity:.9;
+                letter-spacing:0;
             }
 
-            /* Caja decorativa del canvas */
-            .canvas-box{
-                padding:16px;
-                border-radius:34px;
-                background:linear-gradient(180deg,rgba(255,160,245,.18),rgba(110,30,190,.12));
-                border:3px solid rgba(255,141,243,.55);
-                box-shadow:0 0 25px rgba(255,105,255,.42), 0 0 55px rgba(170,80,255,.25), inset 0 0 18px rgba(255,255,255,.13);
+            .marcoJuegoCarrera{
+                padding:0;
+                border-radius:30px;
+                overflow:hidden;
+                background:#12072c;
             }
 
-            /* Canvas donde se dibuja el juego */
             canvas{
                 display:block;
-                border-radius:26px;
-                touch-action:none; /* evita zoom en móviles */
-                max-width:100%;
-                box-shadow:0 0 22px rgba(255,105,255,.45);
+                width:100%;
+                height:auto;
+                aspect-ratio:1200 / 700;
+                border-radius:30px;
+                touch-action:none;
             }
 
-            /* Diseño responsive para móviles */
-            @media(max-width:800px){
-                .zona-juego{
-                    flex-direction:column;
-                    align-items:center;
+            @media(max-width:700px){
+                .carrera-wrap{
+                    padding:6px;
+                }
+
+                .marcoGeneralCarrera{
+                    width:96vw;
+                    padding:14px;
+                    border-radius:28px;
+                }
+
+                .tituloCarrera{
+                    padding:14px 10px;
+                    margin-bottom:14px;
+                    border-radius:22px;
+                    font-size:clamp(22px,7vw,34px);
+                }
+
+                .subtituloCarrera{
+                    font-size:12px;
+                }
+
+                canvas{
+                    border-radius:20px;
+                }
+            }
+
+            @media(max-height:500px){
+                .carrera-wrap{
+                    align-items:flex-start;
+                    padding:5px;
+                }
+
+                .marcoGeneralCarrera{
+                    width:min(96vw, calc((100dvh - 20px) * 1.714));
+                    padding:10px;
+                    border-radius:24px;
+                }
+
+                .tituloCarrera{
+                    padding:8px;
+                    margin-bottom:8px;
+                    border-radius:18px;
+                    font-size:22px;
+                }
+
+                .subtituloCarrera{
+                    display:none;
                 }
             }
         </style>
 
         <div class="carrera-wrap">
-            <h2>✨ SNOOPY RACE ✨</h2>
+            <div class="marcoGeneralCarrera">
 
-            <div class="zona-juego">
-                <div class="canvas-box">
-                    <canvas id="canvas"></canvas>
+                <div class="tituloCarrera">
+                    SNOOPY RACE ✨
+                    <span class="subtituloCarrera">
+                        Toca la pantalla o presiona espacio para avanzar
+                    </span>
                 </div>
+
+                <div class="marcoJuegoCarrera">
+                    <canvas id="canvasCarrera"></canvas>
+                </div>
+
             </div>
         </div>
     `;
 
     // =========================
-    // CANVAS
+    // 🖼️ CANVAS 1200 x 700
     // =========================
-    // Se obtiene el canvas donde se dibuja todo el juego
-    const canvas = document.getElementById("canvas");
+    const canvas = document.getElementById("canvasCarrera");
     const ctx = canvas.getContext("2d");
 
+    const ANCHO = 1200;
+    const ALTO = 700;
+
+    canvas.width = ANCHO;
+    canvas.height = ALTO;
 
     // =========================
-    // IMÁGENES DE PERSONAJES
+    // 🖼️ IMÁGENES
     // =========================
-    // Se cargan las imágenes de los jugadores y oponentes
     const imgJugador = new Image();
     imgJugador.src = "img/Smoto.png";
 
@@ -102,82 +168,112 @@ function juegoCarrera(container){
     const imgWood = new Image();
     imgWood.src = "img/Wmoto.png";
 
-
     // =========================
-    // VARIABLES DEL JUEGO
+    // 🏁 VARIABLES DEL JUEGO
     // =========================
-    // Aquí se guardan todos los datos del juego
+    let META = ANCHO * 0.82;
 
-    let carriles = []; // posiciones de las pistas
-    let META = 0; // línea de meta
-
-    let jugador = { id:"p", x:50, y:0 }; // jugador principal
-
-    let oponentes = [
-        {id:"o1", x:50, y:0, vel:1.4},
-        {id:"o2", x:50, y:0, vel:1.5},
-        {id:"o3", x:50, y:0, vel:1.3}
+    let carriles = [
+        ALTO * 0.15,
+        ALTO * 0.35,
+        ALTO * 0.55,
+        ALTO * 0.75
     ];
 
-    let inicio = true; // cuenta regresiva activa
-    let t0 = Date.now(); // tiempo de inicio
+    let jugador = {
+        id:"p",
+        x:50,
+        y:carriles[0]
+    };
 
-    let juegoActivo = true; // si el juego sigue corriendo
-    let resultado = ""; // texto final
+    let oponentes = [
+        {id:"o1", x:50, y:carriles[1], vel:2.3},
+        {id:"o2", x:50, y:carriles[2], vel:2.5},
+        {id:"o3", x:50, y:carriles[3], vel:2.2}
+    ];
 
-    let tiempoInicio = 0; // tiempo cuando empieza la carrera
-    let tiempoFinal = 0; // tiempo al terminar
+    let inicio = true;
+    let t0 = Date.now();
 
-    let velJugador = 0; // velocidad del jugador
-    let puede = true; // control para evitar spam de movimiento
+    let juegoActivo = true;
+    let resultado = "";
 
-    let puedeReiniciar = false;
+    let tiempoInicio = 0;
+    let tiempoFinal = 0;
 
-    let estado = "inicio"; 
-    // "inicio" | "jugando" | "final"
+    let velJugador = 0;
+    let puede = true;
+    let estado = "inicio";
 
     // =========================
-    // AJUSTA TAMAÑO Y CARRILES
+    // 🏆 MEJORES TIEMPOS
     // =========================
-    // Ajusta el tamaño del canvas y posiciones de las pistas
-    function resize(){
+    let mejoresTiempos = JSON.parse(
+        localStorage.getItem("mejoresTiemposCarrera")
+    ) || [];
 
-        const maxW = Math.min(window.innerWidth * 0.82, 1120);
-        const maxH = Math.min(window.innerHeight * 0.58, 520);
+    function guardarTiempo(){
 
-        canvas.width = maxW;   // ancho del canvas
-        canvas.height = maxH;  // alto del canvas
+        if(resultado !== "YOU WIN"){
+            return;
+        }
 
-        META = canvas.width * 0.82; // posición de la meta
+        let tiempoNumero = parseFloat(tiempoFinal);
 
-        // posiciones verticales de los carriles
-        carriles = [
-            canvas.height*0.15,
-            canvas.height*0.35,
-            canvas.height*0.55,
-            canvas.height*0.75
-        ];
+        mejoresTiempos.push(tiempoNumero);
 
-        // asigna carril al jugador
-        jugador.y = carriles[0];
+        mejoresTiempos.sort((a,b) => a - b);
 
-        // asigna carriles a oponentes
-        oponentes.forEach((o,i)=>{
-            o.y = carriles[i+1];
-        });
+        mejoresTiempos = mejoresTiempos.slice(0,5);
+
+        localStorage.setItem(
+            "mejoresTiemposCarrera",
+            JSON.stringify(mejoresTiempos)
+        );
     }
 
-    window.addEventListener("resize", resize); // cuando cambia tamaño pantalla
-    window.addEventListener("orientationchange", resize); // rotación celular
-    resize(); // ejecuta al inicio
+    // =========================
+    // 🔁 REINICIAR JUEGO
+    // =========================
+    function reiniciarJuego(){
 
+        jugador.x = 50;
+        jugador.y = carriles[0];
+
+        oponentes = [
+            {id:"o1", x:50, y:carriles[1], vel:2.3},
+            {id:"o2", x:50, y:carriles[2], vel:2.5},
+            {id:"o3", x:50, y:carriles[3], vel:2.2}
+        ];
+
+        inicio = true;
+        t0 = Date.now();
+
+        juegoActivo = true;
+        resultado = "";
+
+        tiempoInicio = 0;
+        tiempoFinal = 0;
+
+        velJugador = 0;
+        puede = true;
+        estado = "inicio";
+
+        canvas.style.cursor = "default";
+    }
 
     // =========================
-    // MOVIMIENTO DEL JUGADOR
+    // 🏍️ MOVIMIENTO DEL JUGADOR
     // =========================
-    // Aumenta velocidad cuando el jugador presiona
     function mover(){
+
+        if(estado === "final"){
+            reiniciarJuego();
+            return;
+        }
+
         if(!inicio && juegoActivo && puede){
+
             velJugador += 2.6;
             puede = false;
 
@@ -187,213 +283,325 @@ function juegoCarrera(container){
         }
     }
 
-
     // =========================
-    // CONTROLES CON TECLADO
+    // ⌨️ CONTROLES CON TECLADO
     // =========================
-    let spaceLock = false; // evita mantener presionada la tecla
+    let spaceLock = false;
 
     document.addEventListener("keydown", e=>{
-        if(e.code==="Space"){
-            e.preventDefault(); // evita scroll
+
+        if(e.code === "Space"){
+
+            e.preventDefault();
 
             if(!spaceLock){
                 spaceLock = true;
                 mover();
             }
         }
+
+        if(e.code === "Enter" && estado === "final"){
+            reiniciarJuego();
+        }
     });
 
     document.addEventListener("keyup", e=>{
-        if(e.code==="Space"){
+
+        if(e.code === "Space"){
             spaceLock = false;
         }
     });
 
-
     // =========================
-    // CONTROLES CON CLICK Y TOUCH
+    // 📱 CONTROLES CLICK Y TOUCH
     // =========================
-    // permite jugar tocando o clicando
-    canvas.addEventListener("click", ()=>{
-        if(estado === "jugando"){
-            mover();
-        }
+    canvas.addEventListener("click", mover);
 
-        if(estado === "final"){
-            reiniciarJuego();
-        }
-    });
+    canvas.addEventListener("touchstart", e=>{
 
-    canvas.addEventListener("touchstart",(e)=>{
         e.preventDefault();
+        mover();
 
-        if(estado === "jugando"){
-            mover();
-        }
-
-        if(estado === "final"){
-            reiniciarJuego();
-        }
     },{passive:false});
 
-
     // =========================
-    // FONDO DEL JUEGO
+    // 🌌 FONDO DEL JUEGO
     // =========================
-    // Dibuja el fondo con degradado y estrellas
     function fondo(){
 
-        let g = ctx.createLinearGradient(0,0,0,canvas.height);
+        let g = ctx.createLinearGradient(0,0,0,ALTO);
 
         g.addColorStop(0,"#17002e");
         g.addColorStop(0.45,"#3d0878");
         g.addColorStop(1,"#a855f7");
 
         ctx.fillStyle = g;
-        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillRect(0,0,ANCHO,ALTO);
 
-        // estrellas decorativas
-        ctx.fillStyle="rgba(255,255,255,.7)";
+        ctx.fillStyle = "rgba(255,255,255,.7)";
 
         for(let i=0;i<55;i++){
-            let x = (i * 137) % canvas.width;
-            let y = (i * 91) % canvas.height;
+
+            let x = (i * 137) % ANCHO;
+            let y = (i * 91) % ALTO;
+
             ctx.fillRect(x,y,2,2);
         }
     }
 
-
     // =========================
-    // META
+    // 🛣️ PISTAS DEL JUEGO
     // =========================
-    // Dibuja la línea de meta tipo bandera
-    function meta(){
+    function dibujarPistas(){
 
-        let s = 18;
-        let w = s * 3;
-
-        ctx.shadowColor="#ffffff";
-        ctx.shadowBlur=12;
-
-        for(let y=0;y<canvas.height;y+=s){
-            for(let x=0;x<w;x+=s){
-                ctx.fillStyle = ((x+y)/s%2===0) ? "#fff" : "#111";
-                ctx.fillRect(META+x,y,s,s);
-            }
-        }
-
-        ctx.shadowBlur=0;
-    }
-
-
-    // =========================
-    // DIBUJA LAS MOTOS
-    // =========================
-    // Renderiza cada personaje en pantalla
-    function dibujar(img,x,y){
-        ctx.drawImage(img, x-52, y-31, 104, 84);
-    }
-
-
-    // =========================
-    // FUNCIÓN PARA REINICIAR EL JUEGO
-    // =========================
-    function reiniciarJuego(){
-
-        jugador.x = 50;
-        velJugador = 0;
-
-        oponentes.forEach(o=>{
-            o.x = 50;
-            o.tiempo = null;
-        });
-
-        resultado = "";
-
-        inicio = true;
-        t0 = Date.now();
-
-        tiempoInicio = 0;
-        tiempoFinal = 0;
-
-        juegoActivo = true;
-
-        estado = "inicio";
-    }
-
-    // =========================
-    // LOOP PRINCIPAL DEL JUEGO
-    // =========================
-    // Este es el ciclo que dibuja todo el juego cada frame
-    function loop(){
-
-        fondo();
-
-        // borde del canvas
-        ctx.strokeStyle="#ff8df3";
-        ctx.lineWidth=4;
-        ctx.shadowColor="#ff4de1";
-        ctx.shadowBlur=14;
-        ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
-        ctx.shadowBlur=0;
-
-        // pistas del juego
         carriles.forEach((y,i)=>{
 
-            let pista = ctx.createLinearGradient(20,y,canvas.width-20,y);
+            let pista = ctx.createLinearGradient(20,y,ANCHO-20,y);
 
             pista.addColorStop(0,"rgba(255,166,230,.60)");
             pista.addColorStop(0.5,"rgba(255,210,245,.78)");
             pista.addColorStop(1,"rgba(255,166,230,.60)");
 
-            ctx.fillStyle=pista;
-            ctx.fillRect(28,y,canvas.width-56,58);
+            ctx.fillStyle = pista;
+            ctx.fillRect(28,y,ANCHO-56,58);
 
-            ctx.strokeStyle="rgba(255,255,255,.35)";
-            ctx.lineWidth=2;
-            ctx.strokeRect(28,y,canvas.width-56,58);
+            ctx.strokeStyle = "rgba(255,255,255,.35)";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(28,y,ANCHO-56,58);
 
-            for(let x=45;x<canvas.width-45;x+=82){
-                ctx.fillStyle="rgba(255,255,255,.88)";
+            for(let x=45;x<ANCHO-45;x+=82){
+
+                ctx.fillStyle = "rgba(255,255,255,.88)";
                 ctx.fillRect(x,y+26,42,7);
             }
 
-            ctx.fillStyle="rgba(255,255,255,.32)";
-            ctx.font="18px Quicksand";
-            ctx.textAlign="left";
-            ctx.fillText("✦", 38, y+20);
+            ctx.fillStyle = "rgba(255,255,255,.32)";
+            ctx.font = "18px Quicksand";
+            ctx.textAlign = "left";
+            ctx.fillText("✦",38,y+20);
         });
+    }
 
+    // =========================
+    // 🏁 META
+    // =========================
+    function meta(){
+
+        let s = 18;
+        let w = s * 3;
+
+        ctx.shadowColor = "#ffffff";
+        ctx.shadowBlur = 12;
+
+        for(let y=0;y<ALTO;y+=s){
+
+            for(let x=0;x<w;x+=s){
+
+                ctx.fillStyle =
+                ((x+y)/s%2===0) ? "#fff" : "#111";
+
+                ctx.fillRect(META+x,y,s,s);
+            }
+        }
+
+        ctx.shadowBlur = 0;
+    }
+
+    // =========================
+    // 🏍️ DIBUJAR MOTOS
+    // =========================
+    function dibujar(img,x,y){
+
+        if(img.complete && img.naturalWidth > 0){
+
+            ctx.drawImage(
+                img,
+                x - 52,
+                y - 31,
+                104,
+                84
+            );
+        }
+    }
+
+    // =========================
+    // 💀 GAME OVER / FINAL
+    // =========================
+    function mostrarGameOver(){
+
+        ctx.fillStyle = "rgba(0,0,0,.74)";
+        ctx.fillRect(0,0,ANCHO,ALTO);
+
+        // PANEL
+        let gradiente = ctx.createLinearGradient(
+            260,
+            120,
+            950,
+            620
+        );
+
+        gradiente.addColorStop(0,"rgba(255,122,246,.20)");
+        gradiente.addColorStop(1,"rgba(184,77,255,.20)");
+
+        ctx.fillStyle = gradiente;
+
+        ctx.beginPath();
+        ctx.roundRect(260,80,680,560,40);
+        ctx.fill();
+
+        // BORDE
+        ctx.strokeStyle = "rgba(255,255,255,.35)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // TÍTULO
+        ctx.textAlign = "center";
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 72px Quicksand";
+
+        ctx.fillText(
+            resultado,
+            ANCHO/2,
+            170
+        );
+
+        // TIEMPO
+        ctx.fillStyle = "#ffb3f5";
+        ctx.font = "bold 30px Quicksand";
+
+        ctx.fillText(
+            "⏱ Tiempo: " + tiempoFinal + "s",
+            ANCHO/2,
+            235
+        );
+
+        // MENSAJE
+        ctx.fillStyle = "#ffe066";
+        ctx.font = "bold 32px Quicksand";
+
+        if(resultado === "YOU WIN"){
+            ctx.fillText("Ganaste la carrera 🏁",ANCHO/2,290);
+        }
+        else{
+            ctx.fillText("Sigue intentando 🏍️",ANCHO/2,290);
+        }
+
+        // MEJORES TIEMPOS
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 34px Quicksand";
+
+        ctx.fillText(
+            "🏆 Mejores Tiempos",
+            ANCHO/2,
+            360
+        );
+
+        // TABLA
+        ctx.fillStyle = "rgba(0,0,0,.18)";
+        ctx.beginPath();
+        ctx.roundRect(390,390,420,150,20);
+        ctx.fill();
+
+        ctx.font = "bold 24px Quicksand";
+
+        if(mejoresTiempos.length === 0){
+
+            ctx.fillStyle = "white";
+            ctx.fillText(
+                "Aún no hay tiempos",
+                ANCHO/2,
+                465
+            );
+
+        }else{
+
+            mejoresTiempos.forEach((t,i)=>{
+
+                ctx.fillStyle = i === 0 ? "#ffd43b" : "#ffffff";
+
+                ctx.fillText(
+                    (i+1) + ". " + t + "s",
+                    ANCHO/2,
+                    425 + i*24
+                );
+            });
+        }
+
+        // REINICIAR
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "22px Quicksand";
+
+        ctx.fillText(
+            "Toca la pantalla o presiona Enter para reiniciar",
+            ANCHO/2,
+            615
+        );
+    }
+
+    // =========================
+    // 🔄 LOOP PRINCIPAL
+    // =========================
+    function loop(){
+
+        fondo();
+
+        // BORDE DEL CANVAS
+        ctx.strokeStyle = "#ff8df3";
+        ctx.lineWidth = 4;
+        ctx.shadowColor = "#ff4de1";
+        ctx.shadowBlur = 14;
+
+        ctx.strokeRect(
+            10,
+            10,
+            ANCHO - 20,
+            ALTO - 20
+        );
+
+        ctx.shadowBlur = 0;
+
+        // PISTAS
+        dibujarPistas();
+
+        // META
         meta();
 
-        // cuenta regresiva
+        // CUENTA REGRESIVA
         if(inicio){
 
-            let s=(Date.now()-t0)/1000;
-            let txt=["3","2","1","GO!"][Math.floor(s)] || "";
+            let s = (Date.now() - t0) / 1000;
+            let txt = ["3","2","1","GO!"][Math.floor(s)] || "";
 
-            if(s>3){
+            if(s > 3){
+
                 inicio = false;
                 estado = "jugando";
                 tiempoInicio = Date.now();
             }
 
             if(txt){
-                ctx.font="72px Quicksand";
-                ctx.textAlign="center";
-                ctx.fillStyle="#ff8df3";
-                ctx.shadowColor="#ff4de1";
-                ctx.shadowBlur=25;
-                ctx.fillText(txt,canvas.width/2,canvas.height/2);
-                ctx.shadowBlur=0;
+
+                ctx.font = "bold 72px Quicksand";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#ff8df3";
+                ctx.shadowColor = "#ff4de1";
+                ctx.shadowBlur = 25;
+
+                ctx.fillText(
+                    txt,
+                    ANCHO/2,
+                    ALTO/2
+                );
+
+                ctx.shadowBlur = 0;
             }
 
             requestAnimationFrame(loop);
             return;
         }
 
-        // lógica del juego
+        // LÓGICA DEL JUEGO
         if(juegoActivo){
 
             jugador.x += velJugador;
@@ -403,16 +611,18 @@ function juegoCarrera(container){
                 o.x += o.vel;
             });
 
-            // ganador jugador
             if(jugador.x >= META){
+
                 juegoActivo = false;
                 resultado = "YOU WIN";
                 tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+                guardarTiempo();
             }
 
-            // ganador oponente
             oponentes.forEach(o=>{
+
                 if(o.x >= META && juegoActivo){
+
                     juegoActivo = false;
                     resultado = "GAME OVER";
                     tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
@@ -420,64 +630,50 @@ function juegoCarrera(container){
             });
         }
 
-        // dibuja personajes
+        // MOTOS
         dibujar(imgJugador,jugador.x,jugador.y);
         dibujar(imgSally,oponentes[0].x,oponentes[0].y);
         dibujar(imgCharlie,oponentes[1].x,oponentes[1].y);
         dibujar(imgWood,oponentes[2].x,oponentes[2].y);
 
-        // pantalla final
-        if(!juegoActivo){
-
-            ctx.fillStyle="rgba(20,0,45,.38)";
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-
-            ctx.fillStyle="rgba(255,220,250,.18)";
-            ctx.fillRect(canvas.width/2-235,canvas.height/2-60,470,105);
-
-            ctx.strokeStyle="#ff8df3";
-            ctx.lineWidth=3;
-            ctx.strokeRect(canvas.width/2-235,canvas.height/2-60,470,105);
-
-            ctx.font="55px Quicksand";
-            ctx.textAlign="center";
-            ctx.fillStyle="#ff8df3";
-            ctx.shadowColor="#ff4de1";
-            ctx.shadowBlur=22;
-            ctx.fillText(resultado,canvas.width/2,canvas.height/2+10);
-            ctx.shadowBlur=0;
-
-            estado = "final";
-            canvas.style.cursor = "pointer";
-
-            // mensaje de reinicio
-            ctx.font = "28px Quicksand";
-            ctx.fillText("Toca para reiniciar", canvas.width/2, canvas.height/2 + 90);
-        }
-
-        // =========================
         // CRONÓMETRO
-        // =========================
-        // Muestra el tiempo de la carrera
         if(!inicio){
 
             let tiempoActual;
 
             if(juegoActivo){
                 tiempoActual = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
-            } else {
+            }else{
                 tiempoActual = tiempoFinal;
             }
 
-            ctx.font = "26px Quicksand";
+            ctx.font = "bold 26px Quicksand";
             ctx.fillStyle = "#ffffff";
             ctx.textAlign = "left";
 
-            ctx.fillText("⏱ " + tiempoActual + "s", 30, 40);
+            ctx.fillText(
+                "⏱ " + tiempoActual + "s",
+                30,
+                45
+            );
+        }
+
+        // FINAL
+        if(!juegoActivo){
+
+            estado = "final";
+            canvas.style.cursor = "pointer";
+            mostrarGameOver();
+
+            requestAnimationFrame(loop);
+            return;
         }
 
         requestAnimationFrame(loop);
     }
 
+    // =========================
+    // ▶️ INICIAR JUEGO
+    // =========================
     loop();
 }

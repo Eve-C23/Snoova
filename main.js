@@ -41,8 +41,8 @@ function abrirJuego(nombre){
         game.innerHTML = "";
 
         // abrir juego
-        if(nombre === "gato"){
-            juegoGato(game);
+        if(nombre === "flappy"){
+            juegoFlappySnoopy(game);
         }
 
         else if(nombre === "frutas"){

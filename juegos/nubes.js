@@ -2,33 +2,70 @@ function juegoNubes(contenedor){
 
     contenedor.innerHTML = `
     <div style="text-align:center; position:relative;">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
 
-        <h2 style="
-            font-family:Arial;
-            color:white;
-            text-shadow:
-                0 0 8px #fff,
-                0 0 15px #ff8fab,
-                0 0 25px #a855f7;
-            font-size:42px;
-            margin-bottom:12px;
-            letter-spacing:2px;
-        ">
-            ☁️ Snoopy Sky Jump ☁️
-        </h2>
+        <!-- TITULO MODERNO -->
 
-        <canvas id="nubesGame"
-        width="800"
-        height="500"
-        style="
-            border-radius:30px;
-            border:4px solid rgba(255,255,255,0.8);
+        <div style="
+            width:50%;
+            margin:auto;
+            margin-bottom:20px;
+
+            background:linear-gradient(
+                90deg,
+                #c084fc,
+                #f472b6
+            );
+
+            border-radius:35px;
+
+            padding:8px;
 
             box-shadow:
-            0 0 15px #ff8fab,
-            0 0 30px rgba(168,85,247,0.5);
+            0 0 25px rgba(244,114,182,0.45);
+
+        ">
+
+           <h2 style="
+                font-family:'Baloo 2', Arial;
+                color:white;
+                margin:0;
+                font-size:50px;
+                font-weight:bold;
+                letter-spacing:2px;
+                position:relative;
+                text-shadow:
+                5px 6px 0 rgba(0,0,0,.18),
+                0 4px 10px rgba(0,0,0,0.25);
+            ">
+                SNOOPY SKY JUMP
+            </h2>
+
+            <p style="
+                color:rgba(255,255,255,0.9);
+                margin-top:10px;
+                font-size:28px;
+                font-family:'Baloo 2', Arial;
+            ">
+                Salta entre las nubes ☁️✨
+            </p>
+
+        </div>
+
+        <canvas id="nubesGame"
+        width="1200"
+        height="700"
+        style="
+            border-radius:35px;
+            border:4px solid rgba(255,255,255,0.85);
+
+            box-shadow:
+            0 0 20px #ff8fab,
+            0 0 45px rgba(168,85,247,0.55);
 
             background:black;
+            cursor:pointer;
+            touch-action:none;
         "></canvas>
 
     </div>
@@ -36,6 +73,18 @@ function juegoNubes(contenedor){
 
     const canvas = document.getElementById("nubesGame");
     const ctx = canvas.getContext("2d");
+
+    // =================================================
+    // REINICIAR CON CLICK
+    // =================================================
+
+    canvas.addEventListener("click", ()=>{
+
+        if(gameOver){
+
+            juegoNubes(contenedor);
+        }
+    });
 
     // =================================================
     // IMAGENES
@@ -51,22 +100,70 @@ function juegoNubes(contenedor){
     estrella.src = "img/estrella.png";
 
     // =================================================
+    // AUDIO
+    // =================================================
+
+    const sonidoMoneda = new Audio(
+        "audio/coin.mp3"
+    );
+
+    sonidoMoneda.volume = 0.4;
+
+    const sonidoGameOver = new Audio(
+        "audio/gameover.mp3"
+    );
+
+    sonidoGameOver.volume = 0.5;
+
+    // =================================================
+    // TOP SCORES
+    // =================================================
+
+    let mejoresPuntajes =
+    JSON.parse(
+        localStorage.getItem(
+            "topScoresNubes"
+        )
+    ) || [];
+
+    function guardarScore(){
+
+        mejoresPuntajes.push(puntos);
+
+        mejoresPuntajes.sort(
+            (a,b)=> b-a
+        );
+
+        mejoresPuntajes =
+        mejoresPuntajes.slice(0,5);
+
+        localStorage.setItem(
+
+            "topScoresNubes",
+
+            JSON.stringify(
+                mejoresPuntajes
+            )
+        );
+    }
+
+    // =================================================
     // JUGADOR
     // =================================================
 
     const jugador = {
 
-        x: 380,
-        y: 320,
+        x: 560,
+        y: 500,
 
-        w: 90,
-        h: 90,
+        w: 120,
+        h: 120,
 
         velY: 0,
 
-        salto: -16,
+        salto: -19,
 
-        velocidad: 7
+        velocidad: 8
     };
 
     // =================================================
@@ -78,17 +175,58 @@ function juegoNubes(contenedor){
 
     document.addEventListener("keydown", (e)=>{
 
-        if(e.key === "ArrowLeft") izquierda = true;
+        if(e.key === "ArrowLeft")
+        izquierda = true;
 
-        if(e.key === "ArrowRight") derecha = true;
+        if(e.key === "ArrowRight")
+        derecha = true;
     });
 
     document.addEventListener("keyup", (e)=>{
 
-        if(e.key === "ArrowLeft") izquierda = false;
+        if(e.key === "ArrowLeft")
+        izquierda = false;
 
-        if(e.key === "ArrowRight") derecha = false;
+        if(e.key === "ArrowRight")
+        derecha = false;
     });
+
+    // =================================================
+    // MOUSE
+    // =================================================
+
+    canvas.addEventListener("mousemove", (e)=>{
+
+        const rect =
+        canvas.getBoundingClientRect();
+
+        const mouseX =
+        (e.clientX - rect.left) *
+        (1200 / rect.width);
+
+        jugador.x =
+        mouseX - jugador.w/2;
+    });
+    //=================================================
+    // TOUCH CELULAR
+    // =================================================
+
+    canvas.addEventListener("touchmove", (e)=>{
+
+        e.preventDefault();
+
+        const rect =
+        canvas.getBoundingClientRect();
+
+        const touchX =
+        (e.touches[0].clientX - rect.left) *
+        (1200 / rect.width);
+
+        jugador.x =
+        touchX - jugador.w/2;
+
+    }, { passive:false });
+
 
     // =================================================
     // PLATAFORMAS
@@ -100,29 +238,25 @@ function juegoNubes(contenedor){
 
         plataformas = [];
 
-        // nube inicial
-
         plataformas.push({
 
-            x: 320,
-            y: 420,
+            x: 520,
+            y: 600,
 
-            w: 140,
-            h: 80
+            w: 180,
+            h: 90
         });
 
-        // demás nubes
-
-        for(let i=1;i<9;i++){
+        for(let i=1;i<8;i++){
 
             plataformas.push({
 
-                x: Math.random()*550 + 80,
+                x: Math.random()*850 + 100,
 
-                y: i*65,
+                y: i*95,
 
-                w: 140,
-                h: 80
+                w: 180,
+                h: 90
             });
         }
     }
@@ -146,10 +280,10 @@ function juegoNubes(contenedor){
 
                 monedas.push({
 
-                    x: p.x + 45,
-                    y: p.y - 25,
+                    x: p.x + 70,
+                    y: p.y - 30,
 
-                    size: 30,
+                    size: 40,
 
                     tomada: false,
 
@@ -167,12 +301,12 @@ function juegoNubes(contenedor){
 
     let estrellas = [];
 
-    for(let i=0;i<25;i++){
+    for(let i=0;i<40;i++){
 
         estrellas.push({
 
-            x: Math.random()*800,
-            y: Math.random()*500,
+            x: Math.random()*1200,
+            y: Math.random()*700,
 
             size: Math.random()*4 + 2,
 
@@ -191,7 +325,7 @@ function juegoNubes(contenedor){
     // DIFICULTAD
     // =================================================
 
-    let velocidadMapa = 1;
+    let velocidadMapa = 0.35;
 
     // =================================================
     // GAME OVER
@@ -199,34 +333,7 @@ function juegoNubes(contenedor){
 
     let gameOver = false;
 
-    let botonReiniciar = null;
-
-    // =================================================
-    // BOTON REINICIAR
-    // =================================================
-
-    canvas.addEventListener("click", (e)=>{
-
-        if(!gameOver || !botonReiniciar) return;
-
-        const rect = canvas.getBoundingClientRect();
-
-        let mx = e.clientX - rect.left;
-        let my = e.clientY - rect.top;
-
-        if(
-
-            mx > botonReiniciar.x &&
-            mx < botonReiniciar.x + botonReiniciar.w &&
-
-            my > botonReiniciar.y &&
-            my < botonReiniciar.y + botonReiniciar.h
-
-        ){
-
-            juegoNubes(contenedor);
-        }
-    });
+    let scoreGuardado = false;
 
     // =================================================
     // FONDO
@@ -234,17 +341,34 @@ function juegoNubes(contenedor){
 
     function dibujarFondo(){
 
-        let gradiente = ctx.createLinearGradient(0,0,0,500);
+        let gradiente =
+        ctx.createLinearGradient(
+            0,0,0,700
+        );
 
-        gradiente.addColorStop(0,"#120458");
-        gradiente.addColorStop(0.5,"#5f0a87");
-        gradiente.addColorStop(1,"#a4508b");
+        gradiente.addColorStop(
+            0,
+            "#120458"
+        );
+
+        gradiente.addColorStop(
+            0.5,
+            "#5f0a87"
+        );
+
+        gradiente.addColorStop(
+            1,
+            "#a4508b"
+        );
 
         ctx.fillStyle = gradiente;
 
-        ctx.fillRect(0,0,800,500);
-
-        // estrellas
+        ctx.fillRect(
+            0,
+            0,
+            1200,
+            700
+        );
 
         estrellas.forEach(s=>{
 
@@ -263,26 +387,6 @@ function juegoNubes(contenedor){
         });
 
         ctx.globalAlpha = 1;
-
-        // montañas
-
-        ctx.fillStyle = "rgba(255,255,255,0.05)";
-
-        ctx.beginPath();
-
-        ctx.moveTo(0,500);
-
-        for(let i=0;i<=800;i+=100){
-
-            ctx.lineTo(
-                i,
-                420 + Math.sin(i*0.01)*20
-            );
-        }
-
-        ctx.lineTo(800,500);
-
-        ctx.fill();
     }
 
     // =================================================
@@ -291,10 +395,6 @@ function juegoNubes(contenedor){
 
     function dibujarJugador(){
 
-        ctx.shadowColor = "rgba(0,0,0,0.3)";
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetY = 6;
-
         ctx.drawImage(
             snoopy,
             jugador.x,
@@ -302,8 +402,6 @@ function juegoNubes(contenedor){
             jugador.w,
             jugador.h
         );
-
-        ctx.shadowBlur = 0;
     }
 
     // =================================================
@@ -314,20 +412,20 @@ function juegoNubes(contenedor){
 
         plataformas.forEach(p=>{
 
-            ctx.shadowColor = "rgba(255,255,255,0.5)";
-            ctx.shadowBlur = 12;
-
-            const escala = 0.15;
+            const escala = 0.20;
 
             ctx.drawImage(
+
                 nube,
+
                 p.x,
+
                 p.y,
+
                 nube.width * escala,
+
                 nube.height * escala
             );
-
-            ctx.shadowBlur = 0;
         });
     }
 
@@ -343,9 +441,6 @@ function juegoNubes(contenedor){
 
             m.rotacion += 0.08;
 
-            ctx.shadowColor = "#ffd43b";
-            ctx.shadowBlur = 15;
-
             ctx.fillStyle = "#ffd43b";
 
             ctx.beginPath();
@@ -353,14 +448,13 @@ function juegoNubes(contenedor){
             ctx.arc(
                 m.x,
                 m.y,
-                m.size/2 + Math.sin(m.rotacion)*2,
+                m.size/2 +
+                Math.sin(m.rotacion)*2,
                 0,
                 Math.PI*2
             );
 
             ctx.fill();
-
-            // centro
 
             ctx.fillStyle = "#fff3bf";
 
@@ -375,8 +469,6 @@ function juegoNubes(contenedor){
             );
 
             ctx.fill();
-
-            ctx.shadowBlur = 0;
         });
     }
 
@@ -386,50 +478,48 @@ function juegoNubes(contenedor){
 
     function interfaz(){
 
-        ctx.fillStyle = "rgba(255,255,255,0.08)";
+        ctx.fillStyle =
+        "rgba(255,255,255,0.08)";
 
-        ctx.fillRect(15,15,220,140);
+        ctx.beginPath();
 
-        ctx.strokeStyle = "rgba(255,255,255,0.15)";
-        ctx.strokeRect(15,15,220,140);
-
-        ctx.fillStyle = "#ffd43b";
-
-        ctx.font = "bold 20px Arial";
-        ctx.fillText("⭐ Puntos: " + puntos, 30, 45);
-
-        ctx.fillStyle = "white";
-
-        ctx.font = "bold 18px Arial";
-        ctx.fillText("☁️ Altura: " + altura + "m", 30, 75);
-
-        ctx.font = "bold 18px Arial";
-        ctx.fillStyle = "#ffd43b";
-        ctx.fillText("🪙 Monedas: " + totalMonedas, 30, 105);
-
-        ctx.fillStyle = "white";
-
-        ctx.font = "16px Arial";
-        ctx.fillText("← → mover", 30, 135);
-
-        // dificultad
-
-        ctx.fillStyle = "rgba(255,255,255,0.15)";
-        ctx.fillRect(600,25,160,18);
-
-        ctx.fillStyle = "#ff4d6d";
-
-        ctx.fillRect(
-            600,
+        ctx.roundRect(
             25,
-            Math.min(160, velocidadMapa*40),
-            18
+            25,
+            320,
+            180,
+            25
+        );
+
+        ctx.fill();
+
+        ctx.fillStyle = "#ffd43b";
+
+        ctx.font = "bold 28px Arial";
+
+        ctx.fillText(
+            "⭐ Puntos: " + puntos,
+            45,
+            70
         );
 
         ctx.fillStyle = "white";
 
-        ctx.font = "bold 16px Arial";
-        ctx.fillText("Dificultad", 640, 18);
+        ctx.font = "bold 24px Arial";
+
+        ctx.fillText(
+            "☁️ Altura: " + altura + "m",
+            45,
+            115
+        );
+
+        ctx.fillStyle = "#ffd43b";
+
+        ctx.fillText(
+            "🪙 Monedas: " + totalMonedas,
+            45,
+            160
+        );
     }
 
     // =================================================
@@ -438,37 +528,32 @@ function juegoNubes(contenedor){
 
     function actualizar(){
 
-        // mover
-
         if(izquierda){
 
-            jugador.x -= jugador.velocidad;
+            jugador.x -=
+            jugador.velocidad;
         }
 
         if(derecha){
 
-            jugador.x += jugador.velocidad;
+            jugador.x +=
+            jugador.velocidad;
         }
 
-        // atravesar pantalla
+        if(jugador.x > 1200){
 
-        if(jugador.x > 800){
-
-            jugador.x = -jugador.w;
+            jugador.x =
+            -jugador.w;
         }
 
         if(jugador.x < -jugador.w){
 
-            jugador.x = 800;
+            jugador.x = 1200;
         }
 
-        // gravedad
-
-        jugador.velY += 0.55;
+        jugador.velY += 0.42;
 
         jugador.y += jugador.velY;
-
-        // colisiones
 
         plataformas.forEach(p=>{
 
@@ -476,92 +561,119 @@ function juegoNubes(contenedor){
 
                 jugador.velY > 0 &&
 
-                jugador.x + jugador.w > p.x + 25 &&
+                jugador.x + jugador.w >
+                p.x + 25 &&
 
-                jugador.x < p.x + p.w &&
+                jugador.x <
+                p.x + p.w &&
 
-                jugador.y + jugador.h > p.y &&
+                jugador.y + jugador.h >
+                p.y &&
 
-                jugador.y + jugador.h < p.y + 25
+                jugador.y + jugador.h <
+                p.y + 25
 
             ){
 
-                jugador.velY = jugador.salto;
+                jugador.velY =
+                jugador.salto;
             }
         });
-
-        // monedas
 
         monedas.forEach(m=>{
 
             if(m.tomada) return;
 
-            let dx = jugador.x + jugador.w/2 - m.x;
-            let dy = jugador.y + jugador.h/2 - m.y;
+            let dx =
+            jugador.x +
+            jugador.w/2 - m.x;
 
-            let distancia = Math.sqrt(dx*dx + dy*dy);
+            let dy =
+            jugador.y +
+            jugador.h/2 - m.y;
 
-            if(distancia < 45){
+            let distancia =
+            Math.sqrt(dx*dx + dy*dy);
+
+            if(distancia < 55){
 
                 m.tomada = true;
 
                 puntos += 150;
 
                 totalMonedas++;
+
+                sonidoMoneda.currentTime = 0;
+
+                sonidoMoneda.play();
             }
         });
 
-        // subir mapa
+        if(jugador.y < 320){
 
-        if(jugador.y < 220){
+            let diff =
+            320 - jugador.y;
 
-            let diff = 220 - jugador.y;
+            jugador.y = 320;
 
-            jugador.y = 220;
+            puntos +=
+            Math.floor(diff);
 
-            puntos += Math.floor(diff);
-
-            altura += Math.floor(diff/12);
+            altura +=
+            Math.floor(diff/12);
 
             plataformas.forEach(p=>{
 
-                p.y += diff * velocidadMapa;
+                p.y +=
+                diff * velocidadMapa;
 
-                // reciclar nube
+                if(p.y > 750){
 
-                if(p.y > 550){
+                    p.y = -90;
 
-                    p.y = -60;
-
-                    p.x = Math.random()*550 + 80;
-
-                    p.w = Math.max(90, 140 - puntos/1000);
+                    p.x =
+                    Math.random()*850 + 100;
                 }
             });
 
             monedas.forEach(m=>{
 
-                m.y += diff * velocidadMapa;
+                m.y +=
+                diff * velocidadMapa;
 
-                if(m.y > 550){
+                if(m.y > 750){
 
-                    m.y = -40;
-                    m.x = Math.random()*700 + 40;
+                    m.y = -50;
+
+                    m.x =
+                    Math.random()*1000 + 50;
 
                     m.tomada = false;
                 }
             });
         }
 
-        // dificultad
+        velocidadMapa =
+        0.35 +
+        Math.pow(
+            puntos / 4000,
+            1.12
+        );
 
-        velocidadMapa = 1 + puntos/2500;
-
-        // perder
-
-        if(jugador.y > 550){
+        if(jugador.y > 750){
 
             gameOver = true;
+
+            if(!scoreGuardado){
+
+                guardarScore();
+
+                scoreGuardado = true;
+
+                sonidoGameOver.currentTime = 0;
+
+                sonidoGameOver.play();
+            }
         }
     }
 
@@ -571,78 +683,207 @@ function juegoNubes(contenedor){
 
     function mostrarGameOver(){
 
-        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillStyle =
+        "rgba(0,0,0,.78)";
 
-        ctx.fillRect(0,0,800,500);
-
-        ctx.shadowColor = "#ff4d6d";
-        ctx.shadowBlur = 20;
-
-        ctx.fillStyle = "white";
-
-        ctx.font = "bold 60px Arial";
-
-        ctx.fillText("GAME OVER", 180, 170);
-
-        ctx.shadowBlur = 0;
-
-        // puntos
-
-        ctx.font = "bold 30px Arial";
-
-        ctx.fillText(
-            "⭐ Puntos: " + puntos,
-            280,
-            240
+        ctx.fillRect(
+            0,
+            0,
+            1200,
+            700
         );
 
-        ctx.fillText(
-            "🪙 Monedas: " + totalMonedas,
-            270,
-            290
+        let panelX = 180;
+        let panelY = 60;
+
+        let panelW = 840;
+        let panelH = 560;
+
+        let gradiente =
+        ctx.createLinearGradient(
+
+            panelX,
+
+            panelY,
+
+            panelX + panelW,
+
+            panelY
         );
 
-        // botón
+        gradiente.addColorStop(
+            0,
+            "transparent"
+        );
 
-        botonReiniciar = {
+        gradiente.addColorStop(
+            1,
+            "transparent"
+        );
 
-            x: 270,
-            y: 340,
-
-            w: 250,
-            h: 65
-        };
-
-        ctx.shadowColor = "#ff8fab";
-        ctx.shadowBlur = 15;
-
-        ctx.fillStyle = "#ff4d6d";
+        ctx.fillStyle = gradiente;
 
         ctx.beginPath();
 
         ctx.roundRect(
-            botonReiniciar.x,
-            botonReiniciar.y,
-            botonReiniciar.w,
-            botonReiniciar.h,
-            18
+
+            panelX,
+
+            panelY,
+
+            panelW,
+
+            panelH,
+
+            35
         );
 
         ctx.fill();
 
-        ctx.shadowBlur = 0;
-
-        // texto
+        ctx.textAlign = "center";
 
         ctx.fillStyle = "white";
 
-        ctx.font = "bold 28px Arial";
+        ctx.font =
+        "bold 76px Arial";
 
         ctx.fillText(
-            "REINICIAR",
-            325,
-            382
+
+            "GAME OVER",
+
+            600,
+
+            145
         );
+
+        ctx.font =
+        "30px Arial";
+
+        ctx.fillText(
+
+            "Sigue intentando ☁️✨",
+
+            600,
+
+            195
+        );
+
+        ctx.font =
+        "bold 42px Arial";
+
+        ctx.fillStyle =
+        "#fff3bf";
+
+        ctx.fillText(
+
+            "⭐ Puntos: " + puntos,
+
+            600,
+
+            270
+        );
+
+        ctx.fillText(
+
+            "🪙 Monedas: " + totalMonedas,
+
+            600,
+
+            325
+        );
+
+        ctx.font =
+        "bold 26px Arial";
+
+        ctx.fillStyle =
+        "rgba(255,255,255,.85)";
+
+        ctx.fillText(
+
+            "Haz click para reiniciar",
+
+            600,
+
+            370
+        );
+
+        // =================================================
+        // TOP SCORES
+        // =================================================
+
+        ctx.fillStyle = "white";
+
+        ctx.font =
+        "bold 36px Arial";
+
+        ctx.fillText(
+
+            "🏆 Mejores Puntajes",
+
+            600,
+
+            430
+        );
+
+        let tablaX = 385;
+        let tablaY = 455;
+
+        let tablaW = 430;
+        let tablaH = 150;
+
+        ctx.fillStyle =
+        "rgba(0,0,0,.18)";
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+
+            tablaX,
+
+            tablaY,
+
+            tablaW,
+
+            tablaH,
+
+            20
+        );
+
+        ctx.fill();
+
+        ctx.font =
+        "bold 25px Arial";
+
+        mejoresPuntajes.forEach((p,i)=>{
+
+            ctx.fillStyle =
+            "rgba(255,255,255,.10)";
+
+            ctx.fillRect(
+
+                tablaX + 20,
+
+                tablaY + 12 + (i*28),
+
+                tablaW - 40,
+
+                2
+            );
+
+            ctx.fillStyle = "white";
+
+            ctx.fillText(
+
+                (i+1) +
+                ".   " +
+                p +
+                " pts",
+
+                600,
+
+                tablaY + 38 + (i*28)
+            );
+        });
     }
 
     // =================================================
@@ -672,8 +913,6 @@ function juegoNubes(contenedor){
             mostrarGameOver();
         }
     }
-
-    // iniciar sobre nube
 
     jugador.velY = 0;
 

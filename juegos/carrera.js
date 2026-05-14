@@ -217,11 +217,11 @@ function juegoCarrera(container){
     // permite jugar tocando o clicando
     canvas.addEventListener("click", ()=>{
         if(estado === "jugando"){
-            mover(); // acelera
+            mover();
         }
 
         if(estado === "final"){
-            reiniciarJuego(); // reinicia
+            reiniciarJuego();
         }
     });
 
@@ -375,6 +375,7 @@ function juegoCarrera(container){
 
             if(s>3){
                 inicio = false;
+                estado = "jugando";
                 tiempoInicio = Date.now();
             }
 
@@ -390,8 +391,6 @@ function juegoCarrera(container){
 
             requestAnimationFrame(loop);
             return;
-
-            estado = "jugando";
         }
 
         // lógica del juego
@@ -455,9 +454,6 @@ function juegoCarrera(container){
             ctx.font = "28px Quicksand";
             ctx.fillText("Toca para reiniciar", canvas.width/2, canvas.height/2 + 90);
         }
-
-        puedeReiniciar = true;
-        canvas.style.cursor = "pointer";
 
         // =========================
         // CRONÓMETRO

@@ -1080,9 +1080,7 @@ function mostrarGameOver(){
 
         
     });
-
 }
-
 
 
     // =====================================
@@ -1111,6 +1109,15 @@ function mostrarGameOver(){
 
             
         }
+
+        ctx.fillText(
+
+            "Haz click para reiniciar",
+
+            600,
+
+            370
+        );
         
     }
 

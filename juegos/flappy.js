@@ -1036,14 +1036,6 @@ function mostrarGameOver(){
 
     ctx.fill();
 
-    ctx.fillText(
-
-        "Haz click para reiniciar",
-
-        600,
-
-        370
-    );
 
     // PUNTAJES
 
@@ -1078,6 +1070,14 @@ function mostrarGameOver(){
             tablaY + 42 + (i*30)
         );
 
+        ctx.fillText(
+
+            "Haz click para reiniciar",
+
+            600,
+
+            370
+        );
         
     });
 }
@@ -1109,15 +1109,7 @@ function mostrarGameOver(){
 
             
         }
-
-        ctx.fillText(
-
-            "Haz click para reiniciar",
-
-            600,
-
-            370
-        );
+        
         
     }
 

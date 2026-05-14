@@ -1068,6 +1068,15 @@ function mostrarGameOver(){
 
             tablaY + 42 + (i*30)
         );
+
+        ctx.fillText(
+
+            "Haz click para reiniciar",
+
+            600,
+
+            370
+        );
     });
 
 }

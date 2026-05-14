@@ -53,19 +53,12 @@ function juegoNubes(contenedor){
         </div>
 
         <canvas id="nubesGame"
-        let W = window.innerWidth;
-        let H = window.innerHeight * 0.85;
-
-        canvas.width = W;
-        canvas.height = H;
         style="
             border-radius:35px;
             border:4px solid rgba(255,255,255,0.85);
-
             box-shadow:
             0 0 20px #ff8fab,
             0 0 45px rgba(168,85,247,0.55);
-
             background:black;
             cursor:pointer;
             touch-action:none;
@@ -73,6 +66,18 @@ function juegoNubes(contenedor){
 
     </div>
     `;
+
+    const canvas = document.getElementById("nubesGame");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas(){
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight * 0.85;
+    }
+
+    resizeCanvas();
+
+    const canvas = document.getElementById("nubesGame");
 
     window.addEventListener("resize", ()=>{
         let W = window.innerWidth;
@@ -82,7 +87,6 @@ function juegoNubes(contenedor){
         canvas.height = H;
     });
 
-    const canvas = document.getElementById("nubesGame");
     const baseW = 1200;
     const baseH = 700;
 
@@ -363,6 +367,24 @@ function juegoNubes(contenedor){
 
     let scoreGuardado = false;
 
+    function rectRedondeado(x, y, w, h, r){
+
+        ctx.beginPath();
+
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+
+        ctx.closePath();
+        ctx.fill();
+    }
+
     // =================================================
     // FONDO
     // =================================================
@@ -506,13 +528,7 @@ function juegoNubes(contenedor){
 
         ctx.beginPath();
 
-        ctx.roundRect(
-            25,
-            25,
-            320,
-            180,
-            25
-        );
+        rectRedondeado(25, 25, 320, 180, 25);
 
         ctx.fill();
 
@@ -748,18 +764,7 @@ function juegoNubes(contenedor){
 
         ctx.beginPath();
 
-        ctx.roundRect(
-
-            panelX,
-
-            panelY,
-
-            panelW,
-
-            panelH,
-
-            35
-        );
+        rectRedondeado(panelX, panelY, panelW, panelH, 35);
 
         ctx.fill();
 
@@ -859,18 +864,7 @@ function juegoNubes(contenedor){
 
         ctx.beginPath();
 
-        ctx.roundRect(
-
-            tablaX,
-
-            tablaY,
-
-            tablaW,
-
-            tablaH,
-
-            20
-        );
+        rectRedondeado(tablaX, tablaY, tablaW, tablaH, 20);
 
         ctx.fill();
 

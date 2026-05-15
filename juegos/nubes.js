@@ -4,29 +4,24 @@ function juegoNubes(contenedor){
     <div style="text-align:center; position:relative;">
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
 
-        <!-- TITULO MODERNO -->
+        <!-- TITULO -->
 
         <div style="
             width:50%;
             margin:auto;
             margin-bottom:20px;
-
             background:linear-gradient(
                 90deg,
                 #c084fc,
                 #f472b6
             );
-
             border-radius:35px;
-
             padding:8px;
-
             box-shadow:
             0 0 25px rgba(244,114,182,0.45);
-
         ">
 
-        <h2 style="
+           <h2 style="
                 font-family:'Baloo 2', Arial;
                 color:white;
                 margin:0;
@@ -66,6 +61,10 @@ function juegoNubes(contenedor){
             background:black;
             cursor:pointer;
             touch-action:none;
+
+            width:min(95vw,1200px);
+            height:auto;
+            aspect-ratio:1200/700;
         "></canvas>
 
     </div>
@@ -82,11 +81,8 @@ function juegoNubes(contenedor){
 
         if(gameOver){
 
-            // detener sonido game over
-        sonidoGameOver.pause();
-
-        // regresar al inicio del audio
-        sonidoGameOver.currentTime = 0;
+            sonidoGameOver.pause();
+            sonidoGameOver.currentTime = 0;
 
             juegoNubes(contenedor);
         }
@@ -122,17 +118,15 @@ function juegoNubes(contenedor){
     sonidoGameOver.volume = 0.4;
 
     // =================================================
-    // MUSICA DE FONDO
+    // MUSICA
     // =================================================
 
-        const musicaFondo = new Audio(
-            "audio/musica.mp3"
-        );
+    const musicaFondo = new Audio(
+        "audio/musica.mp3"
+    );
 
-        musicaFondo.volume = 0.5;
-
-        // para que se repita sola
-        musicaFondo.loop = true;
+    musicaFondo.volume = 0.5;
+    musicaFondo.loop = true;
 
     // =================================================
     // TOP SCORES
@@ -226,8 +220,9 @@ function juegoNubes(contenedor){
         jugador.x =
         mouseX - jugador.w/2;
     });
-    //=================================================
-    // TOUCH CELULAR
+
+    // =================================================
+    // TOUCH
     // =================================================
 
     canvas.addEventListener("touchmove", (e)=>{
@@ -245,7 +240,6 @@ function juegoNubes(contenedor){
         touchX - jugador.w/2;
 
     }, { passive:false });
-
 
     // =================================================
     // PLATAFORMAS
@@ -685,7 +679,6 @@ function juegoNubes(contenedor){
 
              musicaFondo.pause();
 
-
             if(!scoreGuardado){
 
                 guardarScore();
@@ -700,13 +693,14 @@ function juegoNubes(contenedor){
     }
 
     // =================================================
-    // GAME OVER
+    // GAME OVER NUEVO
     // =================================================
 
     function mostrarGameOver(){
 
+        // FONDO OSCURO
         ctx.fillStyle =
-        "rgba(0,0,0,.78)";
+        "rgba(0,0,0,.55)";
 
         ctx.fillRect(
             0,
@@ -715,35 +709,16 @@ function juegoNubes(contenedor){
             700
         );
 
-        let panelX = 180;
-        let panelY = 60;
+        // PANEL PRINCIPAL
 
-        let panelW = 840;
-        let panelH = 560;
+        let panelX = 300;
+        let panelY = 90;
 
-        let gradiente =
-        ctx.createLinearGradient(
+        let panelW = 600;
+        let panelH = 520;
 
-            panelX,
-
-            panelY,
-
-            panelX + panelW,
-
-            panelY
-        );
-
-        gradiente.addColorStop(
-            0,
-            "transparent"
-        );
-
-        gradiente.addColorStop(
-            1,
-            "transparent"
-        );
-
-        ctx.fillStyle = gradiente;
+        ctx.fillStyle =
+        "rgba(86,31,120,.68)";
 
         ctx.beginPath();
 
@@ -762,12 +737,41 @@ function juegoNubes(contenedor){
 
         ctx.fill();
 
+        // BORDE
+
+        ctx.strokeStyle =
+        "rgba(255,255,255,.30)";
+
+        ctx.lineWidth = 3;
+
+        ctx.stroke();
+
+        // RECUADRO TITULO
+
+        ctx.fillStyle =
+        "rgba(255,255,255,.08)";
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+
+            360,
+            120,
+            480,
+            115,
+            28
+        );
+
+        ctx.fill();
+
+        // TITULO
+
         ctx.textAlign = "center";
 
         ctx.fillStyle = "white";
 
         ctx.font =
-        "bold 76px Arial";
+        "bold 66px 'Baloo 2', Arial";
 
         ctx.fillText(
 
@@ -775,26 +779,16 @@ function juegoNubes(contenedor){
 
             600,
 
-            145
-        );
-
-        ctx.font =
-        "30px Arial";
-
-        ctx.fillText(
-
-            "Sigue intentando ☁️✨",
-
-            600,
-
             195
         );
 
-        ctx.font =
-        "bold 42px Arial";
+        // PUNTOS
 
         ctx.fillStyle =
-        "#fff3bf";
+        "#ffb6ef";
+
+        ctx.font =
+        "bold 30px 'Baloo 2', Arial";
 
         ctx.fillText(
 
@@ -802,8 +796,13 @@ function juegoNubes(contenedor){
 
             600,
 
-            270
+            285
         );
+
+        // MONEDAS
+
+        ctx.fillStyle =
+        "#ffe066";
 
         ctx.fillText(
 
@@ -811,108 +810,100 @@ function juegoNubes(contenedor){
 
             600,
 
-            325
+            335
         );
 
-    
+        // TOP 5
 
-        // =================================================
-        // TOP SCORES
-        // =================================================
-
-        ctx.fillStyle = "white";
+        ctx.fillStyle =
+        "#ffd84d";
 
         ctx.font =
-        "bold 36px Arial";
+        "bold 34px 'Baloo 2', Arial";
 
         ctx.fillText(
 
-            "🏆 Mejores Puntajes",
+            "🏆 TOP 5",
 
             600,
 
-            430
+            405
         );
 
-        let tablaX = 385;
-        let tablaY = 455;
-
-        let tablaW = 430;
-        let tablaH = 150;
+        // TABLA
 
         ctx.fillStyle =
-        "rgba(0,0,0,.18)";
+        "rgba(255,255,255,.05)";
 
         ctx.beginPath();
 
         ctx.roundRect(
 
-            tablaX,
-
-            tablaY,
-
-            tablaW,
-
-            tablaH,
-
+            420,
+            430,
+            360,
+            135,
             20
         );
 
         ctx.fill();
 
         ctx.font =
-        "bold 25px Arial";
+        "bold 24px 'Baloo 2', Arial";
 
-mejoresPuntajes.forEach((p,i)=>{
+        mejoresPuntajes.forEach((p,i)=>{
 
-    ctx.fillStyle =
-    "rgba(255,255,255,.10)";
+            ctx.fillStyle =
+            "rgba(255,255,255,.08)";
 
-    ctx.fillRect(
+            ctx.fillRect(
 
-        tablaX + 20,
+                455,
 
-        tablaY + 12 + (i*28),
+                455 + (i * 24),
 
-        tablaW - 40,
+                290,
 
-        2
-    );
+                2
+            );
 
-    ctx.fillStyle = "white";
+            ctx.fillStyle =
 
-    ctx.fillText(
+            i === 0
 
-        (i+1) +
-        ".   " +
-        p +
-        " pts",
+            ? "#ffe75c"
 
-        600,
+            : "white";
 
-        tablaY + 38 + (i*28)
-    );
-});
+            ctx.fillText(
 
-// =====================================
-// REINICIAR ABAJO DE LA TABLA
-// =====================================
+                (i + 1) +
+                ". " +
+                p +
+                " pts",
 
-ctx.font =
-"bold 26px Arial";
+                600,
 
-ctx.fillStyle =
-"rgba(255,255,255,.85)";
+                478 + (i * 24)
+            );
+        });
 
-ctx.fillText(
+        // REINICIAR
 
-    "Haz click para reiniciar",
+        ctx.fillStyle =
+        "rgba(255,255,255,.92)";
 
-    600,
+        ctx.font =
+        "bold 23px 'Baloo 2', Arial";
 
-    655
-);
-        
+        ctx.fillText(
+
+            "Haz click para reiniciar",
+
+            600,
+
+            595
+        );
     }
 
     // =================================================

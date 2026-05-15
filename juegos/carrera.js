@@ -216,34 +216,27 @@ function juegoCarrera(container){
 
         let records = obtenerRecords();
 
-        let x = ANCHO/2 - 180;
-        let y = 465;
-        let w = 360;
-        let h = 112;
-
-        ctx.fillStyle = "rgba(255,255,255,.14)";
-        ctx.beginPath();
-        ctx.roundRect(x,y,w,h,22);
-        ctx.fill();
-
-        ctx.strokeStyle = "rgba(255,255,255,.35)";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
         ctx.fillStyle = "#ffe066";
-        ctx.font = "bold 21px Quicksand";
+        ctx.font = "bold 34px Quicksand";
         ctx.textAlign = "center";
-        ctx.fillText("🏆 5 MEJORES RÉCORDS", ANCHO/2, y + 30);
+        ctx.fillText("🏆 TOP 5", ANCHO/2, 370);
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "18px Quicksand";
+        ctx.font = "bold 24px Quicksand";
 
         if(records.length === 0){
-            ctx.fillText("Aún no hay récords", ANCHO/2, y + 70);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText("Aún no hay récords", ANCHO/2, 425);
         }
         else{
             records.forEach((r,i)=>{
-                ctx.fillText(`${i+1}. ${r.toFixed(1)}s`, ANCHO/2, y + 58 + (i * 18));
+
+                ctx.fillStyle = i === 0 ? "#ffe066" : "#ffffff";
+
+                ctx.fillText(
+                    `${i+1}. ${r.toFixed(1)}s`,
+                    ANCHO/2,
+                    420 + (i * 35)
+                );
             });
         }
     }
@@ -416,42 +409,42 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // META REDONDEADA SIN SALIRSE
+    // META REDONDEADA SIN BRILLO
     // =========================
     function meta(){
 
-        let s = 18;
+        let s = 20;
         let w = s * 3;
-        let xMeta = Math.min(META, ANCHO - w - 25);
-        let yMeta = 25;
-        let hMeta = ALTO - 50;
+        let xMeta = Math.min(META, ANCHO - w - 70);
+        let yMeta = 20;
+        let hMeta = ALTO - 40;
 
         ctx.save();
 
-        ctx.shadowColor = "#ffffff";
-        ctx.shadowBlur = 12;
-
         ctx.beginPath();
-        ctx.roundRect(xMeta, yMeta, w, hMeta, 16);
+        ctx.roundRect(xMeta, yMeta, w, hMeta, 18);
         ctx.clip();
 
-        for(let y=yMeta; y<yMeta + hMeta; y+=s){
+        for(let y = yMeta; y < yMeta + hMeta; y += s){
 
-            for(let x=0; x<w; x+=s){
+            for(let x = 0; x < w; x += s){
 
-                ctx.fillStyle = ((x+y)/s%2===0) ? "#fff" : "#111";
+                let fila = Math.floor((y - yMeta) / s);
+                let col = Math.floor(x / s);
+
+                ctx.fillStyle = (fila + col) % 2 === 0 ? "#ffffff" : "#111111";
+
                 ctx.fillRect(xMeta + x, y, s, s);
             }
         }
 
         ctx.restore();
 
-        ctx.shadowBlur = 0;
-
         ctx.strokeStyle = "rgba(255,255,255,.65)";
         ctx.lineWidth = 3;
+
         ctx.beginPath();
-        ctx.roundRect(xMeta, yMeta, w, hMeta, 16);
+        ctx.roundRect(xMeta, yMeta, w, hMeta, 18);
         ctx.stroke();
     }
 
@@ -477,59 +470,43 @@ function juegoCarrera(container){
     // =========================
     function mostrarFinal(){
 
-        ctx.fillStyle = "rgba(0,0,0,.74)";
+        ctx.fillStyle = "rgba(0,0,0,.55)";
         ctx.fillRect(0,0,ANCHO,ALTO);
 
         let gradiente = ctx.createLinearGradient(260,120,950,620);
 
-        gradiente.addColorStop(0,"rgba(255,122,246,.20)");
-        gradiente.addColorStop(1,"rgba(184,77,255,.20)");
+        gradiente.addColorStop(0,"rgba(89,31,112,.72)");
+        gradiente.addColorStop(1,"rgba(69,21,100,.72)");
 
         ctx.fillStyle = gradiente;
 
         ctx.beginPath();
-        ctx.roundRect(260,80,680,560,40);
+        ctx.roundRect(280,90,640,530,38);
         ctx.fill();
 
-        ctx.strokeStyle = "rgba(255,255,255,.35)";
+        ctx.strokeStyle = "rgba(255,255,255,.28)";
         ctx.lineWidth = 3;
         ctx.stroke();
 
         ctx.textAlign = "center";
 
         ctx.fillStyle = "white";
-        ctx.font = "bold 72px Quicksand";
-
-        ctx.fillText(resultado,ANCHO/2,200);
+        ctx.font = "bold 70px Quicksand";
+        ctx.fillText(resultado, ANCHO/2, 195);
 
         ctx.fillStyle = "#ffb3f5";
-        ctx.font = "bold 32px Quicksand";
-
-        if(resultado === "YOU WIN"){
-            ctx.fillText("Ganaste la carrera 🏁✨",ANCHO/2,265);
-        }
-        else{
-            ctx.fillText("Sigue intentando 🏍️✨",ANCHO/2,265);
-        }
-
-        ctx.fillStyle = "#ffe066";
-        ctx.font = "bold 34px Quicksand";
-
-        ctx.fillText("🏁 SNOOPY RACE",ANCHO/2,335);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "26px Quicksand";
-
-        ctx.fillText("⏱ Tiempo: " + tiempoFinal + "s",ANCHO/2,395);
+        ctx.font = "bold 30px Quicksand";
+        ctx.fillText("Tiempo: " + tiempoFinal + "s", ANCHO/2, 265);
 
         dibujarTablaRecords();
 
+        ctx.fillStyle = "#ffffff";
         ctx.font = "22px Quicksand";
 
         ctx.fillText(
             "Toca la pantalla o presiona Enter para reiniciar",
             ANCHO/2,
-            615
+            590
         );
     }
 
@@ -647,7 +624,7 @@ function juegoCarrera(container){
             ctx.fillStyle = "#ffffff";
             ctx.textAlign = "left";
 
-            ctx.fillText("⏱ " + tiempoActual + "s",30,40);
+            ctx.fillText("⏱️ " + tiempoActual + "s",30,40);
         }
 
         requestAnimationFrame(loop);

@@ -165,6 +165,34 @@ function juegoDino(container){
     const imgRecord = new Image();
     imgRecord.src = "record.png";
 
+        // =========================================
+        // AUDIO
+        // =========================================
+
+        // MUSICA DE FONDO
+        const musicaFondo = new Audio(
+            "audio/musica.mp3"
+        );
+
+        musicaFondo.volume = 0.5;
+        musicaFondo.loop = true;
+
+        // GAME OVER
+        const sonidoGameOver = new Audio(
+            "audio/gameover.mp3"
+        );
+
+        sonidoGameOver.volume = 0.7;
+
+        // MONEDA
+        const sonidoMoneda = new Audio(
+            "audio/coin.mp3"
+        );
+
+        sonidoMoneda.volume = 0.5;
+
+
+
     let jugador;
     let obstaculos = [];
     let monedas = [];
@@ -209,6 +237,16 @@ function juegoDino(container){
     }
 
     function init(){
+
+        // CORTAR GAME OVER
+        sonidoGameOver.pause();
+
+        sonidoGameOver.currentTime = 0;
+
+        // REINICIAR MUSICA
+        musicaFondo.currentTime = 0;
+
+        musicaFondo.play();
 
         jugador = {
             x:100,
@@ -287,39 +325,51 @@ function juegoDino(container){
         true
     );
 
-    // =========================================
-    // TOUCH
-    // =========================================
+        // =========================================
+        // TOUCH
+        // =========================================
 
-    canvas.addEventListener("touchstart",(e)=>{
+        canvas.addEventListener("touchstart",(e)=>{
 
-        e.preventDefault();
+            e.preventDefault();
 
-        if(!juegoActivo){
+            // INICIAR MUSICA
+            if(musicaFondo.paused){
 
-            init();
+                musicaFondo.play();
+            }
 
-        }else{
+            if(!juegoActivo){
 
-            saltar();
-        }
-    });
+                init();
 
-    // =========================================
-    // CLICK
-    // =========================================
+            }else{
 
-    canvas.addEventListener("click",()=>{
+                saltar();
+            }
+        });
 
-        if(!juegoActivo){
+        // =========================================
+        // CLICK
+        // =========================================
 
-            init();
+        canvas.addEventListener("click",()=>{
 
-        }else{
+            // INICIAR MUSICA
+            if(musicaFondo.paused){
 
-            saltar();
-        }
-    });
+                musicaFondo.play();
+            }
+
+            if(!juegoActivo){
+
+                init();
+
+            }else{
+
+                saltar();
+            }
+        });
 
     function fondo(){
 
@@ -672,7 +722,18 @@ function juegoDino(container){
                 jugador.y < o.y+o.h &&
                 jugador.y+jugador.h > o.y
             ){
+
                 juegoActivo = false;
+
+                // CORTAR MUSICA
+                musicaFondo.pause();
+
+                musicaFondo.currentTime = 0;
+
+                // SONIDO GAME OVER
+                sonidoGameOver.currentTime = 0;
+
+                sonidoGameOver.play();
             }
         }
 
@@ -686,7 +747,13 @@ function juegoDino(container){
 
             if(hit){
 
+                // SONIDO MONEDA
+                sonidoMoneda.currentTime = 0;
+
+                sonidoMoneda.play();
+
                 m.tomada = true;
+
                 coins++;
 
                 return false;
@@ -722,5 +789,6 @@ function juegoDino(container){
     }
 
     init();
+    musicaFondo.play();
     loop();
 }

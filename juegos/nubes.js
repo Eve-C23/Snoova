@@ -9,54 +9,70 @@ function juegoNubes(contenedor){
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 
         <div style="
-            width:70%;
+            width:min(980px, 92vw);
             margin:auto;
-            margin-bottom:25px;
-            background:linear-gradient(90deg,#c084fc,#f472b6);
-            border-radius:35px;
-            padding:22px 10px;
-            box-shadow:0 0 25px rgba(244,114,182,0.45);
+            padding:38px 38px 22px;
+            background:rgba(15,0,45,0.82);
+            border:4px solid rgba(236,72,153,0.35);
+            border-radius:38px;
+            box-shadow:
+                0 0 25px rgba(236,72,153,0.65),
+                inset 0 0 35px rgba(168,85,247,0.18);
         ">
 
-           <h2 style="
-                font-family:'Baloo 2', Arial;
-                color:white;
-                margin:0;
-                font-size:50px;
-                font-weight:800;
-                letter-spacing:3px;
-                text-shadow:
-                5px 6px 0 rgba(0,0,0,.18),
-                0 4px 10px rgba(0,0,0,0.25);
+            <div style="
+                width:100%;
+                box-sizing:border-box;
+                margin:0 auto 32px;
+                background:linear-gradient(90deg,#f472b6,#e879f9);
+                border-radius:28px;
+                padding:18px 10px;
+                box-shadow:0 0 22px rgba(244,114,182,0.45);
             ">
-                SNOOPY SKY JUMP ✨
-            </h2>
 
-            <p style="
-                color:rgba(255,255,255,0.9);
-                margin-top:6px;
-                font-size:24px;
-                font-family:'Baloo 2', Arial;
-            ">
-                Salta entre las nubes ☁️✨
-            </p>
+                <h2 style="
+                    font-family:'Baloo 2', Arial;
+                    color:white;
+                    margin:0;
+                    font-size:clamp(30px, 5vw, 50px);
+                    font-weight:800;
+                    letter-spacing:3px;
+                    text-shadow:
+                    5px 6px 0 rgba(0,0,0,.18),
+                    0 4px 10px rgba(0,0,0,0.25);
+                ">
+                    SNOOPY SKY JUMP ✨
+                </h2>
+
+                <p style="
+                    color:rgba(255,255,255,0.9);
+                    margin:2px 0 0;
+                    font-size:clamp(15px, 2.5vw, 24px);
+                    font-family:'Baloo 2', Arial;
+                ">
+                    Salta entre las nubes ☁️✨
+                </p>
+
+            </div>
+
+            <canvas id="nubesGame"
+            width="1200"
+            height="700"
+            style="
+                width:100%;
+                max-width:1200px;
+                height:auto;
+                border-radius:35px;
+                border:4px solid rgba(255,255,255,0.85);
+                box-shadow:
+                0 0 20px #ff8fab,
+                0 0 45px rgba(168,85,247,0.55);
+                background:black;
+                cursor:pointer;
+                touch-action:none;
+            "></canvas>
 
         </div>
-
-        <canvas id="nubesGame"
-        width="1200"
-        height="700"
-        style="
-            border-radius:35px;
-            border:4px solid rgba(255,255,255,0.85);
-            box-shadow:
-            0 0 20px #ff8fab,
-            0 0 45px rgba(168,85,247,0.55);
-            background:black;
-            cursor:pointer;
-            touch-action:none;
-        "></canvas>
-
     </div>
     `;
 
@@ -99,9 +115,7 @@ function juegoNubes(contenedor){
     function guardarScore(){
 
         mejoresPuntajes.push(puntos);
-
         mejoresPuntajes.sort((a,b)=> b-a);
-
         mejoresPuntajes = mejoresPuntajes.slice(0,5);
 
         localStorage.setItem(
@@ -124,25 +138,16 @@ function juegoNubes(contenedor){
     let derecha = false;
 
     document.addEventListener("keydown", (e)=>{
-
-        if(e.key === "ArrowLeft")
-        izquierda = true;
-
-        if(e.key === "ArrowRight")
-        derecha = true;
+        if(e.key === "ArrowLeft") izquierda = true;
+        if(e.key === "ArrowRight") derecha = true;
     });
 
     document.addEventListener("keyup", (e)=>{
-
-        if(e.key === "ArrowLeft")
-        izquierda = false;
-
-        if(e.key === "ArrowRight")
-        derecha = false;
+        if(e.key === "ArrowLeft") izquierda = false;
+        if(e.key === "ArrowRight") derecha = false;
     });
 
     canvas.addEventListener("mousemove", (e)=>{
-
         const rect = canvas.getBoundingClientRect();
 
         const mouseX =
@@ -153,7 +158,6 @@ function juegoNubes(contenedor){
     });
 
     canvas.addEventListener("touchmove", (e)=>{
-
         e.preventDefault();
 
         const rect = canvas.getBoundingClientRect();

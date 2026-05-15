@@ -66,6 +66,10 @@ function juegoMemorama(container){
 
     const ctx = canvas.getContext("2d");
 
+    // =====================================
+    // AJUSTAR PANTALLA
+    // =====================================
+
     function ajustarPantalla(){
 
         const vw = window.innerWidth;
@@ -135,7 +139,7 @@ function juegoMemorama(container){
         imagenes.push(img);
     });
 
-  // =====================================
+    // =====================================
     // AUDIO
     // =====================================
 
@@ -148,31 +152,24 @@ function juegoMemorama(container){
     const sonidoMatch =
     new Audio("audio/match.mp3");
 
-    // NUEVO
     const sonidoGameOver =
     new Audio("audio/gameover.mp3");
 
     sonidoClick.volume = 0.5;
     sonidoWin.volume = 0.7;
     sonidoMatch.volume = 0.6;
-
-    // NUEVO
     sonidoGameOver.volume = 0.7;
 
-
-
-     // =================================================
+    // =====================================
     // MUSICA DE FONDO
-    // =================================================
+    // =====================================
 
-        const musicaFondo = new Audio(
-            "audio/musica.mp3"
-        );
+    const musicaFondo = new Audio(
+        "audio/musica.mp3"
+    );
 
-        musicaFondo.volume = 0.5;
-
-        // para que se repita sola
-        musicaFondo.loop = true;
+    musicaFondo.volume = 0.5;
+    musicaFondo.loop = true;
 
     // =====================================
     // VARIABLES
@@ -241,18 +238,12 @@ function juegoMemorama(container){
     // REINICIAR
     // =====================================
 
-    // =====================================
-    // REINICIAR
-    // =====================================
-
     function reiniciarJuego(){
 
-        // NUEVO
         sonidoGameOver.pause();
 
         sonidoGameOver.currentTime = 0;
 
-        // NUEVO
         musicaFondo.currentTime = 0;
 
         musicaFondo.play();
@@ -286,9 +277,10 @@ function juegoMemorama(container){
 
         intentos = 0;
     }
+
     reiniciarJuego();
 
-// =====================================
+    // =====================================
     // CLICK
     // =====================================
 
@@ -301,7 +293,6 @@ function juegoMemorama(container){
             c=>c.encontrada
         ).length / 2;
 
-        // INICIAR MUSICA SI ESTA PAUSADA
         if(
             musicaFondo.paused &&
             pares !== 10
@@ -312,9 +303,6 @@ function juegoMemorama(container){
 
         if(bloqueado) return;
 
-        // NUEVO
-        // SI YA GANO Y TOCA LA PANTALLA
-        // SE REINICIA EL JUEGO
         if(pares === 10){
 
             reiniciarJuego();
@@ -917,7 +905,7 @@ function juegoMemorama(container){
         });
 
         // =====================================
-        // GANAR
+        // GANAR / GAME OVER
         // =====================================
 
         if(
@@ -935,12 +923,9 @@ function juegoMemorama(container){
             !sonidoVictoria
         ){
 
-            // NUEVO
             musicaFondo.pause();
 
             musicaFondo.currentTime = 0;
-
-            // NUEVO
 
             sonidoWin.currentTime = 0;
 
@@ -952,7 +937,7 @@ function juegoMemorama(container){
         if(pares === 10){
 
             ctx.fillStyle =
-            "rgba(0,0,0,.82)";
+            "rgba(0,0,0,.55)";
 
             ctx.fillRect(
                 0,
@@ -961,45 +946,75 @@ function juegoMemorama(container){
                 BASE_H
             );
 
+            let panelX = 455;
+            let panelY = 170;
+
+            let panelW = 540;
+            let panelH = 590;
+
+            let gradiente =
+            ctx.createLinearGradient(
+                panelX,
+                panelY,
+                panelX,
+                panelY + panelH
+            );
+
+            gradiente.addColorStop(
+                0,
+                "rgba(115,70,170,.45)"
+            );
+
+            gradiente.addColorStop(
+                1,
+                "rgba(55,25,90,.38)"
+            );
+
+            ctx.fillStyle = gradiente;
+
+            ctx.beginPath();
+
+            ctx.roundRect(
+                panelX,
+                panelY,
+                panelW,
+                panelH,
+                28
+            );
+
+            ctx.fill();
+
+            ctx.strokeStyle =
+            "rgba(255,255,255,.35)";
+
+            ctx.lineWidth = 2;
+
+            ctx.stroke();
+
+            ctx.textAlign = "center";
+
             ctx.fillStyle = "white";
 
-            ctx.shadowColor =
-            "#b88cff";
-
-            ctx.shadowBlur = 40;
-
             ctx.font =
-            "bold 82px 'Baloo 2'";
+            "bold 60px 'Baloo 2'";
 
             ctx.fillText(
                 "¡LO LOGRASTE!",
                 725,
-                300
+                270
             );
 
-            ctx.shadowBlur = 0;
-
             ctx.font =
-            "bold 36px 'Baloo 2'";
+            "bold 26px 'Baloo 2'";
+
+            ctx.fillStyle =
+            "rgba(255,255,255,.95)";
 
             ctx.fillText(
                 "Intentos: " + intentos,
                 725,
-                370
+                325
             );
-
-            ctx.font =
-            "bold 24px 'Baloo 2'";
-
-            ctx.fillText(
-                "Toca la pantalla para jugar otra vez",
-                725,
-                420
-            );
-
-            // =====================================
-            // TOP 5
-            // =====================================
 
             ctx.font =
             "bold 34px 'Baloo 2'";
@@ -1008,50 +1023,43 @@ function juegoMemorama(container){
             "#ffd43b";
 
             ctx.fillText(
-                "🏆 Mejores Intentos",
+                "🏆 TOP 5",
                 725,
-                520
+                395
             );
-
-            // TABLA
-
-            ctx.fillStyle =
-            "rgba(255,255,255,.08)";
-
-            ctx.beginPath();
-
-            ctx.roundRect(
-                500,
-                550,
-                450,
-                210,
-                25
-            );
-
-            ctx.fill();
-
-            // LISTA
-
-            ctx.fillStyle =
-            "white";
 
             ctx.font =
             "bold 26px 'Baloo 2'";
+
+            ctx.fillStyle =
+            "white";
 
             mejoresIntentos.forEach((p,i)=>{
 
                 ctx.fillText(
 
                     (i+1) +
-                    ".  " +
+                    ". " +
                     p +
                     " intentos",
 
                     725,
 
-                    600 + (i*32)
+                    445 + (i*38)
                 );
             });
+
+            ctx.font =
+            "bold 20px 'Baloo 2'";
+
+            ctx.fillStyle =
+            "rgba(255,255,255,.92)";
+
+            ctx.fillText(
+                "Toca la pantalla para jugar otra vez",
+                725,
+                705
+            );
         }
 
         requestAnimationFrame(loop);

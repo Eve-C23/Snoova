@@ -1,3 +1,7 @@
+// =====================================
+// JUEGO FLAPPY SNOOPY
+// =====================================
+
 function juegoFlappySnoopy(contenedor){
 
     contenedor.innerHTML = `
@@ -25,7 +29,7 @@ function juegoFlappySnoopy(contenedor){
             justify-content:center;
         ">
 
-            <!-- CUADRO GRANDE -->
+            <!-- CUADRO PRINCIPAL -->
             <div style="
                 width:1120px;
                 padding:28px;
@@ -74,7 +78,7 @@ function juegoFlappySnoopy(contenedor){
                         font-size:24px;
                         font-family:'Baloo 2', Arial;
                     ">
-                        Toca la pantalla para volar
+                        Vuela en tu avión de papel
                     </p>
                 </div>
 
@@ -100,7 +104,8 @@ function juegoFlappySnoopy(contenedor){
     </div>
     `;
 
-    const stage = document.getElementById("skyStage");
+    const stage =
+    document.getElementById("skyStage");
 
     // =====================================
     // AJUSTAR PANTALLA
@@ -689,7 +694,7 @@ function juegoFlappySnoopy(contenedor){
 
             ctx.fill();
 
-            // LUCES
+            // LUCES SUPERIOR
 
             for(let y=22; y<o.arriba-28; y+=40){
 
@@ -736,7 +741,7 @@ function juegoFlappySnoopy(contenedor){
 
             ctx.fill();
 
-            // LUCES ABAJO
+            // LUCES INFERIOR
 
             for(let y=700-o.abajo+22; y<685; y+=40){
 
@@ -769,7 +774,7 @@ function juegoFlappySnoopy(contenedor){
     }
 
     // =====================================
-    // UI
+    // INTERFAZ
     // =====================================
 
     function interfaz(){
@@ -804,6 +809,38 @@ function juegoFlappySnoopy(contenedor){
             48,
             88
         );
+
+        // PANTALLA INICIAL
+
+        if(!iniciado){
+
+            ctx.textAlign = "center";
+
+            ctx.fillStyle = "white";
+
+            ctx.font =
+            "bold 60px Arial";
+
+            ctx.fillText(
+                "PRESIONA ESPACIO",
+                600,
+                280
+            );
+
+            ctx.font =
+            "bold 30px Arial";
+
+            ctx.fillStyle =
+            "rgba(255,255,255,.85)";
+
+            ctx.fillText(
+                "o haz click para empezar",
+                600,
+                340
+            );
+
+            ctx.textAlign = "start";
+        }
     }
 
     // =====================================
@@ -867,18 +904,18 @@ function juegoFlappySnoopy(contenedor){
                 )
             ){
 
-            if(!gameOver){
+                if(!gameOver){
 
-                gameOver = true;
+                    gameOver = true;
 
-                musicaFondo.pause();
+                    musicaFondo.pause();
 
-                sonidoGameOver.currentTime = 0;
+                    sonidoGameOver.currentTime = 0;
 
-                sonidoGameOver.play();
+                    sonidoGameOver.play();
 
-                guardarScore();
-            }
+                    guardarScore();
+                }
             }
         });
 
@@ -886,6 +923,8 @@ function juegoFlappySnoopy(contenedor){
         obstaculos.filter(
             o => o.x > -250
         );
+
+        // TECHO Y PISO
 
         if(
 
@@ -911,7 +950,7 @@ function juegoFlappySnoopy(contenedor){
     }
 
     // =====================================
-    // GAME OVER TRANSPARENTE
+    // GAME OVER
     // =====================================
 
     function mostrarGameOver(){
@@ -930,6 +969,8 @@ function juegoFlappySnoopy(contenedor){
         let panelY = 95;
         let panelW = 540;
         let panelH = 500;
+
+        // PANEL TRANSPARENTE
 
         let gradiente =
         ctx.createLinearGradient(

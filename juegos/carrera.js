@@ -178,6 +178,12 @@ function juegoCarrera(container){
 
     sonidoGameOver.volume = 0.7;
 
+    // VICTORIA
+    const sonidoVictoria = new Audio(
+        "audio/victoria.mp3"
+    );
+
+    sonidoVictoria.volume = 0.7;
 
 
     // =========================
@@ -271,6 +277,11 @@ function reiniciarJuego(){
     sonidoGameOver.pause();
 
     sonidoGameOver.currentTime = 0;
+
+    // CORTAR VICTORIA
+    sonidoVictoria.pause();
+
+    sonidoVictoria.currentTime = 0;
 
     // REINICIAR MUSICA
     musicaFondo.currentTime = 0;
@@ -613,31 +624,31 @@ canvas.addEventListener("touchstart", e=>{
                 o.x += o.vel;
             });
 
-            if(jugador.x >= META){
+        if(jugador.x >= META){
 
-                juegoActivo = false;
+            juegoActivo = false;
 
-                resultado = "YOU WIN";
+            resultado = "YOU WIN";
 
-                tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+            tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
 
-                // CORTAR MUSICA
-                musicaFondo.pause();
+            // CORTAR MUSICA
+            musicaFondo.pause();
 
-                musicaFondo.currentTime = 0;
+            musicaFondo.currentTime = 0;
 
-                // SONIDO GAME OVER
-                sonidoGameOver.currentTime = 0;
+            // SONIDO VICTORIA
+            sonidoVictoria.currentTime = 0;
 
-                sonidoGameOver.play();
+            sonidoVictoria.play();
 
-                if(!recordGuardado){
+            if(!recordGuardado){
 
-                    guardarRecord(tiempoFinal);
+                guardarRecord(tiempoFinal);
 
-                    recordGuardado = true;
-                }
+                recordGuardado = true;
             }
+        }
 
             oponentes.forEach(o=>{
 

@@ -254,36 +254,69 @@ function juegoDino(container){
         }
     }
 
-    window.onkeydown = function(e){
+    // =========================================
+    // TECLAS
+    // =========================================
+
+    function manejarTeclas(e){
 
         if(e.code === "Space"){
 
             e.preventDefault();
+            e.stopPropagation();
+
             saltar();
         }
 
         if(e.code === "Enter" && !juegoActivo){
 
+            e.preventDefault();
+            e.stopPropagation();
+
+            if(e.stopImmediatePropagation){
+                e.stopImmediatePropagation();
+            }
+
             init();
         }
-    };
+    }
+
+    window.addEventListener(
+        "keydown",
+        manejarTeclas,
+        true
+    );
+
+    // =========================================
+    // TOUCH
+    // =========================================
 
     canvas.addEventListener("touchstart",(e)=>{
 
         e.preventDefault();
 
         if(!juegoActivo){
+
             init();
+
         }else{
+
             saltar();
         }
     });
 
+    // =========================================
+    // CLICK
+    // =========================================
+
     canvas.addEventListener("click",()=>{
 
         if(!juegoActivo){
+
             init();
+
         }else{
+
             saltar();
         }
     });

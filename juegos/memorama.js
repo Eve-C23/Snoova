@@ -941,9 +941,6 @@ function juegoMemorama(container){
             musicaFondo.currentTime = 0;
 
             // NUEVO
-            sonidoGameOver.currentTime = 0;
-
-            sonidoGameOver.play();
 
             sonidoWin.currentTime = 0;
 

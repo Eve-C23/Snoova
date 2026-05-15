@@ -98,16 +98,17 @@ function juegoNubes(contenedor){
 
             escalaFinal = Math.min(
                 (zona.clientWidth - 20) / 1200,
-                (zona.clientHeight - 20) / 930,
                 1
             );
 
-            zona.style.alignItems = "center";
+            zona.style.alignItems = "flex-start";
             zona.style.justifyContent = "center";
-            zona.style.overflow = "hidden";
-            zona.style.paddingTop = "0";
+            zona.style.overflowY = "auto";
+            zona.style.overflowX = "hidden";
+            zona.style.paddingTop = "20px";
+            zona.style.paddingBottom = "20px";
 
-            escala.style.transformOrigin = "center center";
+            escala.style.transformOrigin = "top center";
 
         }else{
 
@@ -121,6 +122,7 @@ function juegoNubes(contenedor){
             zona.style.justifyContent = "center";
             zona.style.overflow = "hidden";
             zona.style.paddingTop = "0";
+            zona.style.paddingBottom = "0";
 
             escala.style.transformOrigin = "center center";
         }

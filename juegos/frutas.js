@@ -161,10 +161,36 @@ function juegoFrutas(container){
     // 🖼️ CARGA DE IMÁGENES
     // =========================
     const imgNube = new Image();
-    imgNube.src = "img/nube.png";
+    imgNube.src = "nube.png";
 
     const imgSnoopy = new Image();
-    imgSnoopy.src = "img/snoopyCanasta.png";
+    imgSnoopy.src = "snoopyCanasta.png";
+
+    // =========================
+    // 🔊 AUDIOS
+    // =========================
+
+    // MUSICA DE FONDO
+    const musicaFondo = new Audio(
+        "audio/musica.mp3"
+    );
+
+    musicaFondo.volume = 0.5;
+    musicaFondo.loop = true;
+
+    // GAME OVER
+    const sonidoGameOver = new Audio(
+        "audio/gameover.mp3"
+    );
+
+    sonidoGameOver.volume = 0.7;
+
+    // MONEDA
+    const sonidoCoin = new Audio(
+        "audio/coon.mp3"
+    );
+
+    sonidoCoin.volume = 0.7;
 
     // =========================
     // 🍓 VARIABLES DEL JUEGO
@@ -231,8 +257,19 @@ function juegoFrutas(container){
         teclas[e.key] = true;
 
         if(e.code === "Enter" && !juegoActivo){
-            juegoFrutas(container);
-        }
+
+    // CORTAR GAME OVER
+    sonidoGameOver.pause();
+
+    sonidoGameOver.currentTime = 0;
+
+    // REINICIAR MUSICA
+    musicaFondo.currentTime = 0;
+
+    musicaFondo.play();
+
+    juegoFrutas(container);
+}
     });
 
     document.addEventListener("keyup", e => {
@@ -441,21 +478,66 @@ function juegoFrutas(container){
         }
     }
 
-    canvas.addEventListener(
-        "touchstart",
-        moverConDedo,
-        {passive:false}
-    );
+canvas.addEventListener(
+    "touchstart",
+    e => {
 
-    canvas.addEventListener(
-        "touchmove",
-        moverConDedo,
-        {passive:false}
-    );
+        // INICIAR MUSICA
+        if(musicaFondo.paused){
+
+            musicaFondo.play();
+        }
+
+        // SI ESTÁ EN GAME OVER
+        if(!juegoActivo){
+
+            sonidoGameOver.pause();
+            sonidoGameOver.currentTime = 0;
+
+            musicaFondo.currentTime = 0;
+            musicaFondo.play();
+
+            juegoFrutas(container);
+            return;
+        }
+
+        moverConDedo(e);
+
+    },
+    {passive:false}
+);
+
+canvas.addEventListener(
+    "touchmove",
+    moverConDedo,
+    {passive:false}
+);
 
     canvas.addEventListener(
         "pointerdown",
-        moverConDedo
+        e => {
+
+            // INICIAR MUSICA
+            if(musicaFondo.paused){
+
+                musicaFondo.play();
+            }
+
+            // SI ESTÁ EN GAME OVER
+            if(!juegoActivo){
+
+                sonidoGameOver.pause();
+                sonidoGameOver.currentTime = 0;
+
+                musicaFondo.currentTime = 0;
+                musicaFondo.play();
+
+                juegoFrutas(container);
+                return;
+            }
+
+            moverConDedo(e);
+        }
     );
 
     canvas.addEventListener("pointermove", e => {
@@ -806,6 +888,12 @@ function juegoFrutas(container){
             if(tocaCanasta || tocaSnoopy){
 
                 puntos++;
+
+                // SONIDO COIN
+                sonidoCoin.currentTime = 0;
+
+                sonidoCoin.play();
+
                 frutas.splice(i,1);
             }
             else if(f.y >= ALTO-SUELO){
@@ -860,7 +948,21 @@ function juegoFrutas(container){
         // PERDER
 
         if(vidas <= 0){
+
             juegoActivo = false;
+
+            // CORTAR MUSICA DE FONDO
+            musicaFondo.pause();
+
+            musicaFondo.currentTime = 0;
+
+            // EVITAR QUE SIGA SONANDO
+            musicaFondo.loop = false;
+
+            // SONIDO GAME OVER
+            sonidoGameOver.currentTime = 0;
+
+            sonidoGameOver.play();
         }
 
         requestAnimationFrame(loop);
@@ -869,5 +971,12 @@ function juegoFrutas(container){
     // =========================
     // ▶️ INICIAR JUEGO
     // =========================
+
+    // REINICIAR MUSICA
+    musicaFondo.loop = true;
+
+    musicaFondo.currentTime = 0;
+
+    musicaFondo.play();
     loop();
 }

@@ -96,14 +96,18 @@ function juegoNubes(contenedor){
 
         if(esVertical){
 
-            escalaFinal = Math.min(zona.clientWidth / 1200, 1);
+            escalaFinal = Math.min(
+                (zona.clientWidth - 20) / 1200,
+                (zona.clientHeight - 20) / 930,
+                1
+            );
 
-            zona.style.alignItems = "flex-start";
-            zona.style.overflowY = "auto";
-            zona.style.overflowX = "hidden";
-            zona.style.paddingTop = "18px";
+            zona.style.alignItems = "center";
+            zona.style.justifyContent = "center";
+            zona.style.overflow = "hidden";
+            zona.style.paddingTop = "0";
 
-            escala.style.transformOrigin = "top center";
+            escala.style.transformOrigin = "center center";
 
         }else{
 
@@ -114,6 +118,7 @@ function juegoNubes(contenedor){
             );
 
             zona.style.alignItems = "center";
+            zona.style.justifyContent = "center";
             zona.style.overflow = "hidden";
             zona.style.paddingTop = "0";
 

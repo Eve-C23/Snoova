@@ -185,6 +185,20 @@ function juegoCarrera(container){
 
     sonidoVictoria.volume = 0.7;
 
+        // CONTADOR 3 2 1
+    const sonidoBeep = new Audio(
+        "audio/beep.mp3"
+    );
+
+    sonidoBeep.volume = 0.7;
+
+    // SONIDO GO
+    const sonidoGO = new Audio(
+        "audio/go.mp3"
+    );
+
+    sonidoGO.volume = 0.8;
+
 
     // =========================
     // VARIABLES
@@ -221,6 +235,8 @@ function juegoCarrera(container){
 
     let estado = "inicio";
     let recordGuardado = false;
+
+    let ultimoNumero = -1;
 
     // =========================
     // TABLA DE 5 MEJORES RÉCORDS
@@ -312,6 +328,8 @@ function reiniciarJuego(){
 
     estado = "inicio";
     recordGuardado = false;
+
+    ultimoNumero = -1;
     canvas.style.cursor = "default";
 }
 
@@ -590,9 +608,35 @@ canvas.addEventListener("touchstart", e=>{
         if(inicio){
 
             let s = (Date.now() - t0) / 1000;
-            let txt = ["3","2","1","GO!"][Math.floor(s)] || "";
+
+            let numero = Math.floor(s);
+
+            let txt = ["3","2","1","GO!"][numero] || "";
+
+            // =========================
+            // SONIDOS DEL CONTADOR
+            // =========================
+            if(numero !== ultimoNumero){
+
+                ultimoNumero = numero;
+
+                // SONIDO 3 2 1
+                if(numero >= 0 && numero <= 2){
+
+                    sonidoBeep.currentTime = 0;
+                    sonidoBeep.play();
+                }
+
+                // SONIDO GO
+                if(numero === 3){
+
+                    sonidoGO.currentTime = 0;
+                    sonidoGO.play();
+                }
+            }
 
             if(s > 3){
+
                 inicio = false;
                 estado = "jugando";
                 tiempoInicio = Date.now();

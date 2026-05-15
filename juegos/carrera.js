@@ -165,7 +165,7 @@ function juegoCarrera(container){
 
     // MUSICA DE FONDO
     const musicaFondo = new Audio(
-        "audio/musica.mp3"
+        "audio/carreras.mp3"
     );
 
     musicaFondo.volume = 0.5;

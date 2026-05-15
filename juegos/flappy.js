@@ -1,177 +1,140 @@
 function juegoFlappySnoopy(contenedor){
 
     contenedor.innerHTML = `
-    <div style="
-        text-align:center;
-        position:relative;
-        user-select:none;
-    ">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap');
 
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
+        .flappy-wrapper{
+            width:100%;
+            min-height:100dvh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:flex-start;
+            padding:12px;
+            box-sizing:border-box;
+            overflow:hidden;
+            user-select:none;
+            font-family:'Quicksand', sans-serif;
+        }
 
-    <!-- TITULO -->
+        .flappy-title{
+            width:min(92vw, 1200px);
+            margin-bottom:12px;
+            text-align:center;
+            background:linear-gradient(135deg,#ff8fab,#ff4da6,#b388ff);
+            border-radius:25px;
+            padding:10px;
+            box-shadow:0 0 25px rgba(255,105,180,.45);
+            border:4px solid rgba(255,255,255,.55);
+            box-sizing:border-box;
+        }
 
-    <div style="
-        width:40%;
-        margin:auto;
-        margin-bottom:18px;
-
-        background:
-        linear-gradient(
-            135deg,
-            rgba(22,6,45,.95),
-            rgba(58,13,122,.95),
-            rgba(124,58,237,.92)
-        );
-
-        border-radius:25px;
-
-        padding:8px;
-
-        border:
-        2px solid rgba(255,255,255,.08);
-
-        box-shadow:
-        0 10px 45px rgba(0,0,0,.45),
-        inset 0 0 20px rgba(255,255,255,.04);
-    ">
-
-        <h2 style="
-            font-family:'Baloo 2', Arial;
-            color:white;
-
+        .flappy-title h2{
             margin:0;
+            color:white;
+            font-size:clamp(24px,5vw,52px);
+            letter-spacing:3px;
+            text-shadow:2px 3px rgba(120,40,120,.35);
+        }
 
-            font-size:50px;
+        .flappy-title p{
+            margin:2px 0 0;
+            color:white;
+            font-size:clamp(15px,2.8vw,26px);
+        }
 
-            letter-spacing:4px;
+        .flappy-area{
+            width:1200px;
+            height:700px;
+            transform-origin:top center;
+        }
 
-            text-transform:uppercase;
-
-            text-shadow:
-            0 8px 18px rgba(0,0,0,.45);
-        ">
-            SNOOPY SKY
-        </h2>
-
-        <p style="
-            color:rgba(255,255,255,.82);
+        #flappySnoopy{
+            width:1200px;
+            height:700px;
+            display:block;
+            border-radius:35px;
+            border:4px solid rgba(255,255,255,.08);
+            box-shadow:
+            0 0 20px #ff8fab,
+            0 0 45px rgba(168,85,247,0.55);
+            background:rgba(255,255,255,.82);
             touch-action:none;
-            cursor:pointer;
+        }
+    </style>
 
-            margin-top:5px;
+    <div class="flappy-wrapper">
+        <div class="flappy-title">
+            <h2>SNOOPY SKY</h2>
+            <p>Vuela en tu avión de papel ✨</p>
+        </div>
 
-            font-size:28px;
-
-            font-family:'Baloo 2', Arial;
-        ">
-            Vuela en tu avión de papel ✨
-        </p>
-
-    </div>
-
-    <!-- CANVAS -->
-
-    <canvas id="flappySnoopy"
-    width="1200"
-    height="700"
-    style="
-        border-radius:35px;
-
-        border:
-        4px solid rgba(255,255,255,.08);
-
-        box-shadow:
-        0 0 20px #ff8fab,
-        0 0 45px rgba(168,85,247,0.55);
-        background:rgba(255,255,255,.82);
-    "></canvas>
-
+        <div class="flappy-area" id="flappyArea">
+            <canvas id="flappySnoopy" width="1200" height="700"></canvas>
+        </div>
     </div>
     `;
 
-    const canvas =
-    document.getElementById("flappySnoopy");
+    const canvas = document.getElementById("flappySnoopy");
+    const ctx = canvas.getContext("2d");
+    const area = document.getElementById("flappyArea");
 
-    const ctx =
-    canvas.getContext("2d");
+    // =====================================
+    // ADAPTAR A CELULAR Y LAP
+    // =====================================
+
+    function ajustarPantalla(){
+        const escalaX = (window.innerWidth - 24) / 1200;
+        const escalaY = (window.innerHeight - 150) / 700;
+        const escala = Math.min(escalaX, escalaY, 1);
+
+        area.style.transform = `scale(${escala})`;
+        area.style.height = `${700 * escala}px`;
+    }
+
+    ajustarPantalla();
+    window.addEventListener("resize", ajustarPantalla);
 
     // =====================================
     // IMAGENES
     // =====================================
 
     const snoopy = new Image();
-
-    snoopy.src =
-    "img/snoopyFly3.png";
+    snoopy.src = "img/snoopyFly3.png";
 
     const nube = new Image();
-
-    nube.src =
-    "img/nube2.png";
+    nube.src = "img/nube2.png";
 
     // =====================================
     // AUDIO
     // =====================================
 
-    const sonidoPunto =
-    new Audio("audio/coin.mp3");
-
+    const sonidoPunto = new Audio("audio/coin.mp3");
     sonidoPunto.volume = 0.3;
 
-    const sonidoGameOver =
-    new Audio("audio/gameover.mp3");
-
+    const sonidoGameOver = new Audio("audio/gameover.mp3");
     sonidoGameOver.volume = 0.4;
 
-    // =================================================
-    // MUSICA DE FONDO
-    // =================================================
-
-        const musicaFondo = new Audio(
-            "audio/musica.mp3"
-        );
-
-        musicaFondo.volume = 0.5;
-
-        // para que se repita sola
-        musicaFondo.loop = true;
-
-    
+    const musicaFondo = new Audio("audio/musica.mp3");
+    musicaFondo.volume = 0.5;
+    musicaFondo.loop = true;
 
     // =====================================
     // TOP SCORES
     // =====================================
 
     let mejoresPuntajes =
-    JSON.parse(
-
-        localStorage.getItem(
-            "topScoresSnoopy"
-        )
-
-    ) || [];
+    JSON.parse(localStorage.getItem("topScoresSnoopy")) || [];
 
     function guardarScore(){
-
-        mejoresPuntajes.push(
-            puntos
-        );
-
-        mejoresPuntajes.sort(
-            (a,b)=> b-a
-        );
-
-        mejoresPuntajes =
-        mejoresPuntajes.slice(0,5);
+        mejoresPuntajes.push(puntos);
+        mejoresPuntajes.sort((a,b)=> b-a);
+        mejoresPuntajes = mejoresPuntajes.slice(0,5);
 
         localStorage.setItem(
-
             "topScoresSnoopy",
-
-            JSON.stringify(
-                mejoresPuntajes
-            )
+            JSON.stringify(mejoresPuntajes)
         );
     }
 
@@ -180,17 +143,12 @@ function juegoFlappySnoopy(contenedor){
     // =====================================
 
     const jugador = {
-
         x: 170,
         y: 300,
-
         w: 260,
         h: 260,
-
         gravedad: 0.26,
-
         fuerza: -7.6,
-
         velY: 0
     };
 
@@ -199,15 +157,10 @@ function juegoFlappySnoopy(contenedor){
     // =====================================
 
     let puntos = 0;
-
     let gameOver = false;
-
     let iniciado = false;
-
     let obstaculos = [];
-
     let estrellas = [];
-
     let nubes = [];
 
     // =====================================
@@ -215,15 +168,10 @@ function juegoFlappySnoopy(contenedor){
     // =====================================
 
     for(let i=0;i<80;i++){
-
         estrellas.push({
-
             x: Math.random()*1200,
-
             y: Math.random()*700,
-
             size: Math.random()*2 + 1,
-
             alpha: Math.random()*10
         });
     }
@@ -233,18 +181,11 @@ function juegoFlappySnoopy(contenedor){
     // =====================================
 
     for(let i=0;i<8;i++){
-
         nubes.push({
-
             x: Math.random()*1400,
-
             y: Math.random()*420,
-
-            escala:
-            Math.random()*0.15 + 0.20,
-
-            velocidad:
-            Math.random()*0.4 + 0.15
+            escala: Math.random()*0.15 + 0.20,
+            velocidad: Math.random()*0.4 + 0.15
         });
     }
 
@@ -253,120 +194,97 @@ function juegoFlappySnoopy(contenedor){
     // =====================================
 
     function crearObstaculo(){
-
         let espacio = 430;
-
-        let arriba =
-        Math.random()*180 + 80;
+        let arriba = Math.random()*180 + 80;
 
         obstaculos.push({
-
             x: 1300,
-
             ancho: 170,
-
             arriba: arriba,
-
-            abajo:
-            700 - arriba - espacio,
-
+            abajo: 700 - arriba - espacio,
             pasado:false
         });
     }
 
-    setInterval(()=>{
-
+    const intervaloObstaculos = setInterval(()=>{
         if(iniciado && !gameOver){
-
             crearObstaculo();
         }
-
     },3000);
 
     // =====================================
     // CONTROLES
     // =====================================
 
-    document.addEventListener("keydown",(e)=>{
+    if(contenedor._flappyKeydown){
+        document.removeEventListener("keydown", contenedor._flappyKeydown);
+    }
+
+    contenedor._flappyKeydown = function(e){
 
         if(e.code === "Space"){
-
+            e.preventDefault();
             saltar();
         }
-    });
+
+        if(e.code === "Enter" && gameOver){
+            reiniciarJuego();
+        }
+    };
+
+    document.addEventListener("keydown", contenedor._flappyKeydown);
 
     canvas.addEventListener("click",()=>{
 
-    if(gameOver){
+        if(gameOver){
+            reiniciarJuego();
+            return;
+        }
 
-        // detener game over
-        sonidoGameOver.pause();
+        if(!iniciado){
+            musicaFondo.play();
+        }
 
-        sonidoGameOver.currentTime = 0;
-
-        // detener musica vieja
-        musicaFondo.pause();
-
-        musicaFondo.currentTime = 0;
-
-        juegoFlappySnoopy(contenedor);
-
-        return;
-    }
-
-    // iniciar musica solo al empezar
-    if(!iniciado){
-
-        musicaFondo.play();
-    }
-
-    saltar();
-});
-
-
-     // =====================================
-    // TOUCH CELULAR
-    // =====================================
+        saltar();
+    });
 
     canvas.addEventListener("touchstart",(e)=>{
 
-    e.preventDefault();
+        e.preventDefault();
 
-    if(gameOver){
+        if(gameOver){
+            reiniciarJuego();
+            return;
+        }
 
-        // detener game over
-        sonidoGameOver.pause();
+        if(!iniciado){
+            musicaFondo.play();
+        }
 
-        sonidoGameOver.currentTime = 0;
+        saltar();
 
-        // detener musica vieja
-        musicaFondo.pause();
-
-        musicaFondo.currentTime = 0;
-
-        juegoFlappySnoopy(contenedor);
-
-        return;
-    }
-
-    // iniciar musica al tocar
-    if(!iniciado){
-
-        musicaFondo.play();
-    }
-
-    saltar();
-
-}, { passive:false });
+    }, { passive:false });
 
     function saltar(){
-
         if(gameOver) return;
 
         iniciado = true;
+        jugador.velY = jugador.fuerza;
+    }
 
-        jugador.velY =
-        jugador.fuerza;
+    function reiniciarJuego(){
+
+        clearInterval(intervaloObstaculos);
+
+        sonidoGameOver.pause();
+        sonidoGameOver.currentTime = 0;
+
+        musicaFondo.pause();
+        musicaFondo.currentTime = 0;
+
+        window.removeEventListener("resize", ajustarPantalla);
+
+        juegoFlappySnoopy(contenedor);
     }
 
     // =====================================
@@ -375,101 +293,36 @@ function juegoFlappySnoopy(contenedor){
 
     function dibujarFondo(){
 
-        let gradiente =
-        ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            700
-        );
+        let gradiente = ctx.createLinearGradient(0,0,0,700);
 
-        gradiente.addColorStop(
-            0,
-            "#14002e"
-        );
-
-        gradiente.addColorStop(
-            0.35,
-            "#2b0560"
-        );
-
-        gradiente.addColorStop(
-            0.7,
-            "#4c0dbd"
-        );
-
-        gradiente.addColorStop(
-            1,
-            "#f39adb"
-        );
+        gradiente.addColorStop(0,"#14002e");
+        gradiente.addColorStop(0.35,"#2b0560");
+        gradiente.addColorStop(0.7,"#4c0dbd");
+        gradiente.addColorStop(1,"#f39adb");
 
         ctx.fillStyle = gradiente;
+        ctx.fillRect(0,0,1200,700);
 
-        ctx.fillRect(
-            0,
-            0,
-            1200,
-            700
-        );
+        let glow = ctx.createRadialGradient(600,350,50,600,350,650);
 
-        // GLOW
-
-        let glow =
-        ctx.createRadialGradient(
-            600,
-            350,
-            50,
-            600,
-            350,
-            650
-        );
-
-        glow.addColorStop(
-            0,
-            "rgba(255,255,255,.08)"
-        );
-
-        glow.addColorStop(
-            1,
-            "transparent"
-        );
+        glow.addColorStop(0,"rgba(255,255,255,.08)");
+        glow.addColorStop(1,"transparent");
 
         ctx.fillStyle = glow;
-
-        ctx.fillRect(
-            0,
-            0,
-            1200,
-            700
-        );
-
-        // ESTRELLAS
+        ctx.fillRect(0,0,1200,700);
 
         estrellas.forEach(s=>{
-
             s.alpha += 0.02;
 
-            ctx.globalAlpha =
-            Math.sin(s.alpha)*0.5 + 0.5;
-
+            ctx.globalAlpha = Math.sin(s.alpha)*0.5 + 0.5;
             ctx.fillStyle = "white";
 
             ctx.beginPath();
-
-            ctx.arc(
-                s.x,
-                s.y,
-                s.size,
-                0,
-                Math.PI*2
-            );
-
+            ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
             ctx.fill();
         });
 
         ctx.globalAlpha = 1;
-
-        // NUBES
 
         ctx.globalAlpha = 0.35;
 
@@ -478,63 +331,25 @@ function juegoFlappySnoopy(contenedor){
             n.x -= n.velocidad;
 
             if(n.x < -350){
-
                 n.x = 1300;
-
-                n.y =
-                Math.random()*420;
+                n.y = Math.random()*420;
             }
 
-            const ancho =
-            nube.width * n.escala;
+            const ancho = nube.width * n.escala;
+            const alto = nube.height * n.escala;
 
-            const alto =
-            nube.height * n.escala;
-
-            ctx.drawImage(
-
-                nube,
-
-                n.x,
-
-                n.y,
-
-                ancho,
-
-                alto
-            );
+            ctx.drawImage(nube,n.x,n.y,ancho,alto);
         });
 
         ctx.globalAlpha = 1;
 
-        // PISO
+        let piso = ctx.createLinearGradient(0,560,0,700);
 
-        let piso =
-        ctx.createLinearGradient(
-            0,
-            560,
-            0,
-            700
-        );
-
-        piso.addColorStop(
-            0,
-            "rgba(255,255,255,.04)"
-        );
-
-        piso.addColorStop(
-            1,
-            "rgba(255,255,255,.16)"
-        );
+        piso.addColorStop(0,"rgba(255,255,255,.04)");
+        piso.addColorStop(1,"rgba(255,255,255,.16)");
 
         ctx.fillStyle = piso;
-
-        ctx.fillRect(
-            0,
-            580,
-            1200,
-            120
-        );
+        ctx.fillRect(0,580,1200,120);
     }
 
     // =====================================
@@ -550,13 +365,9 @@ function juegoFlappySnoopy(contenedor){
             jugador.y + jugador.h/2
         );
 
-        ctx.rotate(
-            jugador.velY * 0.012
-        );
+        ctx.rotate(jugador.velY * 0.012);
 
-        ctx.shadowColor =
-        "rgba(0,0,0,.45)";
-
+        ctx.shadowColor = "rgba(0,0,0,.45)";
         ctx.shadowBlur = 25;
 
         ctx.drawImage(
@@ -579,139 +390,59 @@ function juegoFlappySnoopy(contenedor){
         obstaculos.forEach(o=>{
 
             const gradienteSuperior =
-            ctx.createLinearGradient(
-                o.x,
-                0,
-                o.x + o.ancho,
-                0
-            );
+            ctx.createLinearGradient(o.x,0,o.x + o.ancho,0);
 
-            gradienteSuperior.addColorStop(
-                0,
-                "#18181b"
-            );
-
-            gradienteSuperior.addColorStop(
-                0.5,
-                "#312e81"
-            );
-
-            gradienteSuperior.addColorStop(
-                1,
-                "#7c3aed"
-            );
+            gradienteSuperior.addColorStop(0,"#18181b");
+            gradienteSuperior.addColorStop(0.5,"#312e81");
+            gradienteSuperior.addColorStop(1,"#7c3aed");
 
             const gradienteInferior =
-            ctx.createLinearGradient(
-                o.x,
-                0,
-                o.x + o.ancho,
-                0
-            );
+            ctx.createLinearGradient(o.x,0,o.x + o.ancho,0);
 
-            gradienteInferior.addColorStop(
-                0,
-                "#0f172a"
-            );
+            gradienteInferior.addColorStop(0,"#0f172a");
+            gradienteInferior.addColorStop(0.5,"#581c87");
+            gradienteInferior.addColorStop(1,"#db2777");
 
-            gradienteInferior.addColorStop(
-                0.5,
-                "#581c87"
-            );
-
-            gradienteInferior.addColorStop(
-                1,
-                "#db2777"
-            );
-
-            // SUPERIOR
-
-            ctx.fillStyle =
-            gradienteSuperior;
+            ctx.fillStyle = gradienteSuperior;
 
             ctx.beginPath();
-
-            ctx.roundRect(
-                o.x,
-                0,
-                o.ancho,
-                o.arriba,
-                10
-            );
-
+            ctx.roundRect(o.x,0,o.ancho,o.arriba,10);
             ctx.fill();
 
-            // VENTANAS
-
             for(let y=22; y<o.arriba-28; y+=40){
-
                 for(let x=18; x<o.ancho-25; x+=34){
 
-                    const prendida =
-                    Math.random() > 0.25;
+                    const prendida = Math.random() > 0.25;
 
                     ctx.fillStyle =
                     prendida
-                    ?
-                    "rgba(255,230,120,.95)"
-                    :
-                    "rgba(255,255,255,.05)";
+                    ? "rgba(255,230,120,.95)"
+                    : "rgba(255,255,255,.05)";
 
                     ctx.beginPath();
-
-                    ctx.roundRect(
-                        o.x + x,
-                        y,
-                        18,
-                        24,
-                        2
-                    );
-
+                    ctx.roundRect(o.x + x,y,18,24,2);
                     ctx.fill();
                 }
             }
 
-            // INFERIOR
-
-            ctx.fillStyle =
-            gradienteInferior;
+            ctx.fillStyle = gradienteInferior;
 
             ctx.beginPath();
-
-            ctx.roundRect(
-                o.x,
-                700 - o.abajo,
-                o.ancho,
-                o.abajo,
-                10
-            );
-
+            ctx.roundRect(o.x,700 - o.abajo,o.ancho,o.abajo,10);
             ctx.fill();
 
             for(let y=700-o.abajo+22; y<685; y+=40){
-
                 for(let x=18; x<o.ancho-25; x+=34){
 
-                    const prendida =
-                    Math.random() > 0.25;
+                    const prendida = Math.random() > 0.25;
 
                     ctx.fillStyle =
                     prendida
-                    ?
-                    "rgba(255,220,120,.95)"
-                    :
-                    "rgba(255,255,255,.05)";
+                    ? "rgba(255,220,120,.95)"
+                    : "rgba(255,255,255,.05)";
 
                     ctx.beginPath();
-
-                    ctx.roundRect(
-                        o.x + x,
-                        y,
-                        18,
-                        24,
-                        2
-                    );
-
+                    ctx.roundRect(o.x + x,y,18,24,2);
                     ctx.fill();
                 }
             }
@@ -724,63 +455,32 @@ function juegoFlappySnoopy(contenedor){
 
     function interfaz(){
 
-        ctx.fillStyle =
-        "rgba(255,255,255,.05)";
+        ctx.fillStyle = "rgba(255,255,255,.05)";
 
         ctx.beginPath();
-
-        ctx.roundRect(
-            25,
-            25,
-            250,
-            95,
-            24
-        );
-
+        ctx.roundRect(25,25,250,95,24);
         ctx.fill();
 
-        ctx.strokeStyle =
-        "rgba(255,255,255,.08)";
-
+        ctx.strokeStyle = "rgba(255,255,255,.08)";
         ctx.stroke();
 
         ctx.fillStyle = "#ffcc00";
+        ctx.font = "bold 50px Arial";
 
-        ctx.font =
-        "bold 50px Arial";
-
-        ctx.fillText(
-            "⭐ " + puntos,
-            48,
-            88
-        );
+        ctx.fillText("⭐ " + puntos,48,88);
 
         if(!iniciado){
 
             ctx.textAlign = "center";
-
             ctx.fillStyle = "white";
+            ctx.font = "bold 60px Arial";
 
-            ctx.font =
-            "bold 60px Arial";
+            ctx.fillText("PRESIONA ESPACIO",600,280);
 
-            ctx.fillText(
-                "PRESIONA ESPACIO",
-                600,
-                280
-            );
+            ctx.font = "bold 30px Arial";
+            ctx.fillStyle = "rgba(255,255,255,.85)";
 
-            ctx.font =
-            "bold 30px Arial";
-
-            ctx.fillStyle =
-            "rgba(255,255,255,.85)";
-
-            ctx.fillText(
-                "o haz click para empezar",
-                600,
-                340
-            );
+            ctx.fillText("o toca la pantalla para empezar",600,340);
 
             ctx.textAlign = "start";
         }
@@ -794,62 +494,53 @@ function juegoFlappySnoopy(contenedor){
 
         if(!iniciado) return;
 
-        jugador.velY +=
-        jugador.gravedad;
-
-        jugador.y +=
-        jugador.velY;
+        jugador.velY += jugador.gravedad;
+        jugador.y += jugador.velY;
 
         obstaculos.forEach(o=>{
 
             o.x -= 3;
 
-            // PUNTOS
-
-            if(
-
-                !o.pasado &&
-                o.x + o.ancho < jugador.x
-
-            ){
+            if(!o.pasado && o.x + o.ancho < jugador.x){
 
                 o.pasado = true;
-
                 puntos++;
 
                 sonidoPunto.currentTime = 0;
-
                 sonidoPunto.play();
             }
 
-            // HITBOX
-
-            let hitboxX =
-            jugador.x + 70;
-
-            let hitboxY =
-            jugador.y + 70;
-
-            let hitboxW =
-            jugador.w - 140;
-
-            let hitboxH =
-            jugador.h - 140;
+            let hitboxX = jugador.x + 70;
+            let hitboxY = jugador.y + 70;
+            let hitboxW = jugador.w - 140;
+            let hitboxH = jugador.h - 140;
 
             if(
-
                 hitboxX + hitboxW > o.x &&
                 hitboxX < o.x + o.ancho &&
-
                 (
-
                     hitboxY < o.arriba ||
-
-                    hitboxY + hitboxH >
-                    700 - o.abajo
-
+                    hitboxY + hitboxH > 700 - o.abajo
                 )
             ){
+
+                if(!gameOver){
+
+                    gameOver = true;
+
+                    musicaFondo.pause();
+
+                    sonidoGameOver.currentTime = 0;
+                    sonidoGameOver.play();
+
+                    guardarScore();
+                }
+            }
+        });
+
+        obstaculos = obstaculos.filter(o => o.x > -250);
+
+        if(jugador.y < -100 || jugador.y + jugador.h > 790){
 
             if(!gameOver){
 
@@ -858,35 +549,6 @@ function juegoFlappySnoopy(contenedor){
                 musicaFondo.pause();
 
                 sonidoGameOver.currentTime = 0;
-
-                sonidoGameOver.play();
-
-                guardarScore();
-            }
-            }
-        });
-
-        obstaculos =
-        obstaculos.filter(
-            o => o.x > -250
-        );
-
-        // TECHO Y PISO
-
-        if(
-
-            jugador.y < -100 ||
-
-            jugador.y + jugador.h > 790
-
-        ){
-
-            if(!gameOver){
-
-                gameOver = true;
-
-                sonidoGameOver.currentTime = 0;
-
                 sonidoGameOver.play();
 
                 guardarScore();
@@ -895,199 +557,103 @@ function juegoFlappySnoopy(contenedor){
     }
 
     // =====================================
-// GAME OVER
-// =====================================
-
-function mostrarGameOver(){
-
-    ctx.fillStyle =
-    "rgba(0,0,0,.74)";
-
-    ctx.fillRect(
-        0,
-        0,
-        1200,
-        700
-    );
-
-    // PANEL
-
-    let gradiente =
-    ctx.createLinearGradient(
-        260,
-        120,
-        950,
-        620
-    );
-
-    gradiente.addColorStop(
-        0,
-        "transparent"
-    );
-
-    gradiente.addColorStop(
-        1,
-        "transparent"
-    );
-
-    ctx.fillStyle = gradiente;
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        260,
-        80,
-        680,
-        560,
-        40
-    );
-
-    ctx.fill();
-
-    // BORDE
-
-    ctx.strokeStyle =
-    "transparent";
-
-    ctx.lineWidth = 3;
-
-    ctx.stroke();
-
-    // TITULO
-
-    ctx.textAlign = "center";
-
-    ctx.fillStyle = "white";
-
-    ctx.font =
-    "bold 72px Arial";
-
-    ctx.fillText(
-        "GAME OVER",
-        600,
-        170
-    );
-
-    // TEXTO
-
-    ctx.font =
-    "30px Arial";
-
-    ctx.fillStyle =
-    "rgba(255,255,255,.88)";
-
-    ctx.fillText(
-        "Snoopy chocó ⌯⌲",
-        600,
-        220
-    );
-
-    // PUNTAJE
-
-    ctx.font =
-    "bold 48px Arial";
-
-    ctx.fillStyle =
-    "#ffd43b";
-
-    ctx.fillText(
-        "⭐ " + puntos + " pts",
-        600,
-        290
-    );
-
-    // =====================================
-    // TOP 5
+    // GAME OVER
     // =====================================
 
-    ctx.font =
-    "bold 36px Arial";
+    function mostrarGameOver(){
 
-    ctx.fillStyle = "white";
+        const panelX = 335;
+        const panelY = 105;
+        const panelW = 530;
+        const panelH = 500;
 
-    ctx.fillText(
-        "🏆 Mejores Puntajes",
-        600,
-        360
-    );
-
-    // TABLA
-
-    let tablaX = 390;
-
-    let tablaY = 390;
-
-    let tablaW = 420;
-
-    let tablaH = 165;
-
-    ctx.fillStyle =
-    "rgba(0,0,0,.18)";
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        tablaX,
-        tablaY,
-        tablaW,
-        tablaH,
-        20
-    );
-
-    ctx.fill();
-
-    // PUNTAJES
-
-    ctx.font =
-    "bold 26px Arial";
-
-    mejoresPuntajes.forEach((p,i)=>{
-
-        // LINEA
-
-        ctx.fillStyle =
-        "rgba(255,255,255,.08)";
-
-        ctx.fillRect(
-            tablaX + 20,
-            tablaY + 15 + (i*30),
-            tablaW - 40,
-            2
+        let gradiente = ctx.createLinearGradient(
+            panelX,
+            panelY,
+            panelX + panelW,
+            panelY + panelH
         );
 
-        // TEXTO
+        gradiente.addColorStop(0,"rgba(255,143,171,.96)");
+        gradiente.addColorStop(0.5,"rgba(255,77,166,.96)");
+        gradiente.addColorStop(1,"rgba(179,136,255,.96)");
+
+        ctx.fillStyle = gradiente;
+
+        ctx.beginPath();
+        ctx.roundRect(panelX,panelY,panelW,panelH,35);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255,.75)";
+        ctx.lineWidth = 5;
+        ctx.stroke();
+
+        ctx.textAlign = "center";
 
         ctx.fillStyle = "white";
+        ctx.font = "bold 58px Quicksand, Arial";
+
+        ctx.fillText("GAME OVER",600,180);
+
+        ctx.font = "bold 28px Quicksand, Arial";
+        ctx.fillStyle = "rgba(255,255,255,.95)";
+
+        ctx.fillText("Snoopy chocó ⌯⌲",600,225);
+
+        ctx.font = "bold 45px Quicksand, Arial";
+        ctx.fillStyle = "#ffd43b";
+
+        ctx.fillText("⭐ " + puntos + " pts",600,285);
+
+        ctx.font = "bold 32px Quicksand, Arial";
+        ctx.fillStyle = "white";
+
+        ctx.fillText("🏆 Mejores Puntajes",600,345);
+
+        let tablaX = 420;
+        let tablaY = 370;
+        let tablaW = 360;
+        let tablaH = 150;
+
+        ctx.fillStyle = "rgba(255,255,255,.22)";
+
+        ctx.beginPath();
+        ctx.roundRect(tablaX,tablaY,tablaW,tablaH,20);
+        ctx.fill();
+
+        ctx.font = "bold 23px Quicksand, Arial";
+
+        mejoresPuntajes.forEach((p,i)=>{
+
+            ctx.fillStyle = "rgba(255,255,255,.28)";
+
+            ctx.fillRect(
+                tablaX + 25,
+                tablaY + 14 + (i*27),
+                tablaW - 50,
+                2
+            );
+
+            ctx.fillStyle = "white";
+
+            ctx.fillText(
+                (i+1) + ".   " + p + " pts",
+                600,
+                tablaY + 38 + (i*27)
+            );
+        });
+
+        ctx.font = "bold 23px Quicksand, Arial";
+        ctx.fillStyle = "rgba(255,255,255,.95)";
 
         ctx.fillText(
-
-            (i+1) + ".   " +
-            p + " pts",
-
+            "Click, Enter o toca para reiniciar",
             600,
-
-            tablaY + 42 + (i*30)
+            570
         );
-    });
 
-    ctx.font =
-"bold 26px Arial";
-
-ctx.fillStyle =
-"rgba(255,255,255,.85)";
-
-ctx.fillText(
-
-    "Haz click para reiniciar",
-
-    600,
-
-    655
-);
-
-}
-
-
+        ctx.textAlign = "start";
+    }
 
     // =====================================
     // LOOP
@@ -1096,29 +662,20 @@ ctx.fillText(
     function loop(){
 
         dibujarFondo();
-
         dibujarObstaculos();
-
         dibujarJugador();
-
         interfaz();
 
         if(!gameOver){
 
             actualizar();
-
             requestAnimationFrame(loop);
 
         }else{
 
             mostrarGameOver();
-
-            
         }
-        
     }
-
-    
 
     loop();
 }

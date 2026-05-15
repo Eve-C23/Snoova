@@ -19,12 +19,12 @@ function juegoNubes(contenedor){
             box-sizing:border-box;
             text-align:center;
             background:rgba(15,0,45,0.82);
-            border:4px solid rgba(168,85,247,0.75);
+            border:4px solid rgba(139,92,246,0.85);
             border-radius:38px;
             padding:30px;
             box-shadow:
-                0 0 28px rgba(168,85,247,0.85),
-                inset 0 0 35px rgba(168,85,247,0.20);
+                0 0 30px rgba(139,92,246,0.90),
+                inset 0 0 35px rgba(139,92,246,0.20);
         ">
 
             <div style="
@@ -37,7 +37,7 @@ function juegoNubes(contenedor){
                 box-shadow:0 0 22px rgba(244,114,182,0.45);
             ">
 
-                <h2 style="
+               <h2 style="
                     font-family:'Baloo 2', Arial;
                     color:white;
                     margin:0;
@@ -53,8 +53,8 @@ function juegoNubes(contenedor){
                 </h2>
 
                 <p style="
-                    color:rgba(255,255,255,0.92);
-                    margin-top:5px;
+                    color:rgba(255,255,255,0.9);
+                    margin-top:6px;
                     font-size:24px;
                     font-family:'Baloo 2', Arial;
                 ">
@@ -90,15 +90,43 @@ function juegoNubes(contenedor){
     const escala = document.getElementById("nubesEscala");
 
     function ajustarPantalla(){
-        const escalaX = zona.clientWidth / 1200;
-        const escalaY = zona.clientHeight / 930;
-        const escalaFinal = Math.min(escalaX, escalaY, 1);
 
-        escala.style.transform = `scale(${escalaFinal})`;
+        const esVertical = zona.clientHeight > zona.clientWidth;
+        let escalaFinal;
+
+        if(esVertical){
+
+            escalaFinal = Math.min(zona.clientWidth / 1200, 1);
+
+            zona.style.alignItems = "flex-start";
+            zona.style.overflowY = "auto";
+            zona.style.overflowX = "hidden";
+            zona.style.paddingTop = "18px";
+
+            escala.style.transformOrigin = "top center";
+
+        }else{
+
+            escalaFinal = Math.min(
+                zona.clientWidth / 1200,
+                zona.clientHeight / 930,
+                1
+            );
+
+            zona.style.alignItems = "center";
+            zona.style.overflow = "hidden";
+            zona.style.paddingTop = "0";
+
+            escala.style.transformOrigin = "center center";
+        }
+
+        escala.style.transform = "scale(" + escalaFinal + ")";
     }
 
     ajustarPantalla();
+
     window.addEventListener("resize", ajustarPantalla);
+
     window.addEventListener("orientationchange", ()=>{
         setTimeout(ajustarPantalla, 300);
     });

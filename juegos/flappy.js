@@ -180,7 +180,7 @@ function juegoFlappySnoopy(contenedor){
     sonidoGameOver.volume = 0.4;
 
     const musicaFondo =
-    new Audio("audio/musica.mp3");
+    new Audio("audio/flappy.mp3");
 
     musicaFondo.volume = 0.5;
 

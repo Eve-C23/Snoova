@@ -171,7 +171,7 @@ function juegoDino(container){
 
         // MUSICA DE FONDO
         const musicaFondo = new Audio(
-            "audio/musica.mp3"
+            "audio/dino.mp3"
         );
 
         musicaFondo.volume = 0.5;

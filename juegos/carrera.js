@@ -7,9 +7,7 @@ function juegoCarrera(container){
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap');
 
-            *{
-                box-sizing:border-box;
-            }
+            *{ box-sizing:border-box; }
 
             .carrera-wrap{
                 width:100%;
@@ -73,9 +71,7 @@ function juegoCarrera(container){
             }
 
             @media(max-width:700px){
-                .carrera-wrap{
-                    padding:6px;
-                }
+                .carrera-wrap{ padding:6px; }
 
                 .marcoGeneralCarrera{
                     width:96vw;
@@ -90,13 +86,9 @@ function juegoCarrera(container){
                     font-size:clamp(22px,7vw,34px);
                 }
 
-                .subtituloCarrera{
-                    font-size:12px;
-                }
+                .subtituloCarrera{ font-size:12px; }
 
-                canvas{
-                    border-radius:20px;
-                }
+                canvas{ border-radius:20px; }
             }
 
             @media(max-height:500px){
@@ -118,9 +110,7 @@ function juegoCarrera(container){
                     font-size:22px;
                 }
 
-                .subtituloCarrera{
-                    display:none;
-                }
+                .subtituloCarrera{ display:none; }
             }
         </style>
 
@@ -181,11 +171,7 @@ function juegoCarrera(container){
         ALTO * 0.72
     ];
 
-    let jugador = {
-        id:"p",
-        x:70,
-        y:carriles[0]
-    };
+    let jugador = { id:"p", x:70, y:carriles[0] };
 
     let oponentes = [
         {id:"o1", x:70, y:carriles[1], vel:2.4},
@@ -207,6 +193,60 @@ function juegoCarrera(container){
     let spaceLock = false;
 
     let estado = "inicio";
+    let recordGuardado = false;
+
+    // =========================
+    // TABLA DE 5 MEJORES RÉCORDS
+    // =========================
+    function obtenerRecords(){
+        return JSON.parse(localStorage.getItem("recordsCarreraSnoopy")) || [];
+    }
+
+    function guardarRecord(tiempo){
+        let records = obtenerRecords();
+
+        records.push(Number(tiempo));
+        records.sort((a,b)=>a-b);
+        records = records.slice(0,5);
+
+        localStorage.setItem("recordsCarreraSnoopy", JSON.stringify(records));
+    }
+
+    function dibujarTablaRecords(){
+
+        let records = obtenerRecords();
+
+        let x = ANCHO/2 - 180;
+        let y = 465;
+        let w = 360;
+        let h = 112;
+
+        ctx.fillStyle = "rgba(255,255,255,.14)";
+        ctx.beginPath();
+        ctx.roundRect(x,y,w,h,22);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255,.35)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffe066";
+        ctx.font = "bold 21px Quicksand";
+        ctx.textAlign = "center";
+        ctx.fillText("🏆 5 MEJORES RÉCORDS", ANCHO/2, y + 30);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "18px Quicksand";
+
+        if(records.length === 0){
+            ctx.fillText("Aún no hay récords", ANCHO/2, y + 70);
+        }
+        else{
+            records.forEach((r,i)=>{
+                ctx.fillText(`${i+1}. ${r.toFixed(1)}s`, ANCHO/2, y + 58 + (i * 18));
+            });
+        }
+    }
 
     // =========================
     // REINICIAR
@@ -236,6 +276,7 @@ function juegoCarrera(container){
         spaceLock = false;
 
         estado = "inicio";
+        recordGuardado = false;
         canvas.style.cursor = "default";
     }
 
@@ -375,26 +416,43 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // META
+    // META REDONDEADA SIN SALIRSE
     // =========================
     function meta(){
 
         let s = 18;
         let w = s * 3;
+        let xMeta = Math.min(META, ANCHO - w - 25);
+        let yMeta = 25;
+        let hMeta = ALTO - 50;
+
+        ctx.save();
 
         ctx.shadowColor = "#ffffff";
         ctx.shadowBlur = 12;
 
-        for(let y=0; y<ALTO; y+=s){
+        ctx.beginPath();
+        ctx.roundRect(xMeta, yMeta, w, hMeta, 16);
+        ctx.clip();
+
+        for(let y=yMeta; y<yMeta + hMeta; y+=s){
 
             for(let x=0; x<w; x+=s){
 
                 ctx.fillStyle = ((x+y)/s%2===0) ? "#fff" : "#111";
-                ctx.fillRect(META + x,y,s,s);
+                ctx.fillRect(xMeta + x, y, s, s);
             }
         }
 
+        ctx.restore();
+
         ctx.shadowBlur = 0;
+
+        ctx.strokeStyle = "rgba(255,255,255,.65)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(xMeta, yMeta, w, hMeta, 16);
+        ctx.stroke();
     }
 
     // =========================
@@ -442,27 +500,29 @@ function juegoCarrera(container){
         ctx.fillStyle = "white";
         ctx.font = "bold 72px Quicksand";
 
-        ctx.fillText(resultado,ANCHO/2,220);
+        ctx.fillText(resultado,ANCHO/2,200);
 
         ctx.fillStyle = "#ffb3f5";
         ctx.font = "bold 32px Quicksand";
 
         if(resultado === "YOU WIN"){
-            ctx.fillText("Ganaste la carrera 🏁✨",ANCHO/2,290);
+            ctx.fillText("Ganaste la carrera 🏁✨",ANCHO/2,265);
         }
         else{
-            ctx.fillText("Sigue intentando 🏍️✨",ANCHO/2,290);
+            ctx.fillText("Sigue intentando 🏍️✨",ANCHO/2,265);
         }
 
         ctx.fillStyle = "#ffe066";
         ctx.font = "bold 34px Quicksand";
 
-        ctx.fillText("🏁 SNOOPY RACE",ANCHO/2,375);
+        ctx.fillText("🏁 SNOOPY RACE",ANCHO/2,335);
 
         ctx.fillStyle = "#ffffff";
         ctx.font = "26px Quicksand";
 
-        ctx.fillText("⏱ Tiempo: " + tiempoFinal + "s",ANCHO/2,445);
+        ctx.fillText("⏱ Tiempo: " + tiempoFinal + "s",ANCHO/2,395);
+
+        dibujarTablaRecords();
 
         ctx.font = "22px Quicksand";
 
@@ -534,6 +594,11 @@ function juegoCarrera(container){
                 juegoActivo = false;
                 resultado = "YOU WIN";
                 tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+
+                if(!recordGuardado){
+                    guardarRecord(tiempoFinal);
+                    recordGuardado = true;
+                }
             }
 
             oponentes.forEach(o=>{
@@ -543,6 +608,11 @@ function juegoCarrera(container){
                     juegoActivo = false;
                     resultado = "GAME OVER";
                     tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+
+                    if(!recordGuardado){
+                        guardarRecord(tiempoFinal);
+                        recordGuardado = true;
+                    }
                 }
             });
         }

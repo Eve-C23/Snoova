@@ -160,6 +160,27 @@ function juegoCarrera(container){
     imgWood.src = "img/Wmoto.png";
 
     // =========================
+    // AUDIO
+    // =========================
+
+    // MUSICA DE FONDO
+    const musicaFondo = new Audio(
+        "audio/musica.mp3"
+    );
+
+    musicaFondo.volume = 0.5;
+    musicaFondo.loop = true;
+
+    // GAME OVER
+    const sonidoGameOver = new Audio(
+        "audio/gameover.mp3"
+    );
+
+    sonidoGameOver.volume = 0.7;
+
+
+
+    // =========================
     // VARIABLES
     // =========================
     let META = ANCHO * 0.84;
@@ -242,36 +263,46 @@ function juegoCarrera(container){
     }
 
     // =========================
-    // REINICIAR
-    // =========================
-    function reiniciarJuego(){
+// REINICIAR
+// =========================
+function reiniciarJuego(){
 
-        jugador.x = 70;
-        jugador.y = carriles[0];
+    // CORTAR GAME OVER
+    sonidoGameOver.pause();
 
-        oponentes = [
-            {id:"o1", x:70, y:carriles[1], vel:2.4},
-            {id:"o2", x:70, y:carriles[2], vel:2.6},
-            {id:"o3", x:70, y:carriles[3], vel:2.3}
-        ];
+    sonidoGameOver.currentTime = 0;
 
-        inicio = true;
-        t0 = Date.now();
+    // REINICIAR MUSICA
+    musicaFondo.currentTime = 0;
 
-        juegoActivo = true;
-        resultado = "";
+    musicaFondo.play();
 
-        tiempoInicio = 0;
-        tiempoFinal = 0;
+    jugador.x = 70;
+    jugador.y = carriles[0];
 
-        velJugador = 0;
-        puede = true;
-        spaceLock = false;
+    oponentes = [
+        {id:"o1", x:70, y:carriles[1], vel:2.4},
+        {id:"o2", x:70, y:carriles[2], vel:2.6},
+        {id:"o3", x:70, y:carriles[3], vel:2.3}
+    ];
 
-        estado = "inicio";
-        recordGuardado = false;
-        canvas.style.cursor = "default";
-    }
+    inicio = true;
+    t0 = Date.now();
+
+    juegoActivo = true;
+    resultado = "";
+
+    tiempoInicio = 0;
+    tiempoFinal = 0;
+
+    velJugador = 0;
+    puede = true;
+    spaceLock = false;
+
+    estado = "inicio";
+    recordGuardado = false;
+    canvas.style.cursor = "default";
+}
 
     // =========================
     // MOVIMIENTO
@@ -321,30 +352,46 @@ function juegoCarrera(container){
     });
 
     // =========================
-    // CLICK Y TOUCH
-    // =========================
-    canvas.addEventListener("click", ()=>{
+// CLICK Y TOUCH
+// =========================
+canvas.addEventListener("click", ()=>{
 
-        if(estado === "final"){
-            reiniciarJuego();
-        }
-        else{
-            mover();
-        }
-    });
+    // INICIAR MUSICA
+    if(musicaFondo.paused){
 
-    canvas.addEventListener("touchstart", e=>{
+        musicaFondo.play();
+    }
 
-        e.preventDefault();
+    if(estado === "final"){
 
-        if(estado === "final"){
-            reiniciarJuego();
-        }
-        else{
-            mover();
-        }
+        reiniciarJuego();
+    }
+    else{
 
-    },{passive:false});
+        mover();
+    }
+});
+
+canvas.addEventListener("touchstart", e=>{
+
+    e.preventDefault();
+
+    // INICIAR MUSICA
+    if(musicaFondo.paused){
+
+        musicaFondo.play();
+    }
+
+    if(estado === "final"){
+
+        reiniciarJuego();
+    }
+    else{
+
+        mover();
+    }
+
+},{passive:false});
 
     // =========================
     // FONDO
@@ -569,29 +616,57 @@ function juegoCarrera(container){
             if(jugador.x >= META){
 
                 juegoActivo = false;
+
                 resultado = "YOU WIN";
+
                 tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
 
+                // CORTAR MUSICA
+                musicaFondo.pause();
+
+                musicaFondo.currentTime = 0;
+
+                // SONIDO GAME OVER
+                sonidoGameOver.currentTime = 0;
+
+                sonidoGameOver.play();
+
                 if(!recordGuardado){
+
                     guardarRecord(tiempoFinal);
+
                     recordGuardado = true;
                 }
             }
 
             oponentes.forEach(o=>{
 
-                if(o.x >= META && juegoActivo){
+        if(o.x >= META && juegoActivo){
 
-                    juegoActivo = false;
-                    resultado = "GAME OVER";
-                    tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+            juegoActivo = false;
 
-                    if(!recordGuardado){
-                        guardarRecord(tiempoFinal);
-                        recordGuardado = true;
-                    }
-                }
-            });
+            resultado = "GAME OVER";
+
+            tiempoFinal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+
+            // CORTAR MUSICA
+            musicaFondo.pause();
+
+            musicaFondo.currentTime = 0;
+
+            // SONIDO GAME OVER
+            sonidoGameOver.currentTime = 0;
+
+            sonidoGameOver.play();
+
+            if(!recordGuardado){
+
+                guardarRecord(tiempoFinal);
+
+                recordGuardado = true;
+            }
+        }
+    });
         }
 
         dibujar(imgJugador,jugador.x,jugador.y);
@@ -633,5 +708,6 @@ function juegoCarrera(container){
     // =========================
     // INICIAR
     // =========================
+    musicaFondo.play();
     loop();
 }

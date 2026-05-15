@@ -1,24 +1,21 @@
 function juegoNubes(contenedor){
 
     contenedor.innerHTML = `
-    <div style="text-align:center; position:relative;">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
-
-        <!-- TITULO -->
+    <div style="
+        text-align:center;
+        position:relative;
+        width:100%;
+    ">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 
         <div style="
-            width:50%;
+            width:70%;
             margin:auto;
-            margin-bottom:20px;
-            background:linear-gradient(
-                90deg,
-                #c084fc,
-                #f472b6
-            );
+            margin-bottom:25px;
+            background:linear-gradient(90deg,#c084fc,#f472b6);
             border-radius:35px;
-            padding:8px;
-            box-shadow:
-            0 0 25px rgba(244,114,182,0.45);
+            padding:22px 10px;
+            box-shadow:0 0 25px rgba(244,114,182,0.45);
         ">
 
            <h2 style="
@@ -26,20 +23,19 @@ function juegoNubes(contenedor){
                 color:white;
                 margin:0;
                 font-size:50px;
-                font-weight:bold;
-                letter-spacing:2px;
-                position:relative;
+                font-weight:800;
+                letter-spacing:3px;
                 text-shadow:
                 5px 6px 0 rgba(0,0,0,.18),
                 0 4px 10px rgba(0,0,0,0.25);
             ">
-                SNOOPY SKY JUMP
+                SNOOPY SKY JUMP ✨
             </h2>
 
             <p style="
                 color:rgba(255,255,255,0.9);
-                margin-top:10px;
-                font-size:28px;
+                margin-top:6px;
+                font-size:24px;
                 font-family:'Baloo 2', Arial;
             ">
                 Salta entre las nubes ☁️✨
@@ -53,18 +49,12 @@ function juegoNubes(contenedor){
         style="
             border-radius:35px;
             border:4px solid rgba(255,255,255,0.85);
-
             box-shadow:
             0 0 20px #ff8fab,
             0 0 45px rgba(168,85,247,0.55);
-
             background:black;
             cursor:pointer;
             touch-action:none;
-
-            width:min(95vw,1200px);
-            height:auto;
-            aspect-ratio:1200/700;
         "></canvas>
 
     </div>
@@ -72,10 +62,6 @@ function juegoNubes(contenedor){
 
     const canvas = document.getElementById("nubesGame");
     const ctx = canvas.getContext("2d");
-
-    // =================================================
-    // REINICIAR CON CLICK
-    // =================================================
 
     canvas.addEventListener("click", ()=>{
 
@@ -88,10 +74,6 @@ function juegoNubes(contenedor){
         }
     });
 
-    // =================================================
-    // IMAGENES
-    // =================================================
-
     const snoopy = new Image();
     snoopy.src = "img/snoopyJump.png";
 
@@ -101,87 +83,42 @@ function juegoNubes(contenedor){
     const estrella = new Image();
     estrella.src = "img/estrella.png";
 
-    // =================================================
-    // AUDIO
-    // =================================================
-
-    const sonidoMoneda = new Audio(
-        "audio/coin.mp3"
-    );
-
+    const sonidoMoneda = new Audio("audio/coin.mp3");
     sonidoMoneda.volume = 0.3;
 
-    const sonidoGameOver = new Audio(
-        "audio/gameover.mp3"
-    );
-
+    const sonidoGameOver = new Audio("audio/gameover.mp3");
     sonidoGameOver.volume = 0.4;
 
-    // =================================================
-    // MUSICA
-    // =================================================
-
-    const musicaFondo = new Audio(
-        "audio/musica.mp3"
-    );
-
+    const musicaFondo = new Audio("audio/musica.mp3");
     musicaFondo.volume = 0.5;
     musicaFondo.loop = true;
 
-    // =================================================
-    // TOP SCORES
-    // =================================================
-
     let mejoresPuntajes =
-    JSON.parse(
-        localStorage.getItem(
-            "topScoresNubes"
-        )
-    ) || [];
+    JSON.parse(localStorage.getItem("topScoresNubes")) || [];
 
     function guardarScore(){
 
         mejoresPuntajes.push(puntos);
 
-        mejoresPuntajes.sort(
-            (a,b)=> b-a
-        );
+        mejoresPuntajes.sort((a,b)=> b-a);
 
-        mejoresPuntajes =
-        mejoresPuntajes.slice(0,5);
+        mejoresPuntajes = mejoresPuntajes.slice(0,5);
 
         localStorage.setItem(
-
             "topScoresNubes",
-
-            JSON.stringify(
-                mejoresPuntajes
-            )
+            JSON.stringify(mejoresPuntajes)
         );
     }
 
-    // =================================================
-    // JUGADOR
-    // =================================================
-
     const jugador = {
-
         x: 560,
         y: 500,
-
         w: 120,
         h: 120,
-
         velY: 0,
-
         salto: -19,
-
         velocidad: 8
     };
-
-    // =================================================
-    // CONTROLES
-    // =================================================
 
     let izquierda = false;
     let derecha = false;
@@ -204,46 +141,30 @@ function juegoNubes(contenedor){
         derecha = false;
     });
 
-    // =================================================
-    // MOUSE
-    // =================================================
-
     canvas.addEventListener("mousemove", (e)=>{
 
-        const rect =
-        canvas.getBoundingClientRect();
+        const rect = canvas.getBoundingClientRect();
 
         const mouseX =
         (e.clientX - rect.left) *
         (1200 / rect.width);
 
-        jugador.x =
-        mouseX - jugador.w/2;
+        jugador.x = mouseX - jugador.w/2;
     });
-
-    // =================================================
-    // TOUCH
-    // =================================================
 
     canvas.addEventListener("touchmove", (e)=>{
 
         e.preventDefault();
 
-        const rect =
-        canvas.getBoundingClientRect();
+        const rect = canvas.getBoundingClientRect();
 
         const touchX =
         (e.touches[0].clientX - rect.left) *
         (1200 / rect.width);
 
-        jugador.x =
-        touchX - jugador.w/2;
+        jugador.x = touchX - jugador.w/2;
 
     }, { passive:false });
-
-    // =================================================
-    // PLATAFORMAS
-    // =================================================
 
     let plataformas = [];
 
@@ -252,10 +173,8 @@ function juegoNubes(contenedor){
         plataformas = [];
 
         plataformas.push({
-
             x: 520,
             y: 600,
-
             w: 180,
             h: 90
         });
@@ -263,11 +182,8 @@ function juegoNubes(contenedor){
         for(let i=1;i<8;i++){
 
             plataformas.push({
-
                 x: Math.random()*850 + 100,
-
                 y: i*95,
-
                 w: 180,
                 h: 90
             });
@@ -275,10 +191,6 @@ function juegoNubes(contenedor){
     }
 
     crearPlataformas();
-
-    // =================================================
-    // MONEDAS
-    // =================================================
 
     let monedas = [];
     let totalMonedas = 0;
@@ -292,14 +204,10 @@ function juegoNubes(contenedor){
             if(i % 2 === 0){
 
                 monedas.push({
-
                     x: p.x + 70,
                     y: p.y - 30,
-
                     size: 40,
-
                     tomada: false,
-
                     rotacion: Math.random()*10
                 });
             }
@@ -308,80 +216,37 @@ function juegoNubes(contenedor){
 
     crearMonedas();
 
-    // =================================================
-    // ESTRELLAS
-    // =================================================
-
     let estrellas = [];
 
     for(let i=0;i<40;i++){
 
         estrellas.push({
-
             x: Math.random()*1200,
             y: Math.random()*700,
-
             size: Math.random()*4 + 2,
-
             alpha: Math.random()*10
         });
     }
 
-    // =================================================
-    // PUNTOS
-    // =================================================
-
     let puntos = 0;
     let altura = 0;
 
-    // =================================================
-    // DIFICULTAD
-    // =================================================
-
     let velocidadMapa = 0.35;
 
-    // =================================================
-    // GAME OVER
-    // =================================================
-
     let gameOver = false;
-
     let scoreGuardado = false;
-
-    // =================================================
-    // FONDO
-    // =================================================
 
     function dibujarFondo(){
 
-        let gradiente =
-        ctx.createLinearGradient(
-            0,0,0,700
-        );
+        let gradiente = ctx.createLinearGradient(0,0,0,700);
 
-        gradiente.addColorStop(
-            0,
-            "#120458"
-        );
-
-        gradiente.addColorStop(
-            0.5,
-            "#5f0a87"
-        );
-
-        gradiente.addColorStop(
-            1,
-            "#a4508b"
-        );
+        gradiente.addColorStop(0, "#120458");
+        gradiente.addColorStop(0.5, "#5f0a87");
+        gradiente.addColorStop(1, "#a4508b");
 
         ctx.fillStyle = gradiente;
 
-        ctx.fillRect(
-            0,
-            0,
-            1200,
-            700
-        );
+        ctx.fillRect(0,0,1200,700);
 
         estrellas.forEach(s=>{
 
@@ -402,10 +267,6 @@ function juegoNubes(contenedor){
         ctx.globalAlpha = 1;
     }
 
-    // =================================================
-    // PERSONAJE
-    // =================================================
-
     function dibujarJugador(){
 
         ctx.drawImage(
@@ -417,10 +278,6 @@ function juegoNubes(contenedor){
         );
     }
 
-    // =================================================
-    // NUBES
-    // =================================================
-
     function dibujarPlataformas(){
 
         plataformas.forEach(p=>{
@@ -428,23 +285,14 @@ function juegoNubes(contenedor){
             const escala = 0.20;
 
             ctx.drawImage(
-
                 nube,
-
                 p.x,
-
                 p.y,
-
                 nube.width * escala,
-
                 nube.height * escala
             );
         });
     }
-
-    // =================================================
-    // MONEDAS
-    // =================================================
 
     function dibujarMonedas(){
 
@@ -461,8 +309,7 @@ function juegoNubes(contenedor){
             ctx.arc(
                 m.x,
                 m.y,
-                m.size/2 +
-                Math.sin(m.rotacion)*2,
+                m.size/2 + Math.sin(m.rotacion)*2,
                 0,
                 Math.PI*2
             );
@@ -485,24 +332,13 @@ function juegoNubes(contenedor){
         });
     }
 
-    // =================================================
-    // INTERFAZ
-    // =================================================
-
     function interfaz(){
 
-        ctx.fillStyle =
-        "rgba(255,255,255,0.08)";
+        ctx.fillStyle = "rgba(255,255,255,0.08)";
 
         ctx.beginPath();
 
-        ctx.roundRect(
-            25,
-            25,
-            320,
-            180,
-            25
-        );
+        ctx.roundRect(25,25,320,180,25);
 
         ctx.fill();
 
@@ -535,32 +371,21 @@ function juegoNubes(contenedor){
         );
     }
 
-    // =================================================
-    // MOVIMIENTO
-    // =================================================
-
     function actualizar(){
 
         if(izquierda){
-
-            jugador.x -=
-            jugador.velocidad;
+            jugador.x -= jugador.velocidad;
         }
 
         if(derecha){
-
-            jugador.x +=
-            jugador.velocidad;
+            jugador.x += jugador.velocidad;
         }
 
         if(jugador.x > 1200){
-
-            jugador.x =
-            -jugador.w;
+            jugador.x = -jugador.w;
         }
 
         if(jugador.x < -jugador.w){
-
             jugador.x = 1200;
         }
 
@@ -571,25 +396,13 @@ function juegoNubes(contenedor){
         plataformas.forEach(p=>{
 
             if(
-
                 jugador.velY > 0 &&
-
-                jugador.x + jugador.w >
-                p.x + 25 &&
-
-                jugador.x <
-                p.x + p.w &&
-
-                jugador.y + jugador.h >
-                p.y &&
-
-                jugador.y + jugador.h <
-                p.y + 25
-
+                jugador.x + jugador.w > p.x + 25 &&
+                jugador.x < p.x + p.w &&
+                jugador.y + jugador.h > p.y &&
+                jugador.y + jugador.h < p.y + 25
             ){
-
-                jugador.velY =
-                jugador.salto;
+                jugador.velY = jugador.salto;
             }
         });
 
@@ -624,42 +437,35 @@ function juegoNubes(contenedor){
 
         if(jugador.y < 320){
 
-            let diff =
-            320 - jugador.y;
+            let diff = 320 - jugador.y;
 
             jugador.y = 320;
 
-            puntos +=
-            Math.floor(diff);
+            puntos += Math.floor(diff);
 
-            altura +=
-            Math.floor(diff/12);
+            altura += Math.floor(diff/12);
 
             plataformas.forEach(p=>{
 
-                p.y +=
-                diff * velocidadMapa;
+                p.y += diff * velocidadMapa;
 
                 if(p.y > 750){
 
                     p.y = -90;
 
-                    p.x =
-                    Math.random()*850 + 100;
+                    p.x = Math.random()*850 + 100;
                 }
             });
 
             monedas.forEach(m=>{
 
-                m.y +=
-                diff * velocidadMapa;
+                m.y += diff * velocidadMapa;
 
                 if(m.y > 750){
 
                     m.y = -50;
 
-                    m.x =
-                    Math.random()*1000 + 50;
+                    m.x = Math.random()*1000 + 50;
 
                     m.tomada = false;
                 }
@@ -677,7 +483,7 @@ function juegoNubes(contenedor){
 
             gameOver = true;
 
-             musicaFondo.pause();
+            musicaFondo.pause();
 
             if(!scoreGuardado){
 
@@ -692,223 +498,100 @@ function juegoNubes(contenedor){
         }
     }
 
-    // =================================================
-    // GAME OVER NUEVO
-    // =================================================
-
     function mostrarGameOver(){
 
-        // FONDO OSCURO
-        ctx.fillStyle =
-        "rgba(0,0,0,.55)";
+        ctx.fillStyle = "rgba(0,0,0,.50)";
+        ctx.fillRect(0,0,1200,700);
 
-        ctx.fillRect(
-            0,
-            0,
-            1200,
-            700
+        let panelX = 310;
+        let panelY = 70;
+        let panelW = 580;
+        let panelH = 500;
+
+        let gradientePanel =
+        ctx.createLinearGradient(
+            panelX,
+            panelY,
+            panelX,
+            panelY + panelH
         );
 
-        // PANEL PRINCIPAL
+        gradientePanel.addColorStop(0, "rgba(88,35,130,.78)");
+        gradientePanel.addColorStop(1, "rgba(68,20,105,.82)");
 
-        let panelX = 300;
-        let panelY = 90;
-
-        let panelW = 600;
-        let panelH = 520;
-
-        ctx.fillStyle =
-        "rgba(86,31,120,.68)";
+        ctx.fillStyle = gradientePanel;
 
         ctx.beginPath();
 
         ctx.roundRect(
-
             panelX,
-
             panelY,
-
             panelW,
-
             panelH,
-
             35
         );
 
         ctx.fill();
 
-        // BORDE
-
-        ctx.strokeStyle =
-        "rgba(255,255,255,.30)";
-
+        ctx.strokeStyle = "rgba(255,255,255,.35)";
         ctx.lineWidth = 3;
-
         ctx.stroke();
-
-        // RECUADRO TITULO
-
-        ctx.fillStyle =
-        "rgba(255,255,255,.08)";
-
-        ctx.beginPath();
-
-        ctx.roundRect(
-
-            360,
-            120,
-            480,
-            115,
-            28
-        );
-
-        ctx.fill();
-
-        // TITULO
 
         ctx.textAlign = "center";
 
         ctx.fillStyle = "white";
-
-        ctx.font =
-        "bold 66px 'Baloo 2', Arial";
+        ctx.font = "bold 66px 'Baloo 2', Arial";
 
         ctx.fillText(
-
             "GAME OVER",
-
             600,
-
-            195
+            170
         );
 
-        // PUNTOS
-
-        ctx.fillStyle =
-        "#ffb6ef";
-
-        ctx.font =
-        "bold 30px 'Baloo 2', Arial";
+        ctx.fillStyle = "#ffc2f3";
+        ctx.font = "bold 30px 'Baloo 2', Arial";
 
         ctx.fillText(
-
-            "⭐ Puntos: " + puntos,
-
+            "Puntos: " + puntos,
             600,
-
-            285
+            245
         );
 
-        // MONEDAS
-
-        ctx.fillStyle =
-        "#ffe066";
+        ctx.fillStyle = "#ffd84d";
+        ctx.font = "bold 34px 'Baloo 2', Arial";
 
         ctx.fillText(
-
-            "🪙 Monedas: " + totalMonedas,
-
-            600,
-
-            335
-        );
-
-        // TOP 5
-
-        ctx.fillStyle =
-        "#ffd84d";
-
-        ctx.font =
-        "bold 34px 'Baloo 2', Arial";
-
-        ctx.fillText(
-
             "🏆 TOP 5",
-
             600,
-
-            405
+            320
         );
 
-        // TABLA
-
-        ctx.fillStyle =
-        "rgba(255,255,255,.05)";
-
-        ctx.beginPath();
-
-        ctx.roundRect(
-
-            420,
-            430,
-            360,
-            135,
-            20
-        );
-
-        ctx.fill();
-
-        ctx.font =
-        "bold 24px 'Baloo 2', Arial";
+        ctx.font = "bold 25px 'Baloo 2', Arial";
 
         mejoresPuntajes.forEach((p,i)=>{
 
-            ctx.fillStyle =
-            "rgba(255,255,255,.08)";
-
-            ctx.fillRect(
-
-                455,
-
-                455 + (i * 24),
-
-                290,
-
-                2
-            );
-
-            ctx.fillStyle =
-
-            i === 0
-
-            ? "#ffe75c"
-
-            : "white";
+            if(i === 0){
+                ctx.fillStyle = "#ffe75c";
+            }else{
+                ctx.fillStyle = "white";
+            }
 
             ctx.fillText(
-
-                (i + 1) +
-                ". " +
-                p +
-                " pts",
-
+                (i+1) + ". " + p,
                 600,
-
-                478 + (i * 24)
+                365 + (i * 32)
             );
         });
 
-        // REINICIAR
-
-        ctx.fillStyle =
-        "rgba(255,255,255,.92)";
-
-        ctx.font =
-        "bold 23px 'Baloo 2', Arial";
+        ctx.fillStyle = "rgba(255,255,255,.90)";
+        ctx.font = "bold 22px 'Baloo 2', Arial";
 
         ctx.fillText(
-
-            "Haz click para reiniciar",
-
+            "Toca la pantalla o haz click para reiniciar",
             600,
-
-            595
+            535
         );
     }
-
-    // =================================================
-    // LOOP
-    // =================================================
 
     function loop(){
 
